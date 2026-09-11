@@ -1,864 +1,580 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 
 <head>
 
-  <meta charset="UTF-8" />
+<meta charset="UTF-8">
 
-  <meta name="viewport"
+<meta name="viewport"
 
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <title>Utica Streets</title>
+<title>Utica Streets</title>
 
-  <style>
+<style>
 
-    * {
+html, body {
 
-      box-sizing: border-box;
+  margin: 0;
 
-      -webkit-user-select: none;
+  padding: 0;
 
-      user-select: none;
+  overflow: hidden;
 
-      touch-action: none;
+  background: #111;
 
-    }
+  font-family: Arial, sans-serif;
 
-    html, body {
+  touch-action: none;
 
-      width: 100%;
+}
 
-      height: 100%;
+canvas {
 
-      margin: 0;
+  display: block;
 
-      overflow: hidden;
+  width: 100vw;
 
-      background: #000;
+  height: 100vh;
 
-      font-family: Arial, Helvetica, sans-serif;
+  background: #242424;
 
-    }
+}
 
-    #map {
+#hud {
 
-      width: 100%;
+  position: fixed;
 
-      height: 100%;
+  top: 15px;
 
-    }
+  left: 15px;
 
-    #hud {
+  color: white;
 
-      position: fixed;
+  background: rgba(0,0,0,.65);
 
-      top: 12px;
+  padding: 10px 14px;
 
-      left: 12px;
+  border-radius: 10px;
 
-      z-index: 10;
+  font-size: 14px;
 
-      background: rgba(0,0,0,.72);
+  z-index: 10;
 
-      color: white;
+}
 
-      padding: 10px 14px;
+#wanted {
 
-      border-radius: 10px;
+  color: #ffd700;
 
-      font-weight: bold;
+  letter-spacing: 2px;
 
-      font-size: 14px;
+}
 
-      border: 1px solid rgba(255,255,255,.25);
+#controls {
 
-      text-shadow: 1px 1px 2px #000;
+  position: fixed;
 
-    }
+  bottom: 25px;
 
-    #title {
+  left: 0;
 
-      font-size: 18px;
+  width: 100%;
 
-      margin-bottom: 4px;
+  height: 170px;
 
-    }
+  pointer-events: none;
 
-    #wanted {
+  z-index: 20;
 
-      color: #ffd54a;
+}
 
-      letter-spacing: 2px;
+.btn {
 
-    }
+  position: absolute;
 
-    #mission {
+  width: 68px;
 
-      position: fixed;
+  height: 68px;
 
-      top: 12px;
+  border-radius: 50%;
 
-      right: 12px;
+  border: 2px solid rgba(255,255,255,.6);
 
-      max-width: 180px;
+  background: rgba(0,0,0,.55);
 
-      z-index: 10;
+  color: white;
 
-      background: rgba(0,0,0,.72);
+  font-size: 28px;
 
-      color: #fff;
+  font-weight: bold;
 
-      padding: 10px;
+  pointer-events: auto;
 
-      border-radius: 10px;
+  user-select: none;
 
-      font-size: 13px;
+  -webkit-user-select: none;
 
-      text-align: center;
+}
 
-    }
+#left {
 
-    .control {
+  left: 20px;
 
-      position: fixed;
+  bottom: 15px;
 
-      z-index: 20;
+}
 
-      width: 78px;
+#right {
 
-      height: 78px;
+  left: 105px;
 
-      border-radius: 50%;
+  bottom: 15px;
 
-      border: 2px solid rgba(255,255,255,.55);
+}
 
-      background: rgba(0,0,0,.55);
+#gas {
 
-      color: white;
+  right: 20px;
 
-      font-size: 31px;
+  bottom: 65px;
 
-      font-weight: bold;
+  background: rgba(0,120,0,.7);
 
-      display: flex;
+}
 
-      align-items: center;
+#brake {
 
-      justify-content: center;
+  right: 105px;
 
-      box-shadow: 0 3px 10px rgba(0,0,0,.45);
+  bottom: 15px;
 
-    }
+  background: rgba(150,0,0,.7);
 
-    .control:active,
+}
 
-    .pressed {
+#city {
 
-      background: rgba(255,255,255,.25);
+  position: fixed;
 
-      transform: scale(.96);
+  top: 15px;
 
-    }
+  right: 15px;
 
-    #left {
+  color: white;
 
-      left: 18px;
+  font-weight: bold;
 
-      bottom: 35px;
+  background: rgba(0,0,0,.55);
 
-    }
+  padding: 8px 12px;
 
-    #right {
+  border-radius: 8px;
 
-      left: 112px;
+  z-index: 10;
 
-      bottom: 35px;
+}
 
-    }
-
-    #gas {
-
-      right: 18px;
-
-      bottom: 35px;
-
-      width: 88px;
-
-      height: 88px;
-
-      background: rgba(0,110,0,.62);
-
-      font-size: 20px;
-
-    }
-
-    #brake {
-
-      right: 122px;
-
-      bottom: 45px;
-
-      width: 70px;
-
-      height: 70px;
-
-      background: rgba(130,0,0,.62);
-
-      font-size: 14px;
-
-    }
-
-    #speed {
-
-      position: fixed;
-
-      bottom: 142px;
-
-      right: 20px;
-
-      z-index: 10;
-
-      color: white;
-
-      background: rgba(0,0,0,.72);
-
-      padding: 8px 11px;
-
-      border-radius: 8px;
-
-      font-weight: bold;
-
-      font-size: 15px;
-
-    }
-
-    #startMessage {
-
-      position: fixed;
-
-      z-index: 50;
-
-      inset: 0;
-
-      background: rgba(0,0,0,.72);
-
-      color: white;
-
-      display: flex;
-
-      align-items: center;
-
-      justify-content: center;
-
-      padding: 25px;
-
-      text-align: center;
-
-    }
-
-    #startBox {
-
-      background: #111;
-
-      border: 1px solid #555;
-
-      border-radius: 16px;
-
-      padding: 24px;
-
-      max-width: 330px;
-
-    }
-
-    #startButton {
-
-      margin-top: 15px;
-
-      border: 0;
-
-      border-radius: 10px;
-
-      padding: 14px 25px;
-
-      background: #23a455;
-
-      color: white;
-
-      font-size: 18px;
-
-      font-weight: bold;
-
-    }
-
-    #errorBox {
-
-      display: none;
-
-      position: fixed;
-
-      z-index: 100;
-
-      top: 50%;
-
-      left: 50%;
-
-      transform: translate(-50%, -50%);
-
-      max-width: 330px;
-
-      padding: 20px;
-
-      border-radius: 12px;
-
-      background: #151515;
-
-      color: white;
-
-      text-align: center;
-
-      border: 1px solid #666;
-
-    }
-
-    @media (orientation: portrait) {
-
-      #mission {
-
-        top: 90px;
-
-        right: 10px;
-
-      }
-
-    }
-
-  </style>
+</style>
 
 </head>
 
 <body>
 
-<div id="map"></div>
+<canvas id="game"></canvas>
 
 <div id="hud">
 
-  <div id="title">UTICA STREETS</div>
+  <b>UTICA STREETS</b><br>
 
-  <div>Cash: $<span id="cash">500</span></div>
+  Speed: <span id="speed">0</span> MPH<br>
 
-  <div id="wanted">☆☆☆☆☆</div>
+  Cash: $<span id="cash">500</span><br>
 
-</div>
+  Wanted:
 
-<div id="mission">
-
-  Drive to the yellow checkpoint.
+  <span id="wanted">☆☆☆☆☆</span>
 
 </div>
 
-<div id="speed">0 MPH</div>
+<div id="city">
 
-<div id="left" class="control">◀</div>
-
-<div id="right" class="control">▶</div>
-
-<div id="brake" class="control">BRAKE</div>
-
-<div id="gas" class="control">GAS</div>
-
-<div id="startMessage">
-
-  <div id="startBox">
-
-    <h2>UTICA STREETS</h2>
-
-    <p>
-
-      Drive around the real streets of Utica, New York.
-
-      Use the buttons with your thumbs.
-
-    </p>
-
-    <button id="startButton">START GAME</button>
-
-  </div>
+  UTICA, NEW YORK
 
 </div>
 
-<div id="errorBox">
+<div id="controls">
 
-  <h3>Google Maps did not load.</h3>
+  <button class="btn" id="left">◀</button>
 
-  <p>
+  <button class="btn" id="right">▶</button>
 
-    Make sure your Google Maps API key is correct and that
+  <button class="btn" id="gas">▲</button>
 
-    Maps JavaScript API is enabled.
-
-  </p>
+  <button class="btn" id="brake">▼</button>
 
 </div>
 
 <script>
 
-  let map;
+const canvas = document.getElementById("game");
 
-  let car;
+const ctx = canvas.getContext("2d");
 
-  let checkpoint;
+function resize() {
 
-  let position = {
+  canvas.width = innerWidth;
 
-    lat: 43.100903,
+  canvas.height = innerHeight;
 
-    lng: -75.232664
+}
 
-  };
+resize();
 
-  let heading = 0;
+addEventListener("resize", resize);
 
-  let speed = 0;
+const keys = {
 
-  let gasPressed = false;
+  left:false,
 
-  let brakePressed = false;
+  right:false,
 
-  let leftPressed = false;
+  gas:false,
 
-  let rightPressed = false;
+  brake:false
 
-  let cash = 500;
+};
 
-  let wanted = 0;
+function control(id, key) {
 
-  let gameStarted = false;
+  const button = document.getElementById(id);
 
-  const missions = [
+  button.addEventListener("pointerdown", e => {
 
-    {
+    e.preventDefault();
 
-      lat: 43.1039,
+    keys[key] = true;
 
-      lng: -75.2315,
+  });
 
-      text: "Drive downtown."
+  button.addEventListener("pointerup", e => {
 
-    },
+    e.preventDefault();
 
-    {
+    keys[key] = false;
 
-      lat: 43.0978,
+  });
 
-      lng: -75.2253,
+  button.addEventListener("pointercancel", () => {
 
-      text: "Head toward Genesee Street."
+    keys[key] = false;
 
-    },
+  });
 
-    {
+  button.addEventListener("pointerleave", () => {
 
-      lat: 43.1055,
+    keys[key] = false;
 
-      lng: -75.2401,
+  });
 
-      text: "Reach the next checkpoint."
+}
 
-    },
+control("left","left");
 
-    {
+control("right","right");
 
-      lat: 43.0918,
+control("gas","gas");
 
-      lng: -75.2370,
+control("brake","brake");
 
-      text: "Cruise to South Utica."
+const car = {
 
-    },
+  x: 0,
 
-    {
+  y: 0,
 
-      lat: 43.1125,
+  angle: 0,
 
-      lng: -75.2256,
+  speed: 0
 
-      text: "Make your way north."
+};
 
-    }
+let cash = 500;
 
-  ];
+let wanted = 0;
 
-  let missionIndex = 0;
+const blocks = [];
 
-  function initMap() {
+const blockSize = 360;
 
-    map = new google.maps.Map(
+const roadWidth = 110;
 
-      document.getElementById("map"),
+/* Build a large city */
 
-      {
+for(let x=-8; x<=8; x++){
 
-        center: position,
+  for(let y=-8; y<=8; y++){
 
-        zoom: 17,
+    blocks.push({
 
-        disableDefaultUI: true,
+      x:x*blockSize + roadWidth/2,
 
-        gestureHandling: "none",
+      y:y*blockSize + roadWidth/2,
 
-        mapTypeId: "roadmap",
+      w:blockSize-roadWidth,
 
-        tilt: 0,
+      h:blockSize-roadWidth
 
-        styles: [
+    });
 
-          {
+  }
 
-            featureType: "poi",
+}
 
-            elementType: "labels",
+function drawCity(cameraX,cameraY){
 
-            stylers: [{ visibility: "off" }]
+  ctx.fillStyle="#555";
 
-          },
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 
-          {
+  /* city blocks */
 
-            featureType: "transit",
+  for(const b of blocks){
 
-            elementType: "labels",
+    const sx=b.x-cameraX+canvas.width/2;
 
-            stylers: [{ visibility: "off" }]
+    const sy=b.y-cameraY+canvas.height/2;
 
-          }
+    ctx.fillStyle="#292929";
 
-        ]
+    ctx.fillRect(sx,sy,b.w,b.h);
 
-      }
+    /* sidewalks */
+
+    ctx.strokeStyle="#888";
+
+    ctx.lineWidth=8;
+
+    ctx.strokeRect(
+
+      sx+5,
+
+      sy+5,
+
+      b.w-10,
+
+      b.h-10
 
     );
 
-    createCar();
+    /* buildings */
 
-    createMission();
+    ctx.fillStyle="#444";
 
-    requestAnimationFrame(gameLoop);
+    ctx.fillRect(
 
-  }
+      sx+30,
 
-  function createCar() {
+      sy+30,
 
-    const carIcon = {
+      b.w-60,
 
-      path:
+      b.h-60
 
-        "M 0,-18 L 11,-9 L 11,13 L 5,18 L -5,18 L -11,13 L -11,-9 Z",
+    );
 
-      fillColor: "#e53935",
+    /* windows */
 
-      fillOpacity: 1,
+    ctx.fillStyle="#d7b45a";
 
-      strokeColor: "#111",
+    for(let wx=50;wx<b.w-50;wx+=45){
 
-      strokeWeight: 2,
+      for(let wy=50;wy<b.h-50;wy+=45){
 
-      rotation: heading,
+        ctx.fillRect(
 
-      scale: 1
+          sx+wx,
 
-    };
+          sy+wy,
 
-    car = new google.maps.Marker({
+          12,
 
-      position,
+          12
 
-      map,
-
-      icon: carIcon,
-
-      zIndex: 999
-
-    });
-
-  }
-
-  function updateCarIcon() {
-
-    const icon = car.getIcon();
-
-    icon.rotation = heading;
-
-    car.setIcon(icon);
-
-  }
-
-  function createMission() {
-
-    const mission = missions[missionIndex];
-
-    if (checkpoint) {
-
-      checkpoint.setMap(null);
-
-    }
-
-    checkpoint = new google.maps.Marker({
-
-      position: {
-
-        lat: mission.lat,
-
-        lng: mission.lng
-
-      },
-
-      map,
-
-      title: "Mission",
-
-      icon: {
-
-        path: google.maps.SymbolPath.CIRCLE,
-
-        fillColor: "#ffd600",
-
-        fillOpacity: .85,
-
-        strokeColor: "#ffffff",
-
-        strokeWeight: 3,
-
-        scale: 12
+        );
 
       }
-
-    });
-
-    document.getElementById("mission").innerHTML =
-
-      "MISSION<br>" + mission.text;
-
-  }
-
-  function gameLoop() {
-
-    if (gameStarted) {
-
-      if (gasPressed) {
-
-        speed += 0.018;
-
-      }
-
-      if (brakePressed) {
-
-        speed -= 0.04;
-
-      }
-
-      speed *= 0.985;
-
-      speed = Math.max(-0.12, Math.min(speed, 0.34));
-
-      const turnAmount = 2.3 * Math.min(Math.abs(speed) * 5 + .2, 1);
-
-      if (leftPressed && Math.abs(speed) > .005) {
-
-        heading -= turnAmount;
-
-      }
-
-      if (rightPressed && Math.abs(speed) > .005) {
-
-        heading += turnAmount;
-
-      }
-
-      const radians = heading * Math.PI / 180;
-
-      const distance = speed * 0.000025;
-
-      position.lat += Math.cos(radians) * distance;
-
-      position.lng +=
-
-        Math.sin(radians) *
-
-        distance /
-
-        Math.cos(position.lat * Math.PI / 180);
-
-      car.setPosition(position);
-
-      updateCarIcon();
-
-      map.panTo(position);
-
-      document.getElementById("speed").innerText =
-
-        Math.round(Math.abs(speed) * 135) + " MPH";
-
-      checkMission();
-
-    }
-
-    requestAnimationFrame(gameLoop);
-
-  }
-
-  function checkMission() {
-
-    const mission = missions[missionIndex];
-
-    const dx = position.lat - mission.lat;
-
-    const dy = position.lng - mission.lng;
-
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    if (distance < 0.00055) {
-
-      cash += 250;
-
-      document.getElementById("cash").innerText = cash;
-
-      missionIndex++;
-
-      if (missionIndex >= missions.length) {
-
-        missionIndex = 0;
-
-      }
-
-      createMission();
-
-      document.getElementById("mission").innerHTML =
-
-        "MISSION COMPLETE!<br>+$250";
-
-      setTimeout(() => {
-
-        document.getElementById("mission").innerHTML =
-
-          "MISSION<br>" +
-
-          missions[missionIndex].text;
-
-      }, 1600);
 
     }
 
   }
 
-  function bindButton(id, pressFunction, releaseFunction) {
+  /* road lines */
 
-    const button = document.getElementById(id);
+  ctx.strokeStyle="#e7c841";
 
-    button.addEventListener("pointerdown", e => {
+  ctx.lineWidth=3;
 
-      e.preventDefault();
+  ctx.setLineDash([25,25]);
 
-      button.classList.add("pressed");
+  for(let i=-8;i<=8;i++){
 
-      pressFunction();
+    let road=i*blockSize-cameraX+canvas.width/2;
 
-    });
+    ctx.beginPath();
 
-    button.addEventListener("pointerup", e => {
+    ctx.moveTo(road,0);
 
-      e.preventDefault();
+    ctx.lineTo(road,canvas.height);
 
-      button.classList.remove("pressed");
+    ctx.stroke();
 
-      releaseFunction();
+    let roadY=i*blockSize-cameraY+canvas.height/2;
 
-    });
+    ctx.beginPath();
 
-    button.addEventListener("pointercancel", () => {
+    ctx.moveTo(0,roadY);
 
-      button.classList.remove("pressed");
+    ctx.lineTo(canvas.width,roadY);
 
-      releaseFunction();
-
-    });
-
-    button.addEventListener("pointerleave", () => {
-
-      button.classList.remove("pressed");
-
-      releaseFunction();
-
-    });
+    ctx.stroke();
 
   }
 
-  bindButton(
+  ctx.setLineDash([]);
 
-    "gas",
+}
 
-    () => gasPressed = true,
+function update(){
 
-    () => gasPressed = false
+  if(keys.gas)
+
+    car.speed += .12;
+
+  if(keys.brake)
+
+    car.speed -= .16;
+
+  car.speed *= .985;
+
+  if(car.speed > 7)
+
+    car.speed=7;
+
+  if(car.speed < -3)
+
+    car.speed=-3;
+
+  if(Math.abs(car.speed) > .05){
+
+    let steering=.045;
+
+    if(keys.left)
+
+      car.angle -= steering*(car.speed/3);
+
+    if(keys.right)
+
+      car.angle += steering*(car.speed/3);
+
+  }
+
+  car.x += Math.sin(car.angle)*car.speed;
+
+  car.y -= Math.cos(car.angle)*car.speed;
+
+  document.getElementById("speed").textContent =
+
+    Math.round(Math.abs(car.speed)*12);
+
+  document.getElementById("cash").textContent=cash;
+
+  document.getElementById("wanted").textContent =
+
+    "★".repeat(wanted)+"☆".repeat(5-wanted);
+
+}
+
+function drawCar(){
+
+  ctx.save();
+
+  ctx.translate(
+
+    canvas.width/2,
+
+    canvas.height/2
 
   );
 
-  bindButton(
+  ctx.rotate(car.angle);
 
-    "brake",
+  /* shadow */
 
-    () => brakePressed = true,
+  ctx.fillStyle="rgba(0,0,0,.5)";
 
-    () => brakePressed = false
+  ctx.fillRect(-16,-31,36,66);
+
+  /* body */
+
+  ctx.fillStyle="#1976d2";
+
+  ctx.fillRect(-15,-30,30,60);
+
+  /* hood */
+
+  ctx.fillStyle="#0d47a1";
+
+  ctx.fillRect(-13,-28,26,16);
+
+  /* windshield */
+
+  ctx.fillStyle="#9ed9ff";
+
+  ctx.fillRect(-11,-8,22,15);
+
+  /* rear window */
+
+  ctx.fillRect(-11,12,22,10);
+
+  /* headlights */
+
+  ctx.fillStyle="#fff6a8";
+
+  ctx.fillRect(-12,-31,8,4);
+
+  ctx.fillRect(4,-31,8,4);
+
+  ctx.restore();
+
+}
+
+function gameLoop(){
+
+  update();
+
+  ctx.clearRect(
+
+    0,
+
+    0,
+
+    canvas.width,
+
+    canvas.height
 
   );
 
-  bindButton(
+  drawCity(car.x,car.y);
 
-    "left",
+  drawCar();
 
-    () => leftPressed = true,
+  requestAnimationFrame(gameLoop);
 
-    () => leftPressed = false
+}
 
-  );
-
-  bindButton(
-
-    "right",
-
-    () => rightPressed = true,
-
-    () => rightPressed = false
-
-  );
-
-  document.getElementById("startButton")
-
-    .addEventListener("click", () => {
-
-      document.getElementById("startMessage").style.display = "none";
-
-      gameStarted = true;
-
-    });
-
-  window.gm_authFailure = function() {
-
-    document.getElementById("errorBox").style.display = "block";
-
-  };
-
-</script>
-
-<script
-
-  async
-
-  defer
-
-  src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
+gameLoop();
 
 </script>
 
