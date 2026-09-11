@@ -1,145 +1,115 @@
-.control{
+<!DOCTYPE html>
 
-  position:fixed;
+<html lang="en">
 
-  z-index:30;
+<head>
 
-  width:72px;
+  <meta charset="UTF-8">
 
-  height:72px;
+  <meta
 
-  border-radius:50%;
+    name="viewport"
 
-  border:3px solid rgba(255,255,255,.45);
+    content="width=device-width,
 
-  background:rgba(0,0,0,.55);
+    initial-scale=1,
 
-  color:white;
+    maximum-scale=1,
 
-  font-size:30px;
+    user-scalable=no,
 
-  font-weight:bold;
+    viewport-fit=cover"
 
-  display:flex;
+  >
 
-  align-items:center;
+  <title>Utica Drive</title>
 
-  justify-content:center;
+  <link rel="stylesheet" href="./style.css">
 
-  user-select:none;
+</head>
 
-  -webkit-user-select:none;
+<body>
 
-  touch-action:none;
+  <div id="loading">
 
-}
+    LOADING UTICA...
 
-.control.active{
+  </div>
 
-  background:rgba(255,255,255,.25);
+  <div id="hud">
 
-  transform:scale(.94);
+    <div>
 
-}
+      <div id="cityName">UTICA, NEW YORK</div>
 
-/* STEERING */
+      <div id="mode">DRIVE</div>
 
-#left{
+    </div>
 
-  left:18px;
+    <div id="speed">0 MPH</div>
 
-  bottom:calc(env(safe-area-inset-bottom) + 125px);
+  </div>
 
-}
+  <!-- EXIT / ENTER -->
 
-#right{
+  <button id="exitBtn" class="utilityButton">
 
-  left:105px;
+    EXIT
 
-  bottom:calc(env(safe-area-inset-bottom) + 125px);
+  </button>
 
-}
+  <!-- LEFT SIDE STEERING -->
 
-/* GAS */
+  <div id="steeringControls">
 
-#gas{
+    <button id="leftBtn" class="roundButton">
 
-  right:18px;
+      ◀
 
-  bottom:calc(env(safe-area-inset-bottom) + 215px);
+    </button>
 
-}
+    <button id="rightBtn" class="roundButton">
 
-/* BRAKE */
+      ▶
 
-#brake{
+    </button>
 
-  right:18px;
+  </div>
 
-  bottom:calc(env(safe-area-inset-bottom) + 125px);
+  <!-- RIGHT SIDE PEDALS -->
 
-}
+  <div id="pedalControls">
 
-/* REVERSE - completely separate */
+    <button id="gasBtn" class="roundButton pedal">
 
-#reverse{
+      ▲
 
-  position:fixed;
+      <span>GAS</span>
 
-  right:18px;
+    </button>
 
-  bottom:calc(env(safe-area-inset-bottom) + 305px);
+    <button id="brakeBtn" class="roundButton pedal">
 
-  width:100px;
+      ▼
 
-  height:48px;
+      <span>BRAKE</span>
 
-  border-radius:16px;
+    </button>
 
-  border:3px solid rgba(255,255,255,.45);
+    <button id="reverseBtn">
 
-  background:rgba(0,0,0,.60);
+      REVERSE
 
-  color:white;
+    </button>
 
-  font-size:14px;
+  </div>
 
-  font-weight:bold;
+  <div id="notice"></div>
 
-  z-index:31;
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 
-  touch-action:none;
+  <script src="./app.js"></script>
 
-}
+</body>
 
-/* EXIT - moved away from steering */
-
-#exit{
-
-  position:fixed;
-
-  left:20px;
-
-  top:calc(env(safe-area-inset-top) + 72px);
-
-  width:82px;
-
-  height:44px;
-
-  border-radius:14px;
-
-  border:2px solid rgba(255,255,255,.45);
-
-  background:rgba(0,0,0,.60);
-
-  color:white;
-
-  font-size:14px;
-
-  font-weight:bold;
-
-  z-index:31;
-
-  touch-action:none;
-
-}
+</html>
