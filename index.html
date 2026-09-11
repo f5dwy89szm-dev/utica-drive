@@ -4,179 +4,167 @@
 
 <head>
 
-<meta charset="UTF-8">
+  <meta charset="UTF-8" />
 
-<meta name="viewport"
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Utica Drive</title>
 
-<title>Utica Streets</title>
+  <style>
 
-<style>
+    html, body {
 
-html, body {
+      margin: 0;
 
-  margin: 0;
+      padding: 0;
 
-  padding: 0;
+      overflow: hidden;
 
-  overflow: hidden;
+      background: #111;
 
-  background: #111;
+      font-family: Arial, sans-serif;
 
-  font-family: Arial, sans-serif;
+      touch-action: none;
 
-  touch-action: none;
+    }
 
-}
+    canvas {
 
-canvas {
+      display: block;
 
-  display: block;
+    }
 
-  width: 100vw;
+    #hud {
 
-  height: 100vh;
+      position: fixed;
 
-  background: #242424;
+      top: 12px;
 
-}
+      left: 12px;
 
-#hud {
+      z-index: 10;
 
-  position: fixed;
+      color: white;
 
-  top: 15px;
+      background: rgba(0,0,0,0.55);
 
-  left: 15px;
+      padding: 10px 14px;
 
-  color: white;
+      border-radius: 12px;
 
-  background: rgba(0,0,0,.65);
+      font-size: 16px;
 
-  padding: 10px 14px;
+      line-height: 1.5;
 
-  border-radius: 10px;
+      backdrop-filter: blur(5px);
 
-  font-size: 14px;
+    }
 
-  z-index: 10;
+    #wanted {
 
-}
+      color: #ffd54a;
 
-#wanted {
+      letter-spacing: 3px;
 
-  color: #ffd700;
+    }
 
-  letter-spacing: 2px;
+    .control {
 
-}
+      position: fixed;
 
-#controls {
+      z-index: 20;
 
-  position: fixed;
+      width: 76px;
 
-  bottom: 25px;
+      height: 76px;
 
-  left: 0;
+      border-radius: 50%;
 
-  width: 100%;
+      border: 2px solid rgba(255,255,255,0.65);
 
-  height: 170px;
+      background: rgba(30,30,30,0.6);
 
-  pointer-events: none;
+      color: white;
 
-  z-index: 20;
+      font-size: 30px;
 
-}
+      display: flex;
 
-.btn {
+      align-items: center;
 
-  position: absolute;
+      justify-content: center;
 
-  width: 68px;
+      user-select: none;
 
-  height: 68px;
+      -webkit-user-select: none;
 
-  border-radius: 50%;
+      backdrop-filter: blur(5px);
 
-  border: 2px solid rgba(255,255,255,.6);
+    }
 
-  background: rgba(0,0,0,.55);
+    #left {
 
-  color: white;
+      left: 18px;
 
-  font-size: 28px;
+      bottom: 26px;
 
-  font-weight: bold;
+    }
 
-  pointer-events: auto;
+    #right {
 
-  user-select: none;
+      left: 110px;
 
-  -webkit-user-select: none;
+      bottom: 26px;
 
-}
+    }
 
-#left {
+    #gas {
 
-  left: 20px;
+      right: 18px;
 
-  bottom: 15px;
+      bottom: 112px;
 
-}
+      background: rgba(0,120,0,0.65);
 
-#right {
+    }
 
-  left: 105px;
+    #brake {
 
-  bottom: 15px;
+      right: 18px;
 
-}
+      bottom: 26px;
 
-#gas {
+      background: rgba(160,0,0,0.65);
 
-  right: 20px;
+    }
 
-  bottom: 65px;
+    #message {
 
-  background: rgba(0,120,0,.7);
+      position: fixed;
 
-}
+      top: 100px;
 
-#brake {
+      left: 50%;
 
-  right: 105px;
+      transform: translateX(-50%);
 
-  bottom: 15px;
+      z-index: 30;
 
-  background: rgba(150,0,0,.7);
+      color: white;
 
-}
+      background: rgba(0,0,0,0.7);
 
-#city {
+      padding: 12px 18px;
 
-  position: fixed;
+      border-radius: 12px;
 
-  top: 15px;
+      font-size: 18px;
 
-  right: 15px;
+      display: none;
 
-  color: white;
+    }
 
-  font-weight: bold;
-
-  background: rgba(0,0,0,.55);
-
-  padding: 8px 12px;
-
-  border-radius: 8px;
-
-  z-index: 10;
-
-}
-
-</style>
+  </style>
 
 </head>
 
@@ -186,35 +174,23 @@ canvas {
 
 <div id="hud">
 
-  <b>UTICA STREETS</b><br>
+  <div>Speed: <span id="speed">0</span> mph</div>
 
-  Speed: <span id="speed">0</span> MPH<br>
+  <div>Cash: $<span id="cash">500</span></div>
 
-  Cash: $<span id="cash">500</span><br>
-
-  Wanted:
-
-  <span id="wanted">☆☆☆☆☆</span>
+  <div>Wanted: <span id="wanted">☆☆☆☆☆</span></div>
 
 </div>
 
-<div id="city">
+<div id="message"></div>
 
-  UTICA, NEW YORK
+<div id="left" class="control">◀</div>
 
-</div>
+<div id="right" class="control">▶</div>
 
-<div id="controls">
+<div id="gas" class="control">▲</div>
 
-  <button class="btn" id="left">◀</button>
-
-  <button class="btn" id="right">▶</button>
-
-  <button class="btn" id="gas">▲</button>
-
-  <button class="btn" id="brake">▼</button>
-
-</div>
+<div id="brake" class="control">▼</div>
 
 <script>
 
@@ -236,67 +212,115 @@ addEventListener("resize", resize);
 
 const keys = {
 
-  left:false,
+  left: false,
 
-  right:false,
+  right: false,
 
-  gas:false,
+  gas: false,
 
-  brake:false
+  brake: false
 
 };
 
-function control(id, key) {
+function bindButton(id, key) {
 
-  const button = document.getElementById(id);
+  const el = document.getElementById(id);
 
-  button.addEventListener("pointerdown", e => {
+  const start = e => {
 
     e.preventDefault();
 
     keys[key] = true;
 
-  });
+  };
 
-  button.addEventListener("pointerup", e => {
+  const end = e => {
 
     e.preventDefault();
 
     keys[key] = false;
 
-  });
+  };
 
-  button.addEventListener("pointercancel", () => {
+  el.addEventListener("touchstart", start, { passive: false });
 
-    keys[key] = false;
+  el.addEventListener("touchend", end, { passive: false });
 
-  });
+  el.addEventListener("touchcancel", end, { passive: false });
 
-  button.addEventListener("pointerleave", () => {
+  el.addEventListener("mousedown", start);
 
-    keys[key] = false;
+  el.addEventListener("mouseup", end);
 
-  });
+  el.addEventListener("mouseleave", end);
 
 }
 
-control("left","left");
+bindButton("left", "left");
 
-control("right","right");
+bindButton("right", "right");
 
-control("gas","gas");
+bindButton("gas", "gas");
 
-control("brake","brake");
+bindButton("brake", "brake");
+
+addEventListener("keydown", e => {
+
+  if (e.key === "ArrowLeft") keys.left = true;
+
+  if (e.key === "ArrowRight") keys.right = true;
+
+  if (e.key === "ArrowUp") keys.gas = true;
+
+  if (e.key === "ArrowDown") keys.brake = true;
+
+});
+
+addEventListener("keyup", e => {
+
+  if (e.key === "ArrowLeft") keys.left = false;
+
+  if (e.key === "ArrowRight") keys.right = false;
+
+  if (e.key === "ArrowUp") keys.gas = false;
+
+  if (e.key === "ArrowDown") keys.brake = false;
+
+});
+
+const world = {
+
+  width: 3000,
+
+  height: 3000
+
+};
 
 const car = {
 
-  x: 0,
+  x: 1500,
 
-  y: 0,
+  y: 1500,
 
-  angle: 0,
+  angle: -Math.PI / 2,
 
-  speed: 0
+  speed: 0,
+
+  width: 28,
+
+  height: 50,
+
+  maxSpeed: 10,
+
+  reverseSpeed: -4,
+
+  accel: 0.18,
+
+  brake: 0.25,
+
+  friction: 0.05,
+
+  turnSpeed: 0.045
 
 };
 
@@ -304,105 +328,303 @@ let cash = 500;
 
 let wanted = 0;
 
-const blocks = [];
+let crashCooldown = 0;
 
-const blockSize = 360;
+const roads = [];
 
-const roadWidth = 110;
+for (let x = 200; x < world.width; x += 400) {
 
-/* Build a large city */
+  roads.push({
 
-for(let x=-8; x<=8; x++){
+    x: x,
 
-  for(let y=-8; y<=8; y++){
+    y: 0,
 
-    blocks.push({
+    w: 170,
 
-      x:x*blockSize + roadWidth/2,
+    h: world.height
 
-      y:y*blockSize + roadWidth/2,
+  });
 
-      w:blockSize-roadWidth,
+}
 
-      h:blockSize-roadWidth
+for (let y = 200; y < world.height; y += 400) {
 
-    });
+  roads.push({
+
+    x: 0,
+
+    y: y,
+
+    w: world.width,
+
+    h: 170
+
+  });
+
+}
+
+const buildings = [];
+
+for (let gx = 0; gx < world.width; gx += 400) {
+
+  for (let gy = 0; gy < world.height; gy += 400) {
+
+    const positions = [
+
+      {x: gx + 20, y: gy + 20, w: 150, h: 150},
+
+      {x: gx + 200, y: gy + 20, w: 170, h: 150},
+
+      {x: gx + 20, y: gy + 200, w: 150, h: 170},
+
+      {x: gx + 200, y: gy + 200, w: 170, h: 170}
+
+    ];
+
+    for (const b of positions) {
+
+      buildings.push(b);
+
+    }
 
   }
 
 }
 
-function drawCity(cameraX,cameraY){
+const police = [];
 
-  ctx.fillStyle="#555";
+function spawnPolice() {
 
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+  const angle = Math.random() * Math.PI * 2;
 
-  /* city blocks */
+  police.push({
 
-  for(const b of blocks){
+    x: car.x + Math.cos(angle) * 500,
 
-    const sx=b.x-cameraX+canvas.width/2;
+    y: car.y + Math.sin(angle) * 500,
 
-    const sy=b.y-cameraY+canvas.height/2;
+    angle: 0,
 
-    ctx.fillStyle="#292929";
+    speed: 3
 
-    ctx.fillRect(sx,sy,b.w,b.h);
+  });
 
-    /* sidewalks */
+}
 
-    ctx.strokeStyle="#888";
+function addWanted() {
 
-    ctx.lineWidth=8;
+  if (wanted < 5) {
 
-    ctx.strokeRect(
+    wanted++;
 
-      sx+5,
+    showMessage("Police alerted!");
 
-      sy+5,
+  }
 
-      b.w-10,
+  while (police.length < wanted * 2) {
 
-      b.h-10
+    spawnPolice();
 
-    );
+  }
 
-    /* buildings */
+}
 
-    ctx.fillStyle="#444";
+function showMessage(text) {
 
-    ctx.fillRect(
+  const box = document.getElementById("message");
 
-      sx+30,
+  box.textContent = text;
 
-      sy+30,
+  box.style.display = "block";
 
-      b.w-60,
+  clearTimeout(showMessage.timer);
 
-      b.h-60
+  showMessage.timer = setTimeout(() => {
 
-    );
+    box.style.display = "none";
 
-    /* windows */
+  }, 1500);
 
-    ctx.fillStyle="#d7b45a";
+}
 
-    for(let wx=50;wx<b.w-50;wx+=45){
+function isOnRoad(x, y) {
 
-      for(let wy=50;wy<b.h-50;wy+=45){
+  return roads.some(r =>
 
-        ctx.fillRect(
+    x > r.x &&
 
-          sx+wx,
+    x < r.x + r.w &&
 
-          sy+wy,
+    y > r.y &&
 
-          12,
+    y < r.y + r.h
 
-          12
+  );
+
+}
+
+function hitsBuilding(x, y) {
+
+  return buildings.some(b =>
+
+    x > b.x &&
+
+    x < b.x + b.w &&
+
+    y > b.y &&
+
+    y < b.y + b.h
+
+  );
+
+}
+
+function updateCar() {
+
+  if (keys.gas) {
+
+    car.speed += car.accel;
+
+  }
+
+  if (keys.brake) {
+
+    car.speed -= car.brake;
+
+  }
+
+  if (!keys.gas && !keys.brake) {
+
+    if (car.speed > 0) {
+
+      car.speed -= car.friction;
+
+      if (car.speed < 0) car.speed = 0;
+
+    }
+
+    if (car.speed < 0) {
+
+      car.speed += car.friction;
+
+      if (car.speed > 0) car.speed = 0;
+
+    }
+
+  }
+
+  car.speed = Math.min(car.maxSpeed, car.speed);
+
+  car.speed = Math.max(car.reverseSpeed, car.speed);
+
+  if (!isOnRoad(car.x, car.y)) {
+
+    car.speed *= 0.97;
+
+  }
+
+  if (Math.abs(car.speed) > 0.2) {
+
+    const steering =
+
+      car.turnSpeed *
+
+      Math.min(Math.abs(car.speed) / 3, 1);
+
+    if (keys.left) {
+
+      car.angle -= steering * Math.sign(car.speed);
+
+    }
+
+    if (keys.right) {
+
+      car.angle += steering * Math.sign(car.speed);
+
+    }
+
+  }
+
+  const oldX = car.x;
+
+  const oldY = car.y;
+
+  car.x += Math.sin(car.angle) * car.speed;
+
+  car.y -= Math.cos(car.angle) * car.speed;
+
+  if (
+
+    car.x < 0 ||
+
+    car.x > world.width ||
+
+    car.y < 0 ||
+
+    car.y > world.height ||
+
+    hitsBuilding(car.x, car.y)
+
+  ) {
+
+    car.x = oldX;
+
+    car.y = oldY;
+
+    if (crashCooldown <= 0 && Math.abs(car.speed) > 3) {
+
+      addWanted();
+
+      crashCooldown = 60;
+
+    }
+
+    car.speed *= -0.25;
+
+  }
+
+  if (crashCooldown > 0) crashCooldown--;
+
+}
+
+function updatePolice() {
+
+  for (const p of police) {
+
+    const dx = car.x - p.x;
+
+    const dy = car.y - p.y;
+
+    const distance = Math.hypot(dx, dy);
+
+    p.angle = Math.atan2(dx, -dy);
+
+    p.x += Math.sin(p.angle) * p.speed;
+
+    p.y -= Math.cos(p.angle) * p.speed;
+
+    if (distance < 38) {
+
+      car.speed *= 0.92;
+
+      if (Math.random() < 0.01) {
+
+        cash = Math.max(0, cash - 100);
+
+        wanted = Math.max(0, wanted - 1);
+
+        police.splice(
+
+          Math.max(0, police.indexOf(p)),
+
+          1
 
         );
+
+        showMessage("Busted! -$100");
+
+        break;
 
       }
 
@@ -410,171 +632,319 @@ function drawCity(cameraX,cameraY){
 
   }
 
-  /* road lines */
+  while (police.length > wanted * 2) {
 
-  ctx.strokeStyle="#e7c841";
-
-  ctx.lineWidth=3;
-
-  ctx.setLineDash([25,25]);
-
-  for(let i=-8;i<=8;i++){
-
-    let road=i*blockSize-cameraX+canvas.width/2;
-
-    ctx.beginPath();
-
-    ctx.moveTo(road,0);
-
-    ctx.lineTo(road,canvas.height);
-
-    ctx.stroke();
-
-    let roadY=i*blockSize-cameraY+canvas.height/2;
-
-    ctx.beginPath();
-
-    ctx.moveTo(0,roadY);
-
-    ctx.lineTo(canvas.width,roadY);
-
-    ctx.stroke();
+    police.pop();
 
   }
 
-  ctx.setLineDash([]);
-
 }
 
-function update(){
+function drawRoads(cameraX, cameraY) {
 
-  if(keys.gas)
+  ctx.fillStyle = "#417d3c";
 
-    car.speed += .12;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  if(keys.brake)
+  for (const r of roads) {
 
-    car.speed -= .16;
+    ctx.fillStyle = "#444";
 
-  car.speed *= .985;
+    ctx.fillRect(
 
-  if(car.speed > 7)
+      r.x - cameraX,
 
-    car.speed=7;
+      r.y - cameraY,
 
-  if(car.speed < -3)
+      r.w,
 
-    car.speed=-3;
+      r.h
 
-  if(Math.abs(car.speed) > .05){
+    );
 
-    let steering=.045;
+    ctx.strokeStyle = "#777";
 
-    if(keys.left)
+    ctx.lineWidth = 3;
 
-      car.angle -= steering*(car.speed/3);
+    ctx.setLineDash([25, 25]);
 
-    if(keys.right)
+    if (r.w > r.h) {
 
-      car.angle += steering*(car.speed/3);
+      ctx.beginPath();
+
+      ctx.moveTo(
+
+        r.x - cameraX,
+
+        r.y + r.h / 2 - cameraY
+
+      );
+
+      ctx.lineTo(
+
+        r.x + r.w - cameraX,
+
+        r.y + r.h / 2 - cameraY
+
+      );
+
+      ctx.stroke();
+
+    } else {
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+
+        r.x + r.w / 2 - cameraX,
+
+        r.y - cameraY
+
+      );
+
+      ctx.lineTo(
+
+        r.x + r.w / 2 - cameraX,
+
+        r.y + r.h - cameraY
+
+      );
+
+      ctx.stroke();
+
+    }
+
+    ctx.setLineDash([]);
 
   }
 
-  car.x += Math.sin(car.angle)*car.speed;
+}
 
-  car.y -= Math.cos(car.angle)*car.speed;
+function drawBuildings(cameraX, cameraY) {
 
-  document.getElementById("speed").textContent =
+  for (const b of buildings) {
 
-    Math.round(Math.abs(car.speed)*12);
+    const bx = b.x - cameraX;
 
-  document.getElementById("cash").textContent=cash;
+    const by = b.y - cameraY;
 
-  document.getElementById("wanted").textContent =
+    if (
 
-    "★".repeat(wanted)+"☆".repeat(5-wanted);
+      bx > canvas.width ||
+
+      by > canvas.height ||
+
+      bx + b.w < 0 ||
+
+      by + b.h < 0
+
+    ) continue;
+
+    ctx.fillStyle = "#666";
+
+    ctx.fillRect(bx, by, b.w, b.h);
+
+    ctx.fillStyle = "#888";
+
+    ctx.fillRect(
+
+      bx + 7,
+
+      by + 7,
+
+      b.w - 14,
+
+      b.h - 14
+
+    );
+
+    ctx.strokeStyle = "#444";
+
+    ctx.lineWidth = 3;
+
+    ctx.strokeRect(bx, by, b.w, b.h);
+
+  }
 
 }
 
-function drawCar(){
+function drawCar(cameraX, cameraY) {
+
+  const x = car.x - cameraX;
+
+  const y = car.y - cameraY;
 
   ctx.save();
 
-  ctx.translate(
-
-    canvas.width/2,
-
-    canvas.height/2
-
-  );
+  ctx.translate(x, y);
 
   ctx.rotate(car.angle);
 
-  /* shadow */
+  ctx.fillStyle = "#1e90ff";
 
-  ctx.fillStyle="rgba(0,0,0,.5)";
+  ctx.fillRect(
 
-  ctx.fillRect(-16,-31,36,66);
+    -car.width / 2,
 
-  /* body */
+    -car.height / 2,
 
-  ctx.fillStyle="#1976d2";
+    car.width,
 
-  ctx.fillRect(-15,-30,30,60);
+    car.height
 
-  /* hood */
+  );
 
-  ctx.fillStyle="#0d47a1";
+  ctx.fillStyle = "#bfe5ff";
 
-  ctx.fillRect(-13,-28,26,16);
+  ctx.fillRect(
 
-  /* windshield */
+    -car.width / 2 + 5,
 
-  ctx.fillStyle="#9ed9ff";
+    -car.height / 2 + 8,
 
-  ctx.fillRect(-11,-8,22,15);
+    car.width - 10,
 
-  /* rear window */
+    12
 
-  ctx.fillRect(-11,12,22,10);
+  );
 
-  /* headlights */
+  ctx.fillStyle = "#111";
 
-  ctx.fillStyle="#fff6a8";
+  ctx.fillRect(
 
-  ctx.fillRect(-12,-31,8,4);
+    -car.width / 2 - 3,
 
-  ctx.fillRect(4,-31,8,4);
+    -18,
+
+    5,
+
+    14
+
+  );
+
+  ctx.fillRect(
+
+    car.width / 2 - 2,
+
+    -18,
+
+    5,
+
+    14
+
+  );
+
+  ctx.fillRect(
+
+    -car.width / 2 - 3,
+
+    7,
+
+    5,
+
+    14
+
+  );
+
+  ctx.fillRect(
+
+    car.width / 2 - 2,
+
+    7,
+
+    5,
+
+    14
+
+  );
 
   ctx.restore();
 
 }
 
-function gameLoop(){
+function drawPolice(cameraX, cameraY) {
 
-  update();
+  for (const p of police) {
 
-  ctx.clearRect(
+    const x = p.x - cameraX;
 
-    0,
+    const y = p.y - cameraY;
 
-    0,
+    ctx.save();
 
-    canvas.width,
+    ctx.translate(x, y);
 
-    canvas.height
+    ctx.rotate(p.angle);
 
-  );
+    ctx.fillStyle = "white";
 
-  drawCity(car.x,car.y);
+    ctx.fillRect(-14, -24, 28, 48);
 
-  drawCar();
+    ctx.fillStyle = "#111";
 
-  requestAnimationFrame(gameLoop);
+    ctx.fillRect(-10, -12, 20, 18);
+
+    ctx.fillStyle = "red";
+
+    ctx.fillRect(-10, -27, 8, 5);
+
+    ctx.fillStyle = "blue";
+
+    ctx.fillRect(2, -27, 8, 5);
+
+    ctx.restore();
+
+  }
 
 }
 
-gameLoop();
+function updateHUD() {
+
+  document.getElementById("speed").textContent =
+
+    Math.round(Math.abs(car.speed) * 7);
+
+  document.getElementById("cash").textContent =
+
+    cash;
+
+  document.getElementById("wanted").textContent =
+
+    "★".repeat(wanted) +
+
+    "☆".repeat(5 - wanted);
+
+}
+
+function loop() {
+
+  updateCar();
+
+  updatePolice();
+
+  const cameraX =
+
+    car.x - canvas.width / 2;
+
+  const cameraY =
+
+    car.y - canvas.height / 2;
+
+  drawRoads(cameraX, cameraY);
+
+  drawBuildings(cameraX, cameraY);
+
+  drawPolice(cameraX, cameraY);
+
+  drawCar(cameraX, cameraY);
+
+  updateHUD();
+
+  requestAnimationFrame(loop);
+
+}
+
+loop();
 
 </script>
 
