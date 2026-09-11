@@ -6,9 +6,13 @@
 
   <meta charset="UTF-8" />
 
-  <meta name="viewport"
+  <meta
 
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    name="viewport"
+
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+  />
 
   <title>Utica Open World</title>
 
@@ -24,9 +28,25 @@
 
   <style>
 
-    html, body {
+    * {
+
+      box-sizing: border-box;
 
       margin: 0;
+
+      padding: 0;
+
+      -webkit-user-select: none;
+
+      user-select: none;
+
+      touch-action: none;
+
+    }
+
+    html,
+
+    body {
 
       width: 100%;
 
@@ -34,151 +54,53 @@
 
       overflow: hidden;
 
-      background: #000;
+      background: #111;
 
-      touch-action: none;
-
-      font-family: Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
 
     }
 
     #map {
 
-      position: absolute;
+      position: fixed;
 
       inset: 0;
-
-    }
-
-    #hud {
-
-      position: absolute;
-
-      top: 14px;
-
-      left: 14px;
-
-      z-index: 10;
-
-      color: white;
-
-      background: rgba(0,0,0,.55);
-
-      padding: 10px 14px;
-
-      border-radius: 12px;
-
-      font-size: 14px;
-
-      line-height: 1.5;
-
-      backdrop-filter: blur(5px);
-
-    }
-
-    #title {
-
-      font-size: 19px;
-
-      font-weight: bold;
-
-    }
-
-    #car {
-
-      position: absolute;
-
-      left: 50%;
-
-      top: 50%;
-
-      width: 25px;
-
-      height: 46px;
-
-      transform: translate(-50%, -50%);
-
-      z-index: 8;
-
-      pointer-events: none;
-
-    }
-
-    .car-body {
-
-      position: absolute;
 
       width: 100%;
 
       height: 100%;
 
-      background: #1687ff;
+    }
 
-      border-radius: 7px 7px 5px 5px;
+    /* DARK GTA-LIKE MAP FILTER */
 
-      box-shadow: 0 0 8px rgba(0,0,0,.8);
+    #map canvas {
+
+      filter:
+
+        saturate(0.65)
+
+        brightness(0.82)
+
+        contrast(1.12);
 
     }
 
-    .windshield {
+    #topHud {
 
-      position: absolute;
+      position: fixed;
 
-      left: 4px;
+      top: 14px;
 
-      top: 9px;
+      left: 14px;
 
-      width: 17px;
+      right: 14px;
 
-      height: 10px;
+      display: flex;
 
-      background: #142536;
+      justify-content: space-between;
 
-      border-radius: 3px;
-
-    }
-
-    .rearwindow {
-
-      position: absolute;
-
-      left: 4px;
-
-      bottom: 8px;
-
-      width: 17px;
-
-      height: 9px;
-
-      background: #142536;
-
-      border-radius: 3px;
-
-    }
-
-    .light {
-
-      position: absolute;
-
-      width: 5px;
-
-      height: 3px;
-
-      background: #fff6a0;
-
-      top: 1px;
-
-    }
-
-    .light.left { left: 3px; }
-
-    .light.right { right: 3px; }
-
-    #controls {
-
-      position: absolute;
-
-      inset: 0;
+      align-items: flex-start;
 
       z-index: 20;
 
@@ -186,25 +108,289 @@
 
     }
 
-    .btn {
+    .panel {
 
-      position: absolute;
-
-      width: 74px;
-
-      height: 74px;
-
-      border-radius: 50%;
-
-      border: 2px solid rgba(255,255,255,.75);
+      background: rgba(0, 0, 0, 0.72);
 
       color: white;
 
-      background: rgba(0,0,0,.46);
+      border: 1px solid rgba(255,255,255,0.22);
 
-      font-size: 34px;
+      border-radius: 14px;
+
+      padding: 10px 13px;
+
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+
+      backdrop-filter: blur(7px);
+
+    }
+
+    #title {
+
+      font-size: 16px;
+
+      font-weight: 800;
+
+      letter-spacing: 1px;
+
+    }
+
+    #location {
+
+      font-size: 11px;
+
+      opacity: 0.8;
+
+      margin-top: 3px;
+
+    }
+
+    #speedBox {
+
+      text-align: right;
+
+      min-width: 96px;
+
+    }
+
+    #speed {
+
+      font-size: 28px;
+
+      font-weight: 900;
+
+      line-height: 26px;
+
+    }
+
+    #mph {
+
+      font-size: 10px;
+
+      opacity: 0.75;
+
+      letter-spacing: 2px;
+
+    }
+
+    #money {
+
+      margin-top: 4px;
+
+      color: #61ff7d;
+
+      font-size: 13px;
 
       font-weight: bold;
+
+    }
+
+    #mission {
+
+      position: fixed;
+
+      top: 102px;
+
+      left: 50%;
+
+      transform: translateX(-50%);
+
+      z-index: 20;
+
+      background: rgba(0,0,0,0.7);
+
+      color: white;
+
+      padding: 8px 14px;
+
+      border-radius: 20px;
+
+      font-size: 12px;
+
+      border: 1px solid rgba(255,255,255,0.2);
+
+      pointer-events: none;
+
+      white-space: nowrap;
+
+    }
+
+    /* PLAYER CAR */
+
+    #carMarker {
+
+      width: 42px;
+
+      height: 66px;
+
+      position: relative;
+
+      transform-origin: center center;
+
+      pointer-events: none;
+
+    }
+
+    .carBody {
+
+      position: absolute;
+
+      width: 28px;
+
+      height: 54px;
+
+      left: 7px;
+
+      top: 5px;
+
+      border-radius: 8px 8px 11px 11px;
+
+      background: linear-gradient(
+
+        90deg,
+
+        #163bb5,
+
+        #3879ff 45%,
+
+        #77a8ff 52%,
+
+        #1c52d8
+
+      );
+
+      border: 2px solid #0b1e52;
+
+      box-shadow:
+
+        0 0 10px rgba(55, 125, 255, 0.8),
+
+        0 7px 7px rgba(0,0,0,0.55);
+
+    }
+
+    .windshield {
+
+      position: absolute;
+
+      width: 20px;
+
+      height: 13px;
+
+      left: 11px;
+
+      top: 15px;
+
+      background: rgba(12, 28, 48, 0.9);
+
+      border-radius: 4px 4px 2px 2px;
+
+    }
+
+    .rearWindow {
+
+      position: absolute;
+
+      width: 19px;
+
+      height: 10px;
+
+      left: 11.5px;
+
+      top: 38px;
+
+      background: rgba(12, 28, 48, 0.9);
+
+      border-radius: 2px 2px 4px 4px;
+
+    }
+
+    .headlight {
+
+      position: absolute;
+
+      width: 6px;
+
+      height: 3px;
+
+      top: 7px;
+
+      background: #fff3a7;
+
+      box-shadow: 0 0 7px #fff2a0;
+
+      border-radius: 3px;
+
+    }
+
+    .headlight.left {
+
+      left: 10px;
+
+    }
+
+    .headlight.right {
+
+      right: 10px;
+
+    }
+
+    .taillight {
+
+      position: absolute;
+
+      width: 6px;
+
+      height: 3px;
+
+      bottom: 7px;
+
+      background: #ff2828;
+
+      box-shadow: 0 0 7px #ff2020;
+
+      border-radius: 3px;
+
+    }
+
+    .taillight.left {
+
+      left: 10px;
+
+    }
+
+    .taillight.right {
+
+      right: 10px;
+
+    }
+
+    /* CONTROLS */
+
+    #controls {
+
+      position: fixed;
+
+      left: 0;
+
+      right: 0;
+
+      bottom: 22px;
+
+      height: 180px;
+
+      z-index: 30;
+
+      pointer-events: none;
+
+    }
+
+    .controlButton {
+
+      pointer-events: auto;
+
+      position: absolute;
 
       display: flex;
 
@@ -212,99 +398,259 @@
 
       align-items: center;
 
-      user-select: none;
+      color: white;
 
-      -webkit-user-select: none;
+      background: rgba(20, 20, 20, 0.74);
 
-      touch-action: none;
+      border: 2px solid rgba(255,255,255,0.28);
 
-      pointer-events: auto;
+      box-shadow:
 
-      box-shadow: 0 3px 12px rgba(0,0,0,.3);
+        inset 0 0 12px rgba(255,255,255,0.05),
 
-    }
+        0 4px 15px rgba(0,0,0,0.45);
 
-    .btn.active {
+      font-weight: 900;
 
-      background: rgba(30,140,255,.75);
+      backdrop-filter: blur(6px);
 
-      transform: scale(.95);
-
-    }
-
-    #left {
-
-      left: 20px;
-
-      bottom: 35px;
+      -webkit-tap-highlight-color: transparent;
 
     }
 
-    #right {
+    .controlButton.active {
 
-      left: 105px;
+      background: rgba(65, 115, 255, 0.85);
 
-      bottom: 35px;
+      transform: scale(0.94);
 
     }
 
-    #forward {
+    #leftBtn {
 
-      right: 28px;
+      width: 74px;
+
+      height: 74px;
+
+      border-radius: 50%;
+
+      left: 18px;
+
+      bottom: 25px;
+
+      font-size: 31px;
+
+    }
+
+    #rightBtn {
+
+      width: 74px;
+
+      height: 74px;
+
+      border-radius: 50%;
+
+      left: 102px;
+
+      bottom: 25px;
+
+      font-size: 31px;
+
+    }
+
+    #gasBtn {
+
+      width: 82px;
+
+      height: 116px;
+
+      border-radius: 22px;
+
+      right: 18px;
+
+      bottom: 36px;
+
+      font-size: 15px;
+
+      background: rgba(26, 125, 51, 0.76);
+
+    }
+
+    #brakeBtn {
+
+      width: 70px;
+
+      height: 86px;
+
+      border-radius: 20px;
+
+      right: 110px;
+
+      bottom: 18px;
+
+      font-size: 12px;
+
+      background: rgba(150, 26, 26, 0.76);
+
+    }
+
+    #boostBtn {
+
+      width: 65px;
+
+      height: 50px;
+
+      border-radius: 18px;
+
+      right: 112px;
 
       bottom: 115px;
 
-    }
+      font-size: 10px;
 
-    #back {
-
-      right: 28px;
-
-      bottom: 30px;
+      background: rgba(35, 88, 185, 0.82);
 
     }
 
-    #speedBox {
+    #resetBtn {
 
-      position: absolute;
+      position: fixed;
+
+      z-index: 40;
 
       right: 15px;
 
-      top: 15px;
+      top: 116px;
+
+      width: 45px;
+
+      height: 45px;
+
+      border-radius: 50%;
+
+      border: 1px solid rgba(255,255,255,0.25);
+
+      background: rgba(0,0,0,0.7);
 
       color: white;
 
-      background: rgba(0,0,0,.55);
+      font-size: 19px;
 
-      padding: 10px 14px;
+    }
 
-      border-radius: 12px;
+    #zoomHint {
+
+      position: fixed;
+
+      bottom: 8px;
+
+      width: 100%;
+
+      text-align: center;
+
+      color: rgba(255,255,255,0.45);
+
+      font-size: 9px;
 
       z-index: 10;
 
-      text-align: right;
+      pointer-events: none;
 
     }
 
-    #speed {
+    /* LOADING SCREEN */
 
-      font-size: 25px;
+    #loading {
 
-      font-weight: bold;
+      position: fixed;
+
+      inset: 0;
+
+      background:
+
+        radial-gradient(circle at center, #182747, #080b12 70%);
+
+      z-index: 100;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      justify-content: center;
+
+      color: white;
+
+      transition: opacity 0.6s ease;
 
     }
 
-    #status {
+    #loading h1 {
 
-      font-size: 11px;
+      font-size: 32px;
 
-      opacity: .8;
+      letter-spacing: 3px;
+
+      margin-bottom: 8px;
 
     }
 
-    .maplibregl-ctrl-bottom-right {
+    #loading p {
 
-      bottom: 2px;
+      font-size: 13px;
+
+      opacity: 0.7;
+
+    }
+
+    .loader {
+
+      width: 150px;
+
+      height: 4px;
+
+      background: rgba(255,255,255,0.15);
+
+      border-radius: 3px;
+
+      margin-top: 25px;
+
+      overflow: hidden;
+
+    }
+
+    .loader::after {
+
+      content: "";
+
+      display: block;
+
+      height: 100%;
+
+      width: 45%;
+
+      background: white;
+
+      border-radius: 3px;
+
+      animation: loading 1.2s infinite ease-in-out;
+
+    }
+
+    @keyframes loading {
+
+      0% {
+
+        transform: translateX(-110%);
+
+      }
+
+      100% {
+
+        transform: translateX(330%);
+
+      }
 
     }
 
@@ -314,349 +660,945 @@
 
 <body>
 
-<div id="map"></div>
+  <div id="map"></div>
 
-<div id="hud">
+  <div id="loading">
 
-  <div id="title">UTICA</div>
+    <h1>UTICA</h1>
 
-  Cash: $500<br>
+    <p>OPEN WORLD</p>
 
-  Wanted: ☆☆☆☆☆
+    <div class="loader"></div>
 
-</div>
+  </div>
 
-<div id="speedBox">
+  <div id="topHud">
 
-  <div><span id="speed">0</span> MPH</div>
+    <div class="panel">
 
-  <div id="status">Utica, New York</div>
+      <div id="title">UTICA OPEN WORLD</div>
 
-</div>
+      <div id="location">Downtown Utica, New York</div>
 
-<div id="car">
+      <div id="money">$2,500</div>
 
-  <div class="car-body"></div>
+    </div>
 
-  <div class="windshield"></div>
+    <div class="panel" id="speedBox">
 
-  <div class="rearwindow"></div>
+      <div id="speed">0</div>
 
-  <div class="light left"></div>
+      <div id="mph">MPH</div>
 
-  <div class="light right"></div>
+    </div>
 
-</div>
+  </div>
 
-<div id="controls">
+  <div id="mission">
 
-  <div class="btn" id="left">◀</div>
+    Free Roam — Explore Utica
 
-  <div class="btn" id="right">▶</div>
+  </div>
 
-  <div class="btn" id="forward">▲</div>
+  <button id="resetBtn">↻</button>
 
-  <div class="btn" id="back">▼</div>
+  <div id="controls">
 
-</div>
+    <div class="controlButton" id="leftBtn">
 
-<script>
+      ◀
 
-  // Downtown Utica, New York
+    </div>
 
-  let longitude = -75.2327;
+    <div class="controlButton" id="rightBtn">
 
-  let latitude = 43.1009;
+      ▶
 
-  let heading = 0;
+    </div>
 
-  let speed = 0;
+    <div class="controlButton" id="boostBtn">
 
-  const keys = {
+      BOOST
 
-    forward: false,
+    </div>
 
-    back: false,
+    <div class="controlButton" id="brakeBtn">
 
-    left: false,
+      BRAKE
 
-    right: false
+    </div>
 
-  };
+    <div class="controlButton" id="gasBtn">
 
-  const map = new maplibregl.Map({
+      GAS
 
-    container: "map",
+    </div>
 
-    style: "https://tiles.openfreemap.org/styles/liberty",
+  </div>
 
-    center: [longitude, latitude],
+  <div id="zoomHint">
 
-    zoom: 17,
+    Drive using the controls
 
-    pitch: 60,
+  </div>
 
-    bearing: 0,
+  <script>
 
-    attributionControl: true
+    /* =====================================================
 
-  });
+       UTICA OPEN WORLD
 
-  map.dragPan.disable();
+       PHONE DRIVING GAME
 
-  map.scrollZoom.disable();
+       ===================================================== */
 
-  map.boxZoom.disable();
+    const STARTING_POSITION = {
 
-  map.doubleClickZoom.disable();
+      lng: -75.2327,
 
-  map.keyboard.disable();
+      lat: 43.1009
 
-  map.touchZoomRotate.disable();
+    };
 
-  map.on("load", () => {
+    let player = {
 
-    // Attempt to turn mapped buildings into 3D buildings.
+      lng: STARTING_POSITION.lng,
 
-    const layers = map.getStyle().layers;
+      lat: STARTING_POSITION.lat,
 
-    let labelLayerId;
+      angle: 0,
 
-    for (const layer of layers) {
+      speed: 0
 
-      if (
+    };
 
-        layer.type === "symbol" &&
+    let keys = {
 
-        layer.layout &&
+      gas: false,
 
-        layer.layout["text-field"]
+      brake: false,
 
-      ) {
+      left: false,
 
-        labelLayerId = layer.id;
+      right: false,
 
-        break;
+      boost: false
 
-      }
+    };
 
-    }
+    const normalTopSpeed = 0.000035;
 
-    try {
+    const boostTopSpeed = 0.000055;
 
-      map.addLayer(
+    const acceleration = 0.00000105;
 
-        {
+    const reverseAcceleration = 0.00000065;
 
-          id: "utica-3d-buildings",
+    const drag = 0.00000042;
 
-          source: "openmaptiles",
+    const braking = 0.0000017;
 
-          "source-layer": "building",
+    const map = new maplibregl.Map({
 
-          filter: ["!=", ["get", "hide_3d"], true],
+      container: "map",
 
-          type: "fill-extrusion",
+      style: {
 
-          minzoom: 14,
+        version: 8,
 
-          paint: {
+        sources: {
 
-            "fill-extrusion-color": [
+          osm: {
 
-              "interpolate",
+            type: "raster",
 
-              ["linear"],
+            tiles: [
 
-              ["get", "render_height"],
-
-              0, "#cfcfcf",
-
-              50, "#b5b5b5",
-
-              150, "#999999"
+              "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 
             ],
 
-            "fill-extrusion-height": [
+            tileSize: 256,
 
-              "coalesce",
+            attribution:
 
-              ["get", "render_height"],
-
-              8
-
-            ],
-
-            "fill-extrusion-base": [
-
-              "coalesce",
-
-              ["get", "render_min_height"],
-
-              0
-
-            ],
-
-            "fill-extrusion-opacity": 0.9
+              "© OpenStreetMap contributors"
 
           }
 
         },
 
-        labelLayerId
+        layers: [
 
-      );
+          {
 
-    } catch (err) {
+            id: "osm",
 
-      console.log("3D buildings unavailable:", err);
+            type: "raster",
 
-    }
+            source: "osm"
 
-  });
+          }
 
-  function setupButton(id, key) {
+        ]
 
-    const button = document.getElementById(id);
+      },
 
-    function press(e) {
+      center: [
 
-      e.preventDefault();
+        player.lng,
 
-      keys[key] = true;
+        player.lat
 
-      button.classList.add("active");
+      ],
 
-    }
+      zoom: 16.7,
 
-    function release(e) {
+      pitch: 58,
 
-      if (e) e.preventDefault();
+      bearing: 0,
 
-      keys[key] = false;
+      maxZoom: 19,
 
-      button.classList.remove("active");
+      minZoom: 12,
 
-    }
+      attributionControl: true,
 
-    button.addEventListener("touchstart", press, { passive: false });
+      dragPan: false,
 
-    button.addEventListener("touchend", release, { passive: false });
+      dragRotate: false,
 
-    button.addEventListener("touchcancel", release, { passive: false });
+      scrollZoom: false,
 
-    button.addEventListener("pointerdown", press);
+      doubleClickZoom: false,
 
-    button.addEventListener("pointerup", release);
-
-    button.addEventListener("pointercancel", release);
-
-    button.addEventListener("pointerleave", release);
-
-    button.addEventListener("mousedown", press);
-
-    button.addEventListener("mouseup", release);
-
-  }
-
-  setupButton("forward", "forward");
-
-  setupButton("back", "back");
-
-  setupButton("left", "left");
-
-  setupButton("right", "right");
-
-  document.addEventListener("touchmove", e => {
-
-    e.preventDefault();
-
-  }, { passive: false });
-
-  function gameLoop() {
-
-    if (keys.forward) {
-
-      speed += 0.035;
-
-    }
-
-    if (keys.back) {
-
-      speed -= 0.045;
-
-    }
-
-    if (!keys.forward && !keys.back) {
-
-      speed *= 0.965;
-
-    }
-
-    speed = Math.max(-0.45, Math.min(speed, 1.0));
-
-    if (Math.abs(speed) < 0.002) {
-
-      speed = 0;
-
-    }
-
-    if (Math.abs(speed) > 0.015) {
-
-      const steeringPower =
-
-        Math.min(Math.abs(speed) * 2.2, 1);
-
-      if (keys.left) {
-
-        heading -= 1.45 * steeringPower *
-
-          (speed >= 0 ? 1 : -1);
-
-      }
-
-      if (keys.right) {
-
-        heading += 1.45 * steeringPower *
-
-          (speed >= 0 ? 1 : -1);
-
-      }
-
-    }
-
-    const radians = heading * Math.PI / 180;
-
-    const movement = speed * 0.0000045;
-
-    latitude += Math.cos(radians) * movement;
-
-    longitude += Math.sin(radians) * movement /
-
-      Math.cos(latitude * Math.PI / 180);
-
-    map.jumpTo({
-
-      center: [longitude, latitude],
-
-      bearing: heading,
-
-      pitch: 60
+      touchZoomRotate: false
 
     });
 
-    document.getElementById("speed").textContent =
+    /* =====================================================
 
-      Math.round(Math.abs(speed) * 65);
+       CAR
 
-    requestAnimationFrame(gameLoop);
+       ===================================================== */
 
-  }
+    const carElement =
 
-  gameLoop();
+      document.createElement("div");
 
-</script>
+    carElement.id = "carMarker";
+
+    carElement.innerHTML = `
+
+      <div class="carBody"></div>
+
+      <div class="windshield"></div>
+
+      <div class="rearWindow"></div>
+
+      <div class="headlight left"></div>
+
+      <div class="headlight right"></div>
+
+      <div class="taillight left"></div>
+
+      <div class="taillight right"></div>
+
+    `;
+
+    const marker = new maplibregl.Marker({
+
+      element: carElement,
+
+      anchor: "center",
+
+      rotationAlignment: "map"
+
+    })
+
+      .setLngLat([
+
+        player.lng,
+
+        player.lat
+
+      ])
+
+      .addTo(map);
+
+    /* =====================================================
+
+       MAP LOADED
+
+       ===================================================== */
+
+    map.on("load", () => {
+
+      setTimeout(() => {
+
+        document.getElementById("loading")
+
+          .style.opacity = "0";
+
+        setTimeout(() => {
+
+          document.getElementById("loading")
+
+            .style.display = "none";
+
+        }, 650);
+
+      }, 900);
+
+    });
+
+    /* =====================================================
+
+       TOUCH CONTROLS
+
+       ===================================================== */
+
+    function setupButton(id, key) {
+
+      const button =
+
+        document.getElementById(id);
+
+      function down(event) {
+
+        event.preventDefault();
+
+        keys[key] = true;
+
+        button.classList.add("active");
+
+        if (navigator.vibrate) {
+
+          navigator.vibrate(8);
+
+        }
+
+      }
+
+      function up(event) {
+
+        if (event) {
+
+          event.preventDefault();
+
+        }
+
+        keys[key] = false;
+
+        button.classList.remove("active");
+
+      }
+
+      button.addEventListener(
+
+        "pointerdown",
+
+        down
+
+      );
+
+      button.addEventListener(
+
+        "pointerup",
+
+        up
+
+      );
+
+      button.addEventListener(
+
+        "pointercancel",
+
+        up
+
+      );
+
+      button.addEventListener(
+
+        "pointerleave",
+
+        up
+
+      );
+
+    }
+
+    setupButton(
+
+      "gasBtn",
+
+      "gas"
+
+    );
+
+    setupButton(
+
+      "brakeBtn",
+
+      "brake"
+
+    );
+
+    setupButton(
+
+      "leftBtn",
+
+      "left"
+
+    );
+
+    setupButton(
+
+      "rightBtn",
+
+      "right"
+
+    );
+
+    setupButton(
+
+      "boostBtn",
+
+      "boost"
+
+    );
+
+    /* =====================================================
+
+       KEYBOARD CONTROLS TOO
+
+       ===================================================== */
+
+    window.addEventListener(
+
+      "keydown",
+
+      (event) => {
+
+        if (
+
+          event.key === "ArrowUp" ||
+
+          event.key === "w"
+
+        ) {
+
+          keys.gas = true;
+
+        }
+
+        if (
+
+          event.key === "ArrowDown" ||
+
+          event.key === "s"
+
+        ) {
+
+          keys.brake = true;
+
+        }
+
+        if (
+
+          event.key === "ArrowLeft" ||
+
+          event.key === "a"
+
+        ) {
+
+          keys.left = true;
+
+        }
+
+        if (
+
+          event.key === "ArrowRight" ||
+
+          event.key === "d"
+
+        ) {
+
+          keys.right = true;
+
+        }
+
+        if (event.key === "Shift") {
+
+          keys.boost = true;
+
+        }
+
+      }
+
+    );
+
+    window.addEventListener(
+
+      "keyup",
+
+      (event) => {
+
+        if (
+
+          event.key === "ArrowUp" ||
+
+          event.key === "w"
+
+        ) {
+
+          keys.gas = false;
+
+        }
+
+        if (
+
+          event.key === "ArrowDown" ||
+
+          event.key === "s"
+
+        ) {
+
+          keys.brake = false;
+
+        }
+
+        if (
+
+          event.key === "ArrowLeft" ||
+
+          event.key === "a"
+
+        ) {
+
+          keys.left = false;
+
+        }
+
+        if (
+
+          event.key === "ArrowRight" ||
+
+          event.key === "d"
+
+        ) {
+
+          keys.right = false;
+
+        }
+
+        if (event.key === "Shift") {
+
+          keys.boost = false;
+
+        }
+
+      }
+
+    );
+
+    /* =====================================================
+
+       RESET
+
+       ===================================================== */
+
+    document
+
+      .getElementById("resetBtn")
+
+      .addEventListener(
+
+        "click",
+
+        () => {
+
+          player.lng =
+
+            STARTING_POSITION.lng;
+
+          player.lat =
+
+            STARTING_POSITION.lat;
+
+          player.angle = 0;
+
+          player.speed = 0;
+
+          map.jumpTo({
+
+            center: [
+
+              player.lng,
+
+              player.lat
+
+            ],
+
+            zoom: 16.7,
+
+            bearing: 0,
+
+            pitch: 58
+
+          });
+
+        }
+
+      );
+
+    /* =====================================================
+
+       GAME LOOP
+
+       ===================================================== */
+
+    function update() {
+
+      let topSpeed =
+
+        keys.boost
+
+          ? boostTopSpeed
+
+          : normalTopSpeed;
+
+      /* GAS */
+
+      if (keys.gas) {
+
+        player.speed +=
+
+          acceleration;
+
+      }
+
+      /* BRAKE / REVERSE */
+
+      if (keys.brake) {
+
+        if (player.speed > 0) {
+
+          player.speed -=
+
+            braking;
+
+        }
+
+        else {
+
+          player.speed -=
+
+            reverseAcceleration;
+
+        }
+
+      }
+
+      /* DRAG */
+
+      if (
+
+        !keys.gas &&
+
+        !keys.brake
+
+      ) {
+
+        if (player.speed > 0) {
+
+          player.speed -= drag;
+
+          if (player.speed < 0) {
+
+            player.speed = 0;
+
+          }
+
+        }
+
+        else if (player.speed < 0) {
+
+          player.speed += drag;
+
+          if (player.speed > 0) {
+
+            player.speed = 0;
+
+          }
+
+        }
+
+      }
+
+      /* SPEED LIMIT */
+
+      if (
+
+        player.speed >
+
+        topSpeed
+
+      ) {
+
+        player.speed =
+
+          topSpeed;
+
+      }
+
+      if (
+
+        player.speed <
+
+        -normalTopSpeed * 0.45
+
+      ) {
+
+        player.speed =
+
+          -normalTopSpeed * 0.45;
+
+      }
+
+      /* STEERING */
+
+      const moving =
+
+        Math.abs(player.speed) >
+
+        0.000001;
+
+      if (moving) {
+
+        let turnRate =
+
+          2.2;
+
+        if (
+
+          Math.abs(player.speed) >
+
+          normalTopSpeed * 0.7
+
+        ) {
+
+          turnRate = 1.65;
+
+        }
+
+        if (player.speed < 0) {
+
+          turnRate *= -1;
+
+        }
+
+        if (keys.left) {
+
+          player.angle -=
+
+            turnRate;
+
+        }
+
+        if (keys.right) {
+
+          player.angle +=
+
+            turnRate;
+
+        }
+
+      }
+
+      /* MOVE */
+
+      const radians =
+
+        player.angle *
+
+        Math.PI /
+
+        180;
+
+      player.lng +=
+
+        Math.sin(radians) *
+
+        player.speed;
+
+      player.lat +=
+
+        Math.cos(radians) *
+
+        player.speed;
+
+      /* UPDATE CAR */
+
+      marker.setLngLat([
+
+        player.lng,
+
+        player.lat
+
+      ]);
+
+      marker.setRotation(
+
+        player.angle
+
+      );
+
+      /* CAMERA */
+
+      const cameraDistance =
+
+        0.00028;
+
+      const cameraLng =
+
+        player.lng -
+
+        Math.sin(radians) *
+
+        cameraDistance;
+
+      const cameraLat =
+
+        player.lat -
+
+        Math.cos(radians) *
+
+        cameraDistance;
+
+      map.easeTo({
+
+        center: [
+
+          cameraLng,
+
+          cameraLat
+
+        ],
+
+        bearing:
+
+          -player.angle,
+
+        pitch: 58,
+
+        duration: 80,
+
+        easing: t => t
+
+      });
+
+      /* SPEED DISPLAY */
+
+      const speedRatio =
+
+        Math.abs(player.speed) /
+
+        normalTopSpeed;
+
+      let mph =
+
+        Math.round(
+
+          speedRatio * 92
+
+        );
+
+      if (keys.boost) {
+
+        mph =
+
+          Math.round(
+
+            (
+
+              Math.abs(player.speed) /
+
+              boostTopSpeed
+
+            ) *
+
+            135
+
+          );
+
+      }
+
+      document
+
+        .getElementById("speed")
+
+        .textContent =
+
+          mph;
+
+      requestAnimationFrame(
+
+        update
+
+      );
+
+    }
+
+    update();
+
+    /* =====================================================
+
+       STOP BUTTONS IF APP LOSES FOCUS
+
+       ===================================================== */
+
+    window.addEventListener(
+
+      "blur",
+
+      () => {
+
+        keys.gas = false;
+
+        keys.brake = false;
+
+        keys.left = false;
+
+        keys.right = false;
+
+        keys.boost = false;
+
+        document
+
+          .querySelectorAll(
+
+            ".controlButton"
+
+          )
+
+          .forEach(
+
+            button =>
+
+              button.classList.remove(
+
+                "active"
+
+              )
+
+          );
+
+      }
+
+    );
+
+  </script>
 
 </body>
 
