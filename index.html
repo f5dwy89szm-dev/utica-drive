@@ -6,9 +6,21 @@
 
   <meta charset="UTF-8" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport"
 
-  <title>Utica Drive</title>
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Utica Open World</title>
+
+  <link
+
+    href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css"
+
+    rel="stylesheet"
+
+  />
+
+  <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
 
   <style>
 
@@ -16,43 +28,47 @@
 
       margin: 0;
 
-      padding: 0;
+      width: 100%;
+
+      height: 100%;
 
       overflow: hidden;
 
-      background: #111;
-
-      font-family: Arial, sans-serif;
+      background: #000;
 
       touch-action: none;
 
+      font-family: Arial, sans-serif;
+
     }
 
-    canvas {
+    #map {
 
-      display: block;
+      position: absolute;
+
+      inset: 0;
 
     }
 
     #hud {
 
-      position: fixed;
+      position: absolute;
 
-      top: 12px;
+      top: 14px;
 
-      left: 12px;
+      left: 14px;
 
       z-index: 10;
 
       color: white;
 
-      background: rgba(0,0,0,0.55);
+      background: rgba(0,0,0,.55);
 
       padding: 10px 14px;
 
       border-radius: 12px;
 
-      font-size: 16px;
+      font-size: 14px;
 
       line-height: 1.5;
 
@@ -60,107 +76,235 @@
 
     }
 
-    #wanted {
+    #title {
 
-      color: #ffd54a;
+      font-size: 19px;
 
-      letter-spacing: 3px;
+      font-weight: bold;
 
     }
 
-    .control {
+    #car {
 
-      position: fixed;
+      position: absolute;
+
+      left: 50%;
+
+      top: 50%;
+
+      width: 25px;
+
+      height: 46px;
+
+      transform: translate(-50%, -50%);
+
+      z-index: 8;
+
+      pointer-events: none;
+
+    }
+
+    .car-body {
+
+      position: absolute;
+
+      width: 100%;
+
+      height: 100%;
+
+      background: #1687ff;
+
+      border-radius: 7px 7px 5px 5px;
+
+      box-shadow: 0 0 8px rgba(0,0,0,.8);
+
+    }
+
+    .windshield {
+
+      position: absolute;
+
+      left: 4px;
+
+      top: 9px;
+
+      width: 17px;
+
+      height: 10px;
+
+      background: #142536;
+
+      border-radius: 3px;
+
+    }
+
+    .rearwindow {
+
+      position: absolute;
+
+      left: 4px;
+
+      bottom: 8px;
+
+      width: 17px;
+
+      height: 9px;
+
+      background: #142536;
+
+      border-radius: 3px;
+
+    }
+
+    .light {
+
+      position: absolute;
+
+      width: 5px;
+
+      height: 3px;
+
+      background: #fff6a0;
+
+      top: 1px;
+
+    }
+
+    .light.left { left: 3px; }
+
+    .light.right { right: 3px; }
+
+    #controls {
+
+      position: absolute;
+
+      inset: 0;
 
       z-index: 20;
 
-      width: 76px;
+      pointer-events: none;
 
-      height: 76px;
+    }
+
+    .btn {
+
+      position: absolute;
+
+      width: 74px;
+
+      height: 74px;
 
       border-radius: 50%;
 
-      border: 2px solid rgba(255,255,255,0.65);
-
-      background: rgba(30,30,30,0.6);
+      border: 2px solid rgba(255,255,255,.75);
 
       color: white;
 
-      font-size: 30px;
+      background: rgba(0,0,0,.46);
+
+      font-size: 34px;
+
+      font-weight: bold;
 
       display: flex;
 
-      align-items: center;
-
       justify-content: center;
+
+      align-items: center;
 
       user-select: none;
 
       -webkit-user-select: none;
 
-      backdrop-filter: blur(5px);
+      touch-action: none;
+
+      pointer-events: auto;
+
+      box-shadow: 0 3px 12px rgba(0,0,0,.3);
+
+    }
+
+    .btn.active {
+
+      background: rgba(30,140,255,.75);
+
+      transform: scale(.95);
 
     }
 
     #left {
 
-      left: 18px;
+      left: 20px;
 
-      bottom: 26px;
+      bottom: 35px;
 
     }
 
     #right {
 
-      left: 110px;
+      left: 105px;
 
-      bottom: 26px;
-
-    }
-
-    #gas {
-
-      right: 18px;
-
-      bottom: 112px;
-
-      background: rgba(0,120,0,0.65);
+      bottom: 35px;
 
     }
 
-    #brake {
+    #forward {
 
-      right: 18px;
+      right: 28px;
 
-      bottom: 26px;
-
-      background: rgba(160,0,0,0.65);
+      bottom: 115px;
 
     }
 
-    #message {
+    #back {
 
-      position: fixed;
+      right: 28px;
 
-      top: 100px;
+      bottom: 30px;
 
-      left: 50%;
+    }
 
-      transform: translateX(-50%);
+    #speedBox {
 
-      z-index: 30;
+      position: absolute;
+
+      right: 15px;
+
+      top: 15px;
 
       color: white;
 
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,.55);
 
-      padding: 12px 18px;
+      padding: 10px 14px;
 
       border-radius: 12px;
 
-      font-size: 18px;
+      z-index: 10;
 
-      display: none;
+      text-align: right;
+
+    }
+
+    #speed {
+
+      font-size: 25px;
+
+      font-weight: bold;
+
+    }
+
+    #status {
+
+      font-size: 11px;
+
+      opacity: .8;
+
+    }
+
+    .maplibregl-ctrl-bottom-right {
+
+      bottom: 2px;
 
     }
 
@@ -170,459 +314,127 @@
 
 <body>
 
-<canvas id="game"></canvas>
+<div id="map"></div>
 
 <div id="hud">
 
-  <div>Speed: <span id="speed">0</span> mph</div>
+  <div id="title">UTICA</div>
 
-  <div>Cash: $<span id="cash">500</span></div>
+  Cash: $500<br>
 
-  <div>Wanted: <span id="wanted">☆☆☆☆☆</span></div>
+  Wanted: ☆☆☆☆☆
 
 </div>
 
-<div id="message"></div>
+<div id="speedBox">
 
-<div id="left" class="control">◀</div>
+  <div><span id="speed">0</span> MPH</div>
 
-<div id="right" class="control">▶</div>
+  <div id="status">Utica, New York</div>
 
-<div id="gas" class="control">▲</div>
+</div>
 
-<div id="brake" class="control">▼</div>
+<div id="car">
+
+  <div class="car-body"></div>
+
+  <div class="windshield"></div>
+
+  <div class="rearwindow"></div>
+
+  <div class="light left"></div>
+
+  <div class="light right"></div>
+
+</div>
+
+<div id="controls">
+
+  <div class="btn" id="left">◀</div>
+
+  <div class="btn" id="right">▶</div>
+
+  <div class="btn" id="forward">▲</div>
+
+  <div class="btn" id="back">▼</div>
+
+</div>
 
 <script>
 
-const canvas = document.getElementById("game");
+  // Downtown Utica, New York
 
-const ctx = canvas.getContext("2d");
+  let longitude = -75.2327;
 
-function resize() {
+  let latitude = 43.1009;
 
-  canvas.width = innerWidth;
+  let heading = 0;
 
-  canvas.height = innerHeight;
+  let speed = 0;
 
-}
+  const keys = {
 
-resize();
+    forward: false,
 
-addEventListener("resize", resize);
+    back: false,
 
-const keys = {
+    left: false,
 
-  left: false,
-
-  right: false,
-
-  gas: false,
-
-  brake: false
-
-};
-
-function bindButton(id, key) {
-
-  const el = document.getElementById(id);
-
-  const start = e => {
-
-    e.preventDefault();
-
-    keys[key] = true;
+    right: false
 
   };
 
-  const end = e => {
+  const map = new maplibregl.Map({
 
-    e.preventDefault();
+    container: "map",
 
-    keys[key] = false;
+    style: "https://tiles.openfreemap.org/styles/liberty",
 
-  };
+    center: [longitude, latitude],
 
-  el.addEventListener("touchstart", start, { passive: false });
+    zoom: 17,
 
-  el.addEventListener("touchend", end, { passive: false });
+    pitch: 60,
 
-  el.addEventListener("touchcancel", end, { passive: false });
+    bearing: 0,
 
-  el.addEventListener("mousedown", start);
-
-  el.addEventListener("mouseup", end);
-
-  el.addEventListener("mouseleave", end);
-
-}
-
-bindButton("left", "left");
-
-bindButton("right", "right");
-
-bindButton("gas", "gas");
-
-bindButton("brake", "brake");
-
-addEventListener("keydown", e => {
-
-  if (e.key === "ArrowLeft") keys.left = true;
-
-  if (e.key === "ArrowRight") keys.right = true;
-
-  if (e.key === "ArrowUp") keys.gas = true;
-
-  if (e.key === "ArrowDown") keys.brake = true;
-
-});
-
-addEventListener("keyup", e => {
-
-  if (e.key === "ArrowLeft") keys.left = false;
-
-  if (e.key === "ArrowRight") keys.right = false;
-
-  if (e.key === "ArrowUp") keys.gas = false;
-
-  if (e.key === "ArrowDown") keys.brake = false;
-
-});
-
-const world = {
-
-  width: 3000,
-
-  height: 3000
-
-};
-
-const car = {
-
-  x: 1500,
-
-  y: 1500,
-
-  angle: -Math.PI / 2,
-
-  speed: 0,
-
-  width: 28,
-
-  height: 50,
-
-  maxSpeed: 10,
-
-  reverseSpeed: -4,
-
-  accel: 0.18,
-
-  brake: 0.25,
-
-  friction: 0.05,
-
-  turnSpeed: 0.045
-
-};
-
-let cash = 500;
-
-let wanted = 0;
-
-let crashCooldown = 0;
-
-const roads = [];
-
-for (let x = 200; x < world.width; x += 400) {
-
-  roads.push({
-
-    x: x,
-
-    y: 0,
-
-    w: 170,
-
-    h: world.height
+    attributionControl: true
 
   });
 
-}
+  map.dragPan.disable();
 
-for (let y = 200; y < world.height; y += 400) {
+  map.scrollZoom.disable();
 
-  roads.push({
+  map.boxZoom.disable();
 
-    x: 0,
+  map.doubleClickZoom.disable();
 
-    y: y,
+  map.keyboard.disable();
 
-    w: world.width,
+  map.touchZoomRotate.disable();
 
-    h: 170
+  map.on("load", () => {
 
-  });
+    // Attempt to turn mapped buildings into 3D buildings.
 
-}
+    const layers = map.getStyle().layers;
 
-const buildings = [];
+    let labelLayerId;
 
-for (let gx = 0; gx < world.width; gx += 400) {
+    for (const layer of layers) {
 
-  for (let gy = 0; gy < world.height; gy += 400) {
+      if (
 
-    const positions = [
+        layer.type === "symbol" &&
 
-      {x: gx + 20, y: gy + 20, w: 150, h: 150},
+        layer.layout &&
 
-      {x: gx + 200, y: gy + 20, w: 170, h: 150},
+        layer.layout["text-field"]
 
-      {x: gx + 20, y: gy + 200, w: 150, h: 170},
+      ) {
 
-      {x: gx + 200, y: gy + 200, w: 170, h: 170}
-
-    ];
-
-    for (const b of positions) {
-
-      buildings.push(b);
-
-    }
-
-  }
-
-}
-
-const police = [];
-
-function spawnPolice() {
-
-  const angle = Math.random() * Math.PI * 2;
-
-  police.push({
-
-    x: car.x + Math.cos(angle) * 500,
-
-    y: car.y + Math.sin(angle) * 500,
-
-    angle: 0,
-
-    speed: 3
-
-  });
-
-}
-
-function addWanted() {
-
-  if (wanted < 5) {
-
-    wanted++;
-
-    showMessage("Police alerted!");
-
-  }
-
-  while (police.length < wanted * 2) {
-
-    spawnPolice();
-
-  }
-
-}
-
-function showMessage(text) {
-
-  const box = document.getElementById("message");
-
-  box.textContent = text;
-
-  box.style.display = "block";
-
-  clearTimeout(showMessage.timer);
-
-  showMessage.timer = setTimeout(() => {
-
-    box.style.display = "none";
-
-  }, 1500);
-
-}
-
-function isOnRoad(x, y) {
-
-  return roads.some(r =>
-
-    x > r.x &&
-
-    x < r.x + r.w &&
-
-    y > r.y &&
-
-    y < r.y + r.h
-
-  );
-
-}
-
-function hitsBuilding(x, y) {
-
-  return buildings.some(b =>
-
-    x > b.x &&
-
-    x < b.x + b.w &&
-
-    y > b.y &&
-
-    y < b.y + b.h
-
-  );
-
-}
-
-function updateCar() {
-
-  if (keys.gas) {
-
-    car.speed += car.accel;
-
-  }
-
-  if (keys.brake) {
-
-    car.speed -= car.brake;
-
-  }
-
-  if (!keys.gas && !keys.brake) {
-
-    if (car.speed > 0) {
-
-      car.speed -= car.friction;
-
-      if (car.speed < 0) car.speed = 0;
-
-    }
-
-    if (car.speed < 0) {
-
-      car.speed += car.friction;
-
-      if (car.speed > 0) car.speed = 0;
-
-    }
-
-  }
-
-  car.speed = Math.min(car.maxSpeed, car.speed);
-
-  car.speed = Math.max(car.reverseSpeed, car.speed);
-
-  if (!isOnRoad(car.x, car.y)) {
-
-    car.speed *= 0.97;
-
-  }
-
-  if (Math.abs(car.speed) > 0.2) {
-
-    const steering =
-
-      car.turnSpeed *
-
-      Math.min(Math.abs(car.speed) / 3, 1);
-
-    if (keys.left) {
-
-      car.angle -= steering * Math.sign(car.speed);
-
-    }
-
-    if (keys.right) {
-
-      car.angle += steering * Math.sign(car.speed);
-
-    }
-
-  }
-
-  const oldX = car.x;
-
-  const oldY = car.y;
-
-  car.x += Math.sin(car.angle) * car.speed;
-
-  car.y -= Math.cos(car.angle) * car.speed;
-
-  if (
-
-    car.x < 0 ||
-
-    car.x > world.width ||
-
-    car.y < 0 ||
-
-    car.y > world.height ||
-
-    hitsBuilding(car.x, car.y)
-
-  ) {
-
-    car.x = oldX;
-
-    car.y = oldY;
-
-    if (crashCooldown <= 0 && Math.abs(car.speed) > 3) {
-
-      addWanted();
-
-      crashCooldown = 60;
-
-    }
-
-    car.speed *= -0.25;
-
-  }
-
-  if (crashCooldown > 0) crashCooldown--;
-
-}
-
-function updatePolice() {
-
-  for (const p of police) {
-
-    const dx = car.x - p.x;
-
-    const dy = car.y - p.y;
-
-    const distance = Math.hypot(dx, dy);
-
-    p.angle = Math.atan2(dx, -dy);
-
-    p.x += Math.sin(p.angle) * p.speed;
-
-    p.y -= Math.cos(p.angle) * p.speed;
-
-    if (distance < 38) {
-
-      car.speed *= 0.92;
-
-      if (Math.random() < 0.01) {
-
-        cash = Math.max(0, cash - 100);
-
-        wanted = Math.max(0, wanted - 1);
-
-        police.splice(
-
-          Math.max(0, police.indexOf(p)),
-
-          1
-
-        );
-
-        showMessage("Busted! -$100");
+        labelLayerId = layer.id;
 
         break;
 
@@ -630,321 +442,219 @@ function updatePolice() {
 
     }
 
-  }
+    try {
 
-  while (police.length > wanted * 2) {
+      map.addLayer(
 
-    police.pop();
+        {
 
-  }
+          id: "utica-3d-buildings",
 
-}
+          source: "openmaptiles",
 
-function drawRoads(cameraX, cameraY) {
+          "source-layer": "building",
 
-  ctx.fillStyle = "#417d3c";
+          filter: ["!=", ["get", "hide_3d"], true],
 
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+          type: "fill-extrusion",
 
-  for (const r of roads) {
+          minzoom: 14,
 
-    ctx.fillStyle = "#444";
+          paint: {
 
-    ctx.fillRect(
+            "fill-extrusion-color": [
 
-      r.x - cameraX,
+              "interpolate",
 
-      r.y - cameraY,
+              ["linear"],
 
-      r.w,
+              ["get", "render_height"],
 
-      r.h
+              0, "#cfcfcf",
 
-    );
+              50, "#b5b5b5",
 
-    ctx.strokeStyle = "#777";
+              150, "#999999"
 
-    ctx.lineWidth = 3;
+            ],
 
-    ctx.setLineDash([25, 25]);
+            "fill-extrusion-height": [
 
-    if (r.w > r.h) {
+              "coalesce",
 
-      ctx.beginPath();
+              ["get", "render_height"],
 
-      ctx.moveTo(
+              8
 
-        r.x - cameraX,
+            ],
 
-        r.y + r.h / 2 - cameraY
+            "fill-extrusion-base": [
 
-      );
+              "coalesce",
 
-      ctx.lineTo(
+              ["get", "render_min_height"],
 
-        r.x + r.w - cameraX,
+              0
 
-        r.y + r.h / 2 - cameraY
+            ],
 
-      );
+            "fill-extrusion-opacity": 0.9
 
-      ctx.stroke();
+          }
 
-    } else {
+        },
 
-      ctx.beginPath();
-
-      ctx.moveTo(
-
-        r.x + r.w / 2 - cameraX,
-
-        r.y - cameraY
+        labelLayerId
 
       );
 
-      ctx.lineTo(
+    } catch (err) {
 
-        r.x + r.w / 2 - cameraX,
-
-        r.y + r.h - cameraY
-
-      );
-
-      ctx.stroke();
+      console.log("3D buildings unavailable:", err);
 
     }
 
-    ctx.setLineDash([]);
+  });
+
+  function setupButton(id, key) {
+
+    const button = document.getElementById(id);
+
+    function press(e) {
+
+      e.preventDefault();
+
+      keys[key] = true;
+
+      button.classList.add("active");
+
+    }
+
+    function release(e) {
+
+      if (e) e.preventDefault();
+
+      keys[key] = false;
+
+      button.classList.remove("active");
+
+    }
+
+    button.addEventListener("touchstart", press, { passive: false });
+
+    button.addEventListener("touchend", release, { passive: false });
+
+    button.addEventListener("touchcancel", release, { passive: false });
+
+    button.addEventListener("pointerdown", press);
+
+    button.addEventListener("pointerup", release);
+
+    button.addEventListener("pointercancel", release);
+
+    button.addEventListener("pointerleave", release);
+
+    button.addEventListener("mousedown", press);
+
+    button.addEventListener("mouseup", release);
 
   }
 
-}
+  setupButton("forward", "forward");
 
-function drawBuildings(cameraX, cameraY) {
+  setupButton("back", "back");
 
-  for (const b of buildings) {
+  setupButton("left", "left");
 
-    const bx = b.x - cameraX;
+  setupButton("right", "right");
 
-    const by = b.y - cameraY;
+  document.addEventListener("touchmove", e => {
 
-    if (
+    e.preventDefault();
 
-      bx > canvas.width ||
+  }, { passive: false });
 
-      by > canvas.height ||
+  function gameLoop() {
 
-      bx + b.w < 0 ||
+    if (keys.forward) {
 
-      by + b.h < 0
+      speed += 0.035;
 
-    ) continue;
+    }
 
-    ctx.fillStyle = "#666";
+    if (keys.back) {
 
-    ctx.fillRect(bx, by, b.w, b.h);
+      speed -= 0.045;
 
-    ctx.fillStyle = "#888";
+    }
 
-    ctx.fillRect(
+    if (!keys.forward && !keys.back) {
 
-      bx + 7,
+      speed *= 0.965;
 
-      by + 7,
+    }
 
-      b.w - 14,
+    speed = Math.max(-0.45, Math.min(speed, 1.0));
 
-      b.h - 14
+    if (Math.abs(speed) < 0.002) {
 
-    );
+      speed = 0;
 
-    ctx.strokeStyle = "#444";
+    }
 
-    ctx.lineWidth = 3;
+    if (Math.abs(speed) > 0.015) {
 
-    ctx.strokeRect(bx, by, b.w, b.h);
+      const steeringPower =
+
+        Math.min(Math.abs(speed) * 2.2, 1);
+
+      if (keys.left) {
+
+        heading -= 1.45 * steeringPower *
+
+          (speed >= 0 ? 1 : -1);
+
+      }
+
+      if (keys.right) {
+
+        heading += 1.45 * steeringPower *
+
+          (speed >= 0 ? 1 : -1);
+
+      }
+
+    }
+
+    const radians = heading * Math.PI / 180;
+
+    const movement = speed * 0.0000045;
+
+    latitude += Math.cos(radians) * movement;
+
+    longitude += Math.sin(radians) * movement /
+
+      Math.cos(latitude * Math.PI / 180);
+
+    map.jumpTo({
+
+      center: [longitude, latitude],
+
+      bearing: heading,
+
+      pitch: 60
+
+    });
+
+    document.getElementById("speed").textContent =
+
+      Math.round(Math.abs(speed) * 65);
+
+    requestAnimationFrame(gameLoop);
 
   }
 
-}
-
-function drawCar(cameraX, cameraY) {
-
-  const x = car.x - cameraX;
-
-  const y = car.y - cameraY;
-
-  ctx.save();
-
-  ctx.translate(x, y);
-
-  ctx.rotate(car.angle);
-
-  ctx.fillStyle = "#1e90ff";
-
-  ctx.fillRect(
-
-    -car.width / 2,
-
-    -car.height / 2,
-
-    car.width,
-
-    car.height
-
-  );
-
-  ctx.fillStyle = "#bfe5ff";
-
-  ctx.fillRect(
-
-    -car.width / 2 + 5,
-
-    -car.height / 2 + 8,
-
-    car.width - 10,
-
-    12
-
-  );
-
-  ctx.fillStyle = "#111";
-
-  ctx.fillRect(
-
-    -car.width / 2 - 3,
-
-    -18,
-
-    5,
-
-    14
-
-  );
-
-  ctx.fillRect(
-
-    car.width / 2 - 2,
-
-    -18,
-
-    5,
-
-    14
-
-  );
-
-  ctx.fillRect(
-
-    -car.width / 2 - 3,
-
-    7,
-
-    5,
-
-    14
-
-  );
-
-  ctx.fillRect(
-
-    car.width / 2 - 2,
-
-    7,
-
-    5,
-
-    14
-
-  );
-
-  ctx.restore();
-
-}
-
-function drawPolice(cameraX, cameraY) {
-
-  for (const p of police) {
-
-    const x = p.x - cameraX;
-
-    const y = p.y - cameraY;
-
-    ctx.save();
-
-    ctx.translate(x, y);
-
-    ctx.rotate(p.angle);
-
-    ctx.fillStyle = "white";
-
-    ctx.fillRect(-14, -24, 28, 48);
-
-    ctx.fillStyle = "#111";
-
-    ctx.fillRect(-10, -12, 20, 18);
-
-    ctx.fillStyle = "red";
-
-    ctx.fillRect(-10, -27, 8, 5);
-
-    ctx.fillStyle = "blue";
-
-    ctx.fillRect(2, -27, 8, 5);
-
-    ctx.restore();
-
-  }
-
-}
-
-function updateHUD() {
-
-  document.getElementById("speed").textContent =
-
-    Math.round(Math.abs(car.speed) * 7);
-
-  document.getElementById("cash").textContent =
-
-    cash;
-
-  document.getElementById("wanted").textContent =
-
-    "★".repeat(wanted) +
-
-    "☆".repeat(5 - wanted);
-
-}
-
-function loop() {
-
-  updateCar();
-
-  updatePolice();
-
-  const cameraX =
-
-    car.x - canvas.width / 2;
-
-  const cameraY =
-
-    car.y - canvas.height / 2;
-
-  drawRoads(cameraX, cameraY);
-
-  drawBuildings(cameraX, cameraY);
-
-  drawPolice(cameraX, cameraY);
-
-  drawCar(cameraX, cameraY);
-
-  updateHUD();
-
-  requestAnimationFrame(loop);
-
-}
-
-loop();
+  gameLoop();
 
 </script>
 
