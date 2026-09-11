@@ -1,1 +1,867 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Utica Drive</title><link rel="stylesheet" href="https://cesium.com/downloads/cesiumjs/releases/1.132/Build/Cesium/Widgets/widgets.css"><link rel="stylesheet" href="style.css"></head><body><div id="map"></div><div id="setup"><h2>Utica Mobile Drive</h2><input id="key" type="password" placeholder="Google Maps API key"><button id="start">START DRIVING</button></div><div id="controls" hidden><b id="speed">0 MPH</b><button id="left">◀</button><button id="right">▶</button><button id="gas">▲</button><button id="brake">▼</button></div><script src="https://cesium.com/downloads/cesiumjs/releases/1.132/Build/Cesium/Cesium.js"></script><script src="app.js"></script></body></html>
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport"
+
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <title>Utica Streets</title>
+
+  <style>
+
+    * {
+
+      box-sizing: border-box;
+
+      -webkit-user-select: none;
+
+      user-select: none;
+
+      touch-action: none;
+
+    }
+
+    html, body {
+
+      width: 100%;
+
+      height: 100%;
+
+      margin: 0;
+
+      overflow: hidden;
+
+      background: #000;
+
+      font-family: Arial, Helvetica, sans-serif;
+
+    }
+
+    #map {
+
+      width: 100%;
+
+      height: 100%;
+
+    }
+
+    #hud {
+
+      position: fixed;
+
+      top: 12px;
+
+      left: 12px;
+
+      z-index: 10;
+
+      background: rgba(0,0,0,.72);
+
+      color: white;
+
+      padding: 10px 14px;
+
+      border-radius: 10px;
+
+      font-weight: bold;
+
+      font-size: 14px;
+
+      border: 1px solid rgba(255,255,255,.25);
+
+      text-shadow: 1px 1px 2px #000;
+
+    }
+
+    #title {
+
+      font-size: 18px;
+
+      margin-bottom: 4px;
+
+    }
+
+    #wanted {
+
+      color: #ffd54a;
+
+      letter-spacing: 2px;
+
+    }
+
+    #mission {
+
+      position: fixed;
+
+      top: 12px;
+
+      right: 12px;
+
+      max-width: 180px;
+
+      z-index: 10;
+
+      background: rgba(0,0,0,.72);
+
+      color: #fff;
+
+      padding: 10px;
+
+      border-radius: 10px;
+
+      font-size: 13px;
+
+      text-align: center;
+
+    }
+
+    .control {
+
+      position: fixed;
+
+      z-index: 20;
+
+      width: 78px;
+
+      height: 78px;
+
+      border-radius: 50%;
+
+      border: 2px solid rgba(255,255,255,.55);
+
+      background: rgba(0,0,0,.55);
+
+      color: white;
+
+      font-size: 31px;
+
+      font-weight: bold;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      box-shadow: 0 3px 10px rgba(0,0,0,.45);
+
+    }
+
+    .control:active,
+
+    .pressed {
+
+      background: rgba(255,255,255,.25);
+
+      transform: scale(.96);
+
+    }
+
+    #left {
+
+      left: 18px;
+
+      bottom: 35px;
+
+    }
+
+    #right {
+
+      left: 112px;
+
+      bottom: 35px;
+
+    }
+
+    #gas {
+
+      right: 18px;
+
+      bottom: 35px;
+
+      width: 88px;
+
+      height: 88px;
+
+      background: rgba(0,110,0,.62);
+
+      font-size: 20px;
+
+    }
+
+    #brake {
+
+      right: 122px;
+
+      bottom: 45px;
+
+      width: 70px;
+
+      height: 70px;
+
+      background: rgba(130,0,0,.62);
+
+      font-size: 14px;
+
+    }
+
+    #speed {
+
+      position: fixed;
+
+      bottom: 142px;
+
+      right: 20px;
+
+      z-index: 10;
+
+      color: white;
+
+      background: rgba(0,0,0,.72);
+
+      padding: 8px 11px;
+
+      border-radius: 8px;
+
+      font-weight: bold;
+
+      font-size: 15px;
+
+    }
+
+    #startMessage {
+
+      position: fixed;
+
+      z-index: 50;
+
+      inset: 0;
+
+      background: rgba(0,0,0,.72);
+
+      color: white;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 25px;
+
+      text-align: center;
+
+    }
+
+    #startBox {
+
+      background: #111;
+
+      border: 1px solid #555;
+
+      border-radius: 16px;
+
+      padding: 24px;
+
+      max-width: 330px;
+
+    }
+
+    #startButton {
+
+      margin-top: 15px;
+
+      border: 0;
+
+      border-radius: 10px;
+
+      padding: 14px 25px;
+
+      background: #23a455;
+
+      color: white;
+
+      font-size: 18px;
+
+      font-weight: bold;
+
+    }
+
+    #errorBox {
+
+      display: none;
+
+      position: fixed;
+
+      z-index: 100;
+
+      top: 50%;
+
+      left: 50%;
+
+      transform: translate(-50%, -50%);
+
+      max-width: 330px;
+
+      padding: 20px;
+
+      border-radius: 12px;
+
+      background: #151515;
+
+      color: white;
+
+      text-align: center;
+
+      border: 1px solid #666;
+
+    }
+
+    @media (orientation: portrait) {
+
+      #mission {
+
+        top: 90px;
+
+        right: 10px;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<div id="hud">
+
+  <div id="title">UTICA STREETS</div>
+
+  <div>Cash: $<span id="cash">500</span></div>
+
+  <div id="wanted">☆☆☆☆☆</div>
+
+</div>
+
+<div id="mission">
+
+  Drive to the yellow checkpoint.
+
+</div>
+
+<div id="speed">0 MPH</div>
+
+<div id="left" class="control">◀</div>
+
+<div id="right" class="control">▶</div>
+
+<div id="brake" class="control">BRAKE</div>
+
+<div id="gas" class="control">GAS</div>
+
+<div id="startMessage">
+
+  <div id="startBox">
+
+    <h2>UTICA STREETS</h2>
+
+    <p>
+
+      Drive around the real streets of Utica, New York.
+
+      Use the buttons with your thumbs.
+
+    </p>
+
+    <button id="startButton">START GAME</button>
+
+  </div>
+
+</div>
+
+<div id="errorBox">
+
+  <h3>Google Maps did not load.</h3>
+
+  <p>
+
+    Make sure your Google Maps API key is correct and that
+
+    Maps JavaScript API is enabled.
+
+  </p>
+
+</div>
+
+<script>
+
+  let map;
+
+  let car;
+
+  let checkpoint;
+
+  let position = {
+
+    lat: 43.100903,
+
+    lng: -75.232664
+
+  };
+
+  let heading = 0;
+
+  let speed = 0;
+
+  let gasPressed = false;
+
+  let brakePressed = false;
+
+  let leftPressed = false;
+
+  let rightPressed = false;
+
+  let cash = 500;
+
+  let wanted = 0;
+
+  let gameStarted = false;
+
+  const missions = [
+
+    {
+
+      lat: 43.1039,
+
+      lng: -75.2315,
+
+      text: "Drive downtown."
+
+    },
+
+    {
+
+      lat: 43.0978,
+
+      lng: -75.2253,
+
+      text: "Head toward Genesee Street."
+
+    },
+
+    {
+
+      lat: 43.1055,
+
+      lng: -75.2401,
+
+      text: "Reach the next checkpoint."
+
+    },
+
+    {
+
+      lat: 43.0918,
+
+      lng: -75.2370,
+
+      text: "Cruise to South Utica."
+
+    },
+
+    {
+
+      lat: 43.1125,
+
+      lng: -75.2256,
+
+      text: "Make your way north."
+
+    }
+
+  ];
+
+  let missionIndex = 0;
+
+  function initMap() {
+
+    map = new google.maps.Map(
+
+      document.getElementById("map"),
+
+      {
+
+        center: position,
+
+        zoom: 17,
+
+        disableDefaultUI: true,
+
+        gestureHandling: "none",
+
+        mapTypeId: "roadmap",
+
+        tilt: 0,
+
+        styles: [
+
+          {
+
+            featureType: "poi",
+
+            elementType: "labels",
+
+            stylers: [{ visibility: "off" }]
+
+          },
+
+          {
+
+            featureType: "transit",
+
+            elementType: "labels",
+
+            stylers: [{ visibility: "off" }]
+
+          }
+
+        ]
+
+      }
+
+    );
+
+    createCar();
+
+    createMission();
+
+    requestAnimationFrame(gameLoop);
+
+  }
+
+  function createCar() {
+
+    const carIcon = {
+
+      path:
+
+        "M 0,-18 L 11,-9 L 11,13 L 5,18 L -5,18 L -11,13 L -11,-9 Z",
+
+      fillColor: "#e53935",
+
+      fillOpacity: 1,
+
+      strokeColor: "#111",
+
+      strokeWeight: 2,
+
+      rotation: heading,
+
+      scale: 1
+
+    };
+
+    car = new google.maps.Marker({
+
+      position,
+
+      map,
+
+      icon: carIcon,
+
+      zIndex: 999
+
+    });
+
+  }
+
+  function updateCarIcon() {
+
+    const icon = car.getIcon();
+
+    icon.rotation = heading;
+
+    car.setIcon(icon);
+
+  }
+
+  function createMission() {
+
+    const mission = missions[missionIndex];
+
+    if (checkpoint) {
+
+      checkpoint.setMap(null);
+
+    }
+
+    checkpoint = new google.maps.Marker({
+
+      position: {
+
+        lat: mission.lat,
+
+        lng: mission.lng
+
+      },
+
+      map,
+
+      title: "Mission",
+
+      icon: {
+
+        path: google.maps.SymbolPath.CIRCLE,
+
+        fillColor: "#ffd600",
+
+        fillOpacity: .85,
+
+        strokeColor: "#ffffff",
+
+        strokeWeight: 3,
+
+        scale: 12
+
+      }
+
+    });
+
+    document.getElementById("mission").innerHTML =
+
+      "MISSION<br>" + mission.text;
+
+  }
+
+  function gameLoop() {
+
+    if (gameStarted) {
+
+      if (gasPressed) {
+
+        speed += 0.018;
+
+      }
+
+      if (brakePressed) {
+
+        speed -= 0.04;
+
+      }
+
+      speed *= 0.985;
+
+      speed = Math.max(-0.12, Math.min(speed, 0.34));
+
+      const turnAmount = 2.3 * Math.min(Math.abs(speed) * 5 + .2, 1);
+
+      if (leftPressed && Math.abs(speed) > .005) {
+
+        heading -= turnAmount;
+
+      }
+
+      if (rightPressed && Math.abs(speed) > .005) {
+
+        heading += turnAmount;
+
+      }
+
+      const radians = heading * Math.PI / 180;
+
+      const distance = speed * 0.000025;
+
+      position.lat += Math.cos(radians) * distance;
+
+      position.lng +=
+
+        Math.sin(radians) *
+
+        distance /
+
+        Math.cos(position.lat * Math.PI / 180);
+
+      car.setPosition(position);
+
+      updateCarIcon();
+
+      map.panTo(position);
+
+      document.getElementById("speed").innerText =
+
+        Math.round(Math.abs(speed) * 135) + " MPH";
+
+      checkMission();
+
+    }
+
+    requestAnimationFrame(gameLoop);
+
+  }
+
+  function checkMission() {
+
+    const mission = missions[missionIndex];
+
+    const dx = position.lat - mission.lat;
+
+    const dy = position.lng - mission.lng;
+
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < 0.00055) {
+
+      cash += 250;
+
+      document.getElementById("cash").innerText = cash;
+
+      missionIndex++;
+
+      if (missionIndex >= missions.length) {
+
+        missionIndex = 0;
+
+      }
+
+      createMission();
+
+      document.getElementById("mission").innerHTML =
+
+        "MISSION COMPLETE!<br>+$250";
+
+      setTimeout(() => {
+
+        document.getElementById("mission").innerHTML =
+
+          "MISSION<br>" +
+
+          missions[missionIndex].text;
+
+      }, 1600);
+
+    }
+
+  }
+
+  function bindButton(id, pressFunction, releaseFunction) {
+
+    const button = document.getElementById(id);
+
+    button.addEventListener("pointerdown", e => {
+
+      e.preventDefault();
+
+      button.classList.add("pressed");
+
+      pressFunction();
+
+    });
+
+    button.addEventListener("pointerup", e => {
+
+      e.preventDefault();
+
+      button.classList.remove("pressed");
+
+      releaseFunction();
+
+    });
+
+    button.addEventListener("pointercancel", () => {
+
+      button.classList.remove("pressed");
+
+      releaseFunction();
+
+    });
+
+    button.addEventListener("pointerleave", () => {
+
+      button.classList.remove("pressed");
+
+      releaseFunction();
+
+    });
+
+  }
+
+  bindButton(
+
+    "gas",
+
+    () => gasPressed = true,
+
+    () => gasPressed = false
+
+  );
+
+  bindButton(
+
+    "brake",
+
+    () => brakePressed = true,
+
+    () => brakePressed = false
+
+  );
+
+  bindButton(
+
+    "left",
+
+    () => leftPressed = true,
+
+    () => leftPressed = false
+
+  );
+
+  bindButton(
+
+    "right",
+
+    () => rightPressed = true,
+
+    () => rightPressed = false
+
+  );
+
+  document.getElementById("startButton")
+
+    .addEventListener("click", () => {
+
+      document.getElementById("startMessage").style.display = "none";
+
+      gameStarted = true;
+
+    });
+
+  window.gm_authFailure = function() {
+
+    document.getElementById("errorBox").style.display = "block";
+
+  };
+
+</script>
+
+<script
+
+  async
+
+  defer
+
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
+
+</script>
+
+</body>
+
+</html>
