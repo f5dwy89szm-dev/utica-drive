@@ -18,7 +18,7 @@ user-scalable=no,
 
 viewport-fit=cover">
 
-<title>Utica Open World 3D V2</title>
+<title>Utica Open World 3D V3</title>
 
 <style>
 
@@ -26,9 +26,9 @@ viewport-fit=cover">
 
     box-sizing:border-box;
 
-    -webkit-user-select:none;
-
     user-select:none;
+
+    -webkit-user-select:none;
 
     -webkit-touch-callout:none;
 
@@ -72,13 +72,13 @@ canvas{
 
     position:fixed;
 
+    left:14px;
+
     top:max(14px,env(safe-area-inset-top));
 
-    left:15px;
+    z-index:20;
 
     color:#fff;
-
-    z-index:20;
 
     text-shadow:0 2px 6px #000;
 
@@ -98,33 +98,61 @@ canvas{
 
     font-size:13px;
 
+    margin-top:1px;
+
+}
+
+#surface{
+
+    font-size:11px;
+
+    opacity:.82;
+
+    margin-top:3px;
+
 }
 
 #mission{
 
     margin-top:8px;
 
-    max-width:245px;
+    max-width:235px;
 
     padding:8px 10px;
 
     border-radius:10px;
 
-    background:rgba(0,0,0,.43);
+    background:rgba(0,0,0,.46);
 
-    font-size:13px;
+    font-size:12px;
 
-    line-height:1.3;
+    line-height:1.35;
 
 }
 
-#surface{
+#logo{
 
-    margin-top:4px;
+    position:fixed;
+
+    right:14px;
+
+    top:max(15px,env(safe-area-inset-top));
+
+    color:white;
+
+    z-index:10;
+
+    font-weight:bold;
 
     font-size:11px;
 
-    opacity:.85;
+    letter-spacing:1px;
+
+    opacity:.75;
+
+    text-shadow:0 2px 5px #000;
+
+    pointer-events:none;
 
 }
 
@@ -134,15 +162,15 @@ canvas{
 
     position:fixed;
 
-    left:16px;
+    left:15px;
 
     bottom:max(22px,env(safe-area-inset-bottom));
 
-    width:155px;
+    width:158px;
 
-    height:155px;
+    height:158px;
 
-    z-index:30;
+    z-index:50;
 
     touch-action:none;
 
@@ -152,21 +180,25 @@ canvas{
 
     position:absolute;
 
-    width:120px;
+    width:122px;
 
-    height:120px;
+    height:122px;
 
-    left:17px;
+    left:18px;
 
-    top:17px;
+    top:18px;
 
     border-radius:50%;
 
-    background:rgba(20,20,20,.38);
+    background:rgba(18,18,18,.42);
 
-    border:3px solid rgba(255,255,255,.35);
+    border:3px solid rgba(255,255,255,.34);
 
-    box-shadow:0 4px 14px rgba(0,0,0,.45);
+    box-shadow:
+
+        inset 0 0 22px rgba(255,255,255,.07),
+
+        0 5px 15px rgba(0,0,0,.42);
 
 }
 
@@ -178,17 +210,17 @@ canvas{
 
     height:58px;
 
-    left:48px;
+    left:50px;
 
-    top:48px;
+    top:50px;
 
     border-radius:50%;
 
-    background:rgba(255,255,255,.82);
+    background:rgba(255,255,255,.84);
 
-    border:3px solid rgba(0,0,0,.4);
+    border:3px solid rgba(0,0,0,.42);
 
-    box-shadow:0 4px 10px rgba(0,0,0,.4);
+    box-shadow:0 4px 11px rgba(0,0,0,.45);
 
     pointer-events:none;
 
@@ -200,19 +232,19 @@ canvas{
 
     position:fixed;
 
-    right:15px;
+    right:12px;
 
-    bottom:max(20px,env(safe-area-inset-bottom));
+    bottom:max(18px,env(safe-area-inset-bottom));
 
-    width:185px;
+    width:205px;
 
-    height:195px;
+    height:205px;
 
-    z-index:30;
+    z-index:50;
 
 }
 
-.gameButton{
+.ctrl{
 
     position:absolute;
 
@@ -228,15 +260,15 @@ canvas{
 
     box-shadow:
 
-    inset 0 0 0 2px rgba(255,255,255,.22),
+        inset 0 0 0 2px rgba(255,255,255,.22),
 
-    0 5px 12px rgba(0,0,0,.45);
+        0 5px 13px rgba(0,0,0,.42);
 
 }
 
-.gameButton:active{
+.ctrl:active{
 
-    transform:scale(.94);
+    transform:scale(.95);
 
 }
 
@@ -252,7 +284,7 @@ canvas{
 
     border-radius:50%;
 
-    background:rgba(20,165,67,.80);
+    background:rgba(24,166,67,.83);
 
     font-size:19px;
 
@@ -260,77 +292,55 @@ canvas{
 
 #brake{
 
-    left:2px;
+    left:30px;
 
     bottom:3px;
 
-    width:76px;
+    width:72px;
 
-    height:76px;
+    height:72px;
 
     border-radius:50%;
 
-    background:rgba(205,40,40,.82);
+    background:rgba(206,40,40,.84);
 
     font-size:13px;
 
 }
 
-#handbrake{
+#reverse{
 
-    right:3px;
+    left:0;
 
-    top:7px;
+    top:52px;
 
-    width:88px;
+    width:72px;
 
-    height:50px;
+    height:60px;
 
-    border-radius:15px;
+    border-radius:17px;
 
-    background:rgba(30,30,30,.78);
+    background:rgba(225,126,22,.86);
 
     font-size:11px;
 
 }
 
-/* ON FOOT */
+#handbrake{
 
-#run{
+    right:4px;
 
-    position:fixed;
+    top:7px;
 
-    right:25px;
+    width:88px;
 
-    bottom:max(38px,env(safe-area-inset-bottom));
+    height:49px;
 
-    width:84px;
+    border-radius:15px;
 
-    height:84px;
+    background:rgba(28,28,28,.82);
 
-    border:none;
-
-    border-radius:50%;
-
-    background:rgba(39,99,220,.8);
-
-    color:#fff;
-
-    font-size:16px;
-
-    font-weight:900;
-
-    display:none;
-
-    z-index:30;
-
-    touch-action:none;
-
-    box-shadow:
-
-    inset 0 0 0 2px rgba(255,255,255,.23),
-
-    0 5px 12px rgba(0,0,0,.45);
+    font-size:10px;
 
 }
 
@@ -340,63 +350,71 @@ canvas{
 
     position:fixed;
 
-    right:15px;
+    right:14px;
 
-    top:max(72px,calc(env(safe-area-inset-top) + 55px));
+    top:max(75px,calc(env(safe-area-inset-top) + 58px));
 
-    height:48px;
+    z-index:100;
 
-    min-width:105px;
+    min-width:110px;
 
-    border:none;
+    height:49px;
+
+    padding:0 14px;
+
+    border:2px solid rgba(255,255,255,.28);
 
     border-radius:14px;
 
-    padding:0 15px;
-
-    background:rgba(15,15,15,.75);
+    background:rgba(12,12,12,.82);
 
     color:#fff;
 
+    font-weight:900;
+
     font-size:13px;
+
+    touch-action:none;
+
+}
+
+/* ON FOOT */
+
+#run{
+
+    display:none;
+
+    position:fixed;
+
+    right:22px;
+
+    bottom:max(34px,env(safe-area-inset-bottom));
+
+    z-index:50;
+
+    width:84px;
+
+    height:84px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:rgba(38,96,215,.82);
+
+    color:white;
 
     font-weight:900;
 
-    z-index:30;
+    font-size:16px;
 
     touch-action:none;
 
     box-shadow:
 
-    inset 0 0 0 2px rgba(255,255,255,.25),
+        inset 0 0 0 2px rgba(255,255,255,.23),
 
-    0 4px 12px rgba(0,0,0,.5);
-
-}
-
-#logo{
-
-    position:fixed;
-
-    right:15px;
-
-    top:max(16px,env(safe-area-inset-top));
-
-    color:#fff;
-
-    font-size:11px;
-
-    font-weight:bold;
-
-    letter-spacing:1px;
-
-    opacity:.75;
-
-    text-shadow:0 2px 5px #000;
-
-    pointer-events:none;
-
-    z-index:10;
+        0 5px 12px rgba(0,0,0,.45);
 
 }
 
@@ -418,7 +436,7 @@ canvas{
 
 </div>
 
-<div id="logo">UTICA OPEN WORLD V2</div>
+<div id="logo">UTICA OPEN WORLD V3</div>
 
 <div id="stickArea">
 
@@ -430,11 +448,13 @@ canvas{
 
 <div id="vehicleControls">
 
-    <button id="handbrake" class="gameButton">HANDBRAKE</button>
+    <button id="reverse" class="ctrl">REVERSE</button>
 
-    <button id="brake" class="gameButton">BRAKE</button>
+    <button id="handbrake" class="ctrl">HANDBRAKE</button>
 
-    <button id="gas" class="gameButton">GAS</button>
+    <button id="brake" class="ctrl">BRAKE</button>
+
+    <button id="gas" class="ctrl">GAS</button>
 
 </div>
 
@@ -448,47 +468,39 @@ import * as THREE
 
 from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
 
-/* =========================================================
+/* =====================================================
 
-   BASIC THREE SETUP
+   THREE
 
-========================================================= */
+===================================================== */
 
 const scene = new THREE.Scene();
 
-scene.background =
+scene.background = new THREE.Color(0x84b9e2);
 
-new THREE.Color(0x83b8df);
+scene.fog = new THREE.Fog(
 
-scene.fog =
+    0x84b9e2,
 
-new THREE.Fog(
+    210,
 
-    0x83b8df,
-
-    180,
-
-    780
+    820
 
 );
 
-const camera =
+const camera = new THREE.PerspectiveCamera(
 
-new THREE.PerspectiveCamera(
-
-    66,
+    65,
 
     innerWidth / innerHeight,
 
-    0.1,
+    .1,
 
-    1200
+    1300
 
 );
 
-const renderer =
-
-new THREE.WebGLRenderer({
+const renderer = new THREE.WebGLRenderer({
 
     antialias:true,
 
@@ -498,13 +510,7 @@ new THREE.WebGLRenderer({
 
 renderer.setPixelRatio(
 
-    Math.min(
-
-        devicePixelRatio,
-
-        1.5
-
-    )
+    Math.min(devicePixelRatio,1.45)
 
 );
 
@@ -518,29 +524,23 @@ renderer.setSize(
 
 renderer.shadowMap.enabled = true;
 
-renderer.shadowMap.type =
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-THREE.PCFSoftShadowMap;
+document.body.prepend(renderer.domElement);
 
-document.body.prepend(
-
-    renderer.domElement
-
-);
-
-/* =========================================================
+/* =====================================================
 
    LIGHT
 
-========================================================= */
+===================================================== */
 
 scene.add(
 
     new THREE.HemisphereLight(
 
-        0xd6ecff,
+        0xd9edff,
 
-        0x50643b,
+        0x50623c,
 
         2.2
 
@@ -548,23 +548,21 @@ scene.add(
 
 );
 
-const sun =
-
-new THREE.DirectionalLight(
+const sun = new THREE.DirectionalLight(
 
     0xffffff,
 
-    2.2
+    2.25
 
 );
 
 sun.position.set(
 
-    -160,
+    -130,
 
-    240,
+    220,
 
-    120
+    130
 
 );
 
@@ -588,29 +586,25 @@ sun.shadow.camera.bottom = -180;
 
 scene.add(sun);
 
-/* =========================================================
+/* =====================================================
 
    WORLD
 
-========================================================= */
+===================================================== */
 
-const WORLD_HALF = 425;
+const WORLD_HALF = 430;
 
-const grass =
+const ROAD_SPACING = 90;
 
-new THREE.Mesh(
+const ROAD_WIDTH = 28;
 
-    new THREE.PlaneGeometry(
+const ground = new THREE.Mesh(
 
-        900,
-
-        900
-
-    ),
+    new THREE.PlaneGeometry(920,920),
 
     new THREE.MeshStandardMaterial({
 
-        color:0x617f47,
+        color:0x5d7f47,
 
         roughness:1
 
@@ -618,63 +612,39 @@ new THREE.Mesh(
 
 );
 
-grass.rotation.x =
+ground.rotation.x = -Math.PI/2;
 
--Math.PI / 2;
+ground.receiveShadow = true;
 
-grass.receiveShadow = true;
+scene.add(ground);
 
-scene.add(grass);
-
-/* =========================================================
+/* =====================================================
 
    ROADS
 
-========================================================= */
+===================================================== */
 
 const roads = [];
 
-const roadMaterial =
+const roadMat = new THREE.MeshStandardMaterial({
 
-new THREE.MeshStandardMaterial({
+    color:0x343434,
 
-    color:0x353535,
-
-    roughness:.96
+    roughness:.97
 
 });
 
-function makeRoad(
+function createRoad(x,z,w,d){
 
-    x,
+    const mesh = new THREE.Mesh(
 
-    z,
+        new THREE.BoxGeometry(w,.08,d),
 
-    w,
-
-    d
-
-){
-
-    const road =
-
-    new THREE.Mesh(
-
-        new THREE.BoxGeometry(
-
-            w,
-
-            .08,
-
-            d
-
-        ),
-
-        roadMaterial
+        roadMat
 
     );
 
-    road.position.set(
+    mesh.position.set(
 
         x,
 
@@ -684,101 +654,67 @@ function makeRoad(
 
     );
 
-    road.receiveShadow = true;
+    mesh.receiveShadow = true;
 
-    scene.add(road);
+    scene.add(mesh);
 
-    roads.push({
-
-        x,z,w,d
-
-    });
+    roads.push({x,z,w,d});
 
 }
 
-for(
+for(let x=-360;x<=360;x+=ROAD_SPACING){
 
-    let x=-360;
-
-    x<=360;
-
-    x+=90
-
-){
-
-    makeRoad(
+    createRoad(
 
         x,
 
         0,
 
-        26,
+        ROAD_WIDTH,
 
-        850
+        870
 
     );
 
 }
 
-for(
+for(let z=-360;z<=360;z+=ROAD_SPACING){
 
-    let z=-360;
-
-    z<=360;
-
-    z+=90
-
-){
-
-    makeRoad(
+    createRoad(
 
         0,
 
         z,
 
-        850,
+        870,
 
-        26
+        ROAD_WIDTH
 
     );
 
 }
 
-/* road markings */
+/* ROAD LINES */
 
-const lineMat =
+const yellow = new THREE.MeshBasicMaterial({
 
-new THREE.MeshBasicMaterial({
-
-    color:0xe8d565
+    color:0xe5d066
 
 });
 
-function line(
+function stripe(x,z,w,d){
 
-    x,z,w,d
+    const mesh = new THREE.Mesh(
 
-){
+        new THREE.PlaneGeometry(w,d),
 
-    const m =
-
-    new THREE.Mesh(
-
-        new THREE.PlaneGeometry(
-
-            w,d
-
-        ),
-
-        lineMat
+        yellow
 
     );
 
-    m.rotation.x =
+    mesh.rotation.x = -Math.PI/2;
 
-    -Math.PI/2;
-
-    m.position.set(
+    mesh.position.set(
 
         x,
 
@@ -788,33 +724,23 @@ function line(
 
     );
 
-    scene.add(m);
+    scene.add(mesh);
 
 }
 
-for(
+for(let x=-360;x<=360;x+=90){
 
-    let x=-360;
+    for(let z=-400;z<=400;z+=24){
 
-    x<=360;
+        stripe(
 
-    x+=90
+            x,
 
-){
+            z,
 
-    for(
+            .32,
 
-        let z=-395;
-
-        z<=395;
-
-        z+=22
-
-    ){
-
-        line(
-
-            x,z,.35,9
+            10
 
         );
 
@@ -822,29 +748,19 @@ for(
 
 }
 
-for(
+for(let z=-360;z<=360;z+=90){
 
-    let z=-360;
+    for(let x=-400;x<=400;x+=24){
 
-    z<=360;
+        stripe(
 
-    z+=90
+            x,
 
-){
+            z,
 
-    for(
+            10,
 
-        let x=-395;
-
-        x<=395;
-
-        x+=22
-
-    ){
-
-        line(
-
-            x,z,9,.35
+            .32
 
         );
 
@@ -854,25 +770,13 @@ for(
 
 function isOnRoad(pos){
 
-    for(
-
-        const r of roads
-
-    ){
+    for(const r of roads){
 
         if(
 
-            Math.abs(
+            Math.abs(pos.x-r.x)<=r.w/2 &&
 
-                pos.x-r.x
-
-            ) <= r.w/2 &&
-
-            Math.abs(
-
-                pos.z-r.z
-
-            ) <= r.d/2
+            Math.abs(pos.z-r.z)<=r.d/2
 
         ){
 
@@ -886,169 +790,163 @@ function isOnRoad(pos){
 
 }
 
-/* =========================================================
+/* =====================================================
 
-   CURBS
+   SIDEWALKS
 
-========================================================= */
+===================================================== */
 
-const curbMaterial =
+const sidewalkMat = new THREE.MeshStandardMaterial({
 
-new THREE.MeshStandardMaterial({
-
-    color:0xaaaaa5,
+    color:0xaaa9a3,
 
     roughness:1
 
 });
 
-function curb(
+function sidewalkBlock(
 
-    x,z,w,d
+    centerX,
+
+    centerZ
 
 ){
 
-    const c =
+    /*
 
-    new THREE.Mesh(
+    Roads are 28 m wide.
+
+    Buildings therefore begin well inside
+
+    each 90 m block.
+
+    */
+
+    const blockSize =
+
+    ROAD_SPACING -
+
+    ROAD_WIDTH -
+
+    6;
+
+    const slab = new THREE.Mesh(
 
         new THREE.BoxGeometry(
 
-            w,.22,d
+            blockSize,
+
+            .18,
+
+            blockSize
 
         ),
 
-        curbMaterial
+        sidewalkMat
 
     );
 
-    c.position.set(
+    slab.position.set(
 
-        x,
+        centerX,
 
-        .11,
+        .09,
 
-        z
+        centerZ
 
     );
 
-    c.receiveShadow = true;
+    slab.receiveShadow = true;
 
-    scene.add(c);
+    scene.add(slab);
 
 }
 
 /*
 
-visual curb lines
+These are the actual centers between road lines.
+
+Roads: 0, 90, 180...
+
+Blocks: 45, 135, 225...
 
 */
 
-for(
+const blockCenters = [];
 
-    let x=-360;
+for(let x=-315;x<=315;x+=90){
 
-    x<=360;
+    for(let z=-315;z<=315;z+=90){
 
-    x+=90
+        blockCenters.push({x,z});
 
-){
+        sidewalkBlock(
 
-    curb(
+            x,z
 
-        x-14.5,
+        );
 
-        0,
-
-        1.2,
-
-        850
-
-    );
-
-    curb(
-
-        x+14.5,
-
-        0,
-
-        1.2,
-
-        850
-
-    );
+    }
 
 }
 
-for(
-
-    let z=-360;
-
-    z<=360;
-
-    z+=90
-
-){
-
-    curb(
-
-        0,
-
-        z-14.5,
-
-        850,
-
-        1.2
-
-    );
-
-    curb(
-
-        0,
-
-        z+14.5,
-
-        850,
-
-        1.2
-
-    );
-
-}
-
-/* =========================================================
+/* =====================================================
 
    BUILDINGS
 
-========================================================= */
+===================================================== */
 
 const buildingBoxes = [];
 
 const buildingColors = [
 
-    0xb69c7c,
+    0xb59978,
 
-    0x958d83,
+    0x9b9389,
 
-    0xb8b1a5,
+    0xb6aea1,
 
-    0x826f63,
+    0x8a7567,
 
-    0xa17860,
+    0xa57961,
 
-    0x9d9c95,
+    0x9d9d96,
 
-    0x776d64
+    0x736b63,
+
+    0x847c72
 
 ];
 
-function makeBuilding(
+function addBuilding(
 
     x,z,w,d,h
 
 ){
 
-    const mesh =
+    const material =
+
+    new THREE.MeshStandardMaterial({
+
+        color:
+
+        buildingColors[
+
+            Math.floor(
+
+                Math.random()*
+
+                buildingColors.length
+
+            )
+
+        ],
+
+        roughness:.9
+
+    });
+
+    const building =
 
     new THREE.Mesh(
 
@@ -1058,97 +956,69 @@ function makeBuilding(
 
         ),
 
-        new THREE.MeshStandardMaterial({
-
-            color:
-
-            buildingColors[
-
-                Math.floor(
-
-                    Math.random() *
-
-                    buildingColors.length
-
-                )
-
-            ],
-
-            roughness:.9
-
-        })
+        material
 
     );
 
-    mesh.position.set(
+    building.position.set(
 
         x,
 
-        h/2,
+        h/2+.2,
 
         z
 
     );
 
-    mesh.castShadow = true;
+    building.castShadow = true;
 
-    mesh.receiveShadow = true;
+    building.receiveShadow = true;
 
-    scene.add(mesh);
+    scene.add(building);
 
-    const box =
+    buildingBoxes.push(
 
-    new THREE.Box3().setFromObject(
+        new THREE.Box3()
 
-        mesh
+        .setFromObject(building)
 
     );
 
-    buildingBoxes.push(box);
+    if(h>30){
 
-    /*
-
-    rooftop unit
-
-    */
-
-    if(h>28){
-
-        const top =
-
-        new THREE.Mesh(
+        const roof = new THREE.Mesh(
 
             new THREE.BoxGeometry(
 
-                w*.28,
+                w*.27,
 
-                2.4,
+                2.2,
 
-                d*.28
+                d*.27
 
             ),
 
             new THREE.MeshStandardMaterial({
 
-                color:0x4f5050
+                color:0x515151
 
             })
 
         );
 
-        top.position.set(
+        roof.position.set(
 
             x,
 
-            h+1.2,
+            h+1.3,
 
             z
 
         );
 
-        top.castShadow = true;
+        roof.castShadow = true;
 
-        scene.add(top);
+        scene.add(roof);
 
     }
 
@@ -1156,179 +1026,151 @@ function makeBuilding(
 
 /*
 
-Buildings are deliberately kept deeper
+IMPORTANT:
 
-inside blocks, away from roads.
+Buildings are positioned ONLY in the center
+
+of proper blocks.
+
+They cannot generate on a road.
 
 */
 
-for(
+for(const block of blockCenters){
 
-    let gx=-315;
+    /*
 
-    gx<=315;
+    Open park/start block.
 
-    gx+=90
+    */
 
-){
+    if(
 
-    for(
+        Math.abs(block.x)<50 &&
 
-        let gz=-315;
-
-        gz<=315;
-
-        gz+=90
+        Math.abs(block.z)<50
 
     ){
 
-        if(
+        continue;
 
-            Math.abs(gx)<50 &&
+    }
 
-            Math.abs(gz)<50
+    const layout = [
 
-        ){
+        [-15,-15],
 
-            continue;
+        [15,-15],
 
-        }
+        [-15,15],
 
-        const spots = [
+        [15,15]
 
-            [-18,-18],
+    ];
 
-            [18,-18],
+    const number =
 
-            [-18,18],
+    Math.random()<.35
 
-            [18,18]
+    ? 2
 
-        ];
+    : 3;
 
-        const count =
+    for(let i=0;i<number;i++){
 
-        2 +
+        const slot = layout[i];
 
-        Math.floor(
+        const x =
 
-            Math.random()*3
+        block.x +
+
+        slot[0] +
+
+        (Math.random()-.5)*2;
+
+        const z =
+
+        block.z +
+
+        slot[1] +
+
+        (Math.random()-.5)*2;
+
+        /*
+
+        Small enough that even the building edge
+
+        remains far away from roadway.
+
+        */
+
+        const w =
+
+        14 +
+
+        Math.random()*8;
+
+        const d =
+
+        14 +
+
+        Math.random()*8;
+
+        const downtown =
+
+        Math.max(
+
+            0,
+
+            1 -
+
+            Math.hypot(x,z)/430
 
         );
 
-        for(
+        const h =
 
-            let i=0;
+        12 +
 
-            i<count;
+        Math.random()*
 
-            i++
+        (
 
-        ){
+            18 +
 
-            const p =
+            downtown*48
 
-            spots[i];
+        );
 
-            const x =
+        addBuilding(
 
-            gx +
+            x,z,w,d,h
 
-            p[0] +
-
-            (Math.random()-.5)*5;
-
-            const z =
-
-            gz +
-
-            p[1] +
-
-            (Math.random()-.5)*5;
-
-            const w =
-
-            16 +
-
-            Math.random()*9;
-
-            const d =
-
-            16 +
-
-            Math.random()*9;
-
-            const dist =
-
-            Math.hypot(x,z);
-
-            const downtown =
-
-            Math.max(
-
-                0,
-
-                1-dist/390
-
-            );
-
-            const h =
-
-            13 +
-
-            Math.random() *
-
-            (
-
-                18 +
-
-                downtown*46
-
-            );
-
-            makeBuilding(
-
-                x,z,w,d,h
-
-            );
-
-        }
+        );
 
     }
 
 }
 
-/* =========================================================
+/* =====================================================
 
    TREES
 
-========================================================= */
+===================================================== */
 
-function makeTree(
+function createTree(x,z){
 
-    x,z
-
-){
-
-    const trunk =
-
-    new THREE.Mesh(
+    const trunk = new THREE.Mesh(
 
         new THREE.CylinderGeometry(
 
-            .4,
-
-            .55,
-
-            4,
-
-            7
+            .35,.48,3.6,7
 
         ),
 
         new THREE.MeshStandardMaterial({
 
-            color:0x705038
+            color:0x70503a
 
         })
 
@@ -1336,17 +1178,19 @@ function makeTree(
 
     trunk.position.set(
 
-        x,2,z
+        x,
+
+        1.8,
+
+        z
 
     );
 
-    const leaves =
-
-    new THREE.Mesh(
+    const leaves = new THREE.Mesh(
 
         new THREE.SphereGeometry(
 
-            2.4,
+            2.1,
 
             9,
 
@@ -1356,7 +1200,7 @@ function makeTree(
 
         new THREE.MeshStandardMaterial({
 
-            color:0x3b7037
+            color:0x39703a
 
         })
 
@@ -1364,7 +1208,11 @@ function makeTree(
 
     leaves.position.set(
 
-        x,5,z
+        x,
+
+        4.5,
+
+        z
 
     );
 
@@ -1382,41 +1230,27 @@ function makeTree(
 
 }
 
-for(
+/*
 
-    let i=0;
+Trees go toward block centers too,
 
-    i<55;
+not onto road lanes.
 
-    i++
+*/
 
-){
+for(const block of blockCenters){
 
-    const x =
+    if(Math.random()<.65){
 
-    (Math.random()-.5)*770;
+        createTree(
 
-    const z =
+            block.x+
 
-    (Math.random()-.5)*770;
+            (Math.random()-.5)*45,
 
-    const test =
+            block.z+
 
-    new THREE.Vector3(
-
-        x,0,z
-
-    );
-
-    if(
-
-        !isOnRoad(test)
-
-    ){
-
-        makeTree(
-
-            x,z
+            (Math.random()-.5)*45
 
         );
 
@@ -1424,25 +1258,23 @@ for(
 
 }
 
-/* =========================================================
+/* =====================================================
 
    CAR
 
-========================================================= */
+===================================================== */
 
-const car =
+const car = new THREE.Group();
 
-new THREE.Group();
-
-const red =
+const redMat =
 
 new THREE.MeshStandardMaterial({
 
-    color:0xc61925,
+    color:0xd01827,
 
-    roughness:.38,
+    metalness:.22,
 
-    metalness:.2
+    roughness:.36
 
 });
 
@@ -1450,7 +1282,9 @@ const darkRed =
 
 new THREE.MeshStandardMaterial({
 
-    color:0x97121c,
+    color:0x99101b,
+
+    metalness:.16,
 
     roughness:.42
 
@@ -1460,43 +1294,83 @@ const glass =
 
 new THREE.MeshStandardMaterial({
 
-    color:0x1c2d38,
+    color:0x162832,
 
-    roughness:.15,
+    metalness:.32,
 
-    metalness:.3
+    roughness:.18
 
 });
 
-const tire =
+const tireMat =
 
 new THREE.MeshStandardMaterial({
 
-    color:0x101010,
+    color:0x0e0e0e,
 
-    roughness:1
+    roughness:.96
 
 });
 
-const body =
+/* LOWER BODY */
+
+const lowerBody =
 
 new THREE.Mesh(
 
     new THREE.BoxGeometry(
 
-        2.05,.72,4.3
+        2.08,
+
+        .68,
+
+        4.45
 
     ),
 
-    red
+    redMat
 
 );
 
-body.position.y=.82;
+lowerBody.position.y=.76;
 
-body.castShadow=true;
+lowerBody.castShadow=true;
 
-car.add(body);
+car.add(lowerBody);
+
+/* FRONT */
+
+const hood =
+
+new THREE.Mesh(
+
+    new THREE.BoxGeometry(
+
+        1.85,
+
+        .24,
+
+        1.35
+
+    ),
+
+    darkRed
+
+);
+
+hood.position.set(
+
+    0,
+
+    1.01,
+
+    -1.5
+
+);
+
+car.add(hood);
+
+/* CABIN */
 
 const cabin =
 
@@ -1504,7 +1378,11 @@ new THREE.Mesh(
 
     new THREE.BoxGeometry(
 
-        1.7,.72,2
+        1.72,
+
+        .73,
+
+        2.05
 
     ),
 
@@ -1516,9 +1394,9 @@ cabin.position.set(
 
     0,
 
-    1.43,
+    1.38,
 
-    .05
+    .02
 
 );
 
@@ -1526,81 +1404,103 @@ cabin.castShadow=true;
 
 car.add(cabin);
 
-const hood =
+/* BUMPERS */
+
+const bumperMat =
+
+new THREE.MeshStandardMaterial({
+
+    color:0x191919
+
+});
+
+const frontBumper =
 
 new THREE.Mesh(
 
     new THREE.BoxGeometry(
 
-        1.82,.24,1.3
+        1.85,
+
+        .17,
+
+        .16
 
     ),
 
-    darkRed
+    bumperMat
 
 );
 
-hood.position.set(
+frontBumper.position.set(
 
-    0,1.02,-1.45
+    0,
+
+    .55,
+
+    -2.27
 
 );
 
-car.add(hood);
+car.add(frontBumper);
 
-function wheel(
+const rearBumper =
 
-    x,z
+frontBumper.clone();
 
-){
+rearBumper.position.z=2.27;
 
-    const w =
+car.add(rearBumper);
+
+/* WHEELS */
+
+function createWheel(x,z){
+
+    const wheel =
 
     new THREE.Mesh(
 
         new THREE.CylinderGeometry(
 
-            .42,.42,.4,16
+            .42,.42,.40,16
 
         ),
 
-        tire
+        tireMat
 
     );
 
-    w.rotation.z =
+    wheel.rotation.z=Math.PI/2;
 
-    Math.PI/2;
+    wheel.position.set(
 
-    w.position.set(
-
-        x,.47,z
+        x,.44,z
 
     );
 
-    w.castShadow=true;
+    wheel.castShadow=true;
 
-    car.add(w);
+    car.add(wheel);
 
-    return w;
+    return wheel;
 
 }
 
-const fl =
+const wheelFL =
 
-wheel(-1.04,-1.35);
+createWheel(-1.04,-1.38);
 
-const fr =
+const wheelFR =
 
-wheel(1.04,-1.35);
+createWheel(1.04,-1.38);
 
-const rl =
+const wheelRL =
 
-wheel(-1.04,1.35);
+createWheel(-1.04,1.38);
 
-const rr =
+const wheelRR =
 
-wheel(1.04,1.35);
+createWheel(1.04,1.38);
 
 car.position.set(
 
@@ -1610,43 +1510,121 @@ car.position.set(
 
 scene.add(car);
 
-/* =========================================================
+/* =====================================================
 
-   PLAYER
+   HUMAN CHARACTER
 
-========================================================= */
+===================================================== */
 
-const player =
+const player = new THREE.Group();
 
-new THREE.Group();
+/*
 
-const personBody =
+Character root stays at ground level.
+
+*/
+
+const skin =
+
+new THREE.MeshStandardMaterial({
+
+    color:0xc58d69,
+
+    roughness:.82
+
+});
+
+const shirt =
+
+new THREE.MeshStandardMaterial({
+
+    color:0x244f98,
+
+    roughness:.8
+
+});
+
+const pants =
+
+new THREE.MeshStandardMaterial({
+
+    color:0x202934,
+
+    roughness:.9
+
+});
+
+const shoes =
+
+new THREE.MeshStandardMaterial({
+
+    color:0x161616,
+
+    roughness:1
+
+});
+
+const hair =
+
+new THREE.MeshStandardMaterial({
+
+    color:0x241811,
+
+    roughness:1
+
+});
+
+/* TORSO */
+
+const torso =
 
 new THREE.Mesh(
 
-    new THREE.CapsuleGeometry(
+    new THREE.BoxGeometry(
 
-        .4,
+        .82,
 
-        1.1,
+        1.02,
 
-        4,
-
-        8
+        .40
 
     ),
 
-    new THREE.MeshStandardMaterial({
-
-        color:0x275fc5
-
-    })
+    shirt
 
 );
 
-personBody.position.y=1.12;
+torso.position.y=1.72;
 
-personBody.castShadow=true;
+torso.castShadow=true;
+
+player.add(torso);
+
+/* PELVIS */
+
+const pelvis =
+
+new THREE.Mesh(
+
+    new THREE.BoxGeometry(
+
+        .68,
+
+        .35,
+
+        .38
+
+    ),
+
+    pants
+
+);
+
+pelvis.position.y=1.08;
+
+player.add(pelvis);
+
+/* HEAD */
 
 const head =
 
@@ -1654,99 +1632,319 @@ new THREE.Mesh(
 
     new THREE.SphereGeometry(
 
-        .34,
+        .31,
 
-        12,
+        14,
 
-        8
+        10
 
     ),
 
-    new THREE.MeshStandardMaterial({
-
-        color:0xc99471
-
-    })
+    skin
 
 );
 
-head.position.y=2.12;
+head.position.y=2.55;
 
 head.castShadow=true;
 
-player.add(
+player.add(head);
 
-    personBody,
+/* HAIR */
 
-    head
-
-);
-
-player.visible=false;
-
-scene.add(player);
-
-/* =========================================================
-
-   MISSION
-
-========================================================= */
-
-const checkpoint =
-
-new THREE.Group();
-
-const ring =
+const hairMesh =
 
 new THREE.Mesh(
 
-    new THREE.TorusGeometry(
+    new THREE.SphereGeometry(
 
-        4,.45,12,36
+        .32,
+
+        14,
+
+        8,
+
+        0,
+
+        Math.PI*2,
+
+        0,
+
+        Math.PI*.45
 
     ),
 
-    new THREE.MeshStandardMaterial({
-
-        color:0xffd82d,
-
-        emissive:0xc48800,
-
-        emissiveIntensity:1.6
-
-    })
+    hair
 
 );
 
-ring.rotation.x =
+hairMesh.position.y=2.65;
 
-Math.PI/2;
+player.add(hairMesh);
 
-ring.position.y=1.5;
+/* NECK */
 
-const beam =
+const neck =
 
 new THREE.Mesh(
 
     new THREE.CylinderGeometry(
 
-        3.7,
+        .11,.12,.20,8
 
-        3.7,
+    ),
 
-        11,
+    skin
 
-        24,
+);
 
-        1,
+neck.position.y=2.25;
 
-        true
+player.add(neck);
+
+/* LIMB GROUPS */
+
+function makeArm(side){
+
+    const pivot =
+
+    new THREE.Group();
+
+    pivot.position.set(
+
+        side*.52,
+
+        2.06,
+
+        0
+
+    );
+
+    const upper =
+
+    new THREE.Mesh(
+
+        new THREE.CylinderGeometry(
+
+            .13,.14,.58,8
+
+        ),
+
+        shirt
+
+    );
+
+    upper.position.y=-.28;
+
+    upper.castShadow=true;
+
+    pivot.add(upper);
+
+    const forearm =
+
+    new THREE.Mesh(
+
+        new THREE.CylinderGeometry(
+
+            .105,.12,.55,8
+
+        ),
+
+        skin
+
+    );
+
+    forearm.position.y=-.82;
+
+    forearm.castShadow=true;
+
+    pivot.add(forearm);
+
+    const hand =
+
+    new THREE.Mesh(
+
+        new THREE.SphereGeometry(
+
+            .12,
+
+            8,
+
+            6
+
+        ),
+
+        skin
+
+    );
+
+    hand.position.y=-1.13;
+
+    pivot.add(hand);
+
+    player.add(pivot);
+
+    return pivot;
+
+}
+
+function makeLeg(side){
+
+    const pivot =
+
+    new THREE.Group();
+
+    pivot.position.set(
+
+        side*.22,
+
+        1.05,
+
+        0
+
+    );
+
+    const upper =
+
+    new THREE.Mesh(
+
+        new THREE.CylinderGeometry(
+
+            .17,.18,.65,8
+
+        ),
+
+        pants
+
+    );
+
+    upper.position.y=-.32;
+
+    upper.castShadow=true;
+
+    pivot.add(upper);
+
+    const lower =
+
+    new THREE.Mesh(
+
+        new THREE.CylinderGeometry(
+
+            .14,.16,.65,8
+
+        ),
+
+        pants
+
+    );
+
+    lower.position.y=-.95;
+
+    lower.castShadow=true;
+
+    pivot.add(lower);
+
+    const shoe =
+
+    new THREE.Mesh(
+
+        new THREE.BoxGeometry(
+
+            .30,.18,.48
+
+        ),
+
+        shoes
+
+    );
+
+    shoe.position.set(
+
+        0,
+
+        -1.33,
+
+        -.09
+
+    );
+
+    shoe.castShadow=true;
+
+    pivot.add(shoe);
+
+    player.add(pivot);
+
+    return pivot;
+
+}
+
+const armL = makeArm(-1);
+
+const armR = makeArm(1);
+
+const legL = makeLeg(-1);
+
+const legR = makeLeg(1);
+
+player.visible=false;
+
+scene.add(player);
+
+/* =====================================================
+
+   MISSION
+
+===================================================== */
+
+const checkpoint =
+
+new THREE.Group();
+
+const checkpointRing =
+
+new THREE.Mesh(
+
+    new THREE.TorusGeometry(
+
+        4,
+
+        .45,
+
+        12,
+
+        36
+
+    ),
+
+    new THREE.MeshStandardMaterial({
+
+        color:0xffd62d,
+
+        emissive:0xb87900,
+
+        emissiveIntensity:1.8
+
+    })
+
+);
+
+checkpointRing.rotation.x=Math.PI/2;
+
+checkpointRing.position.y=1.5;
+
+const checkpointBeam =
+
+new THREE.Mesh(
+
+    new THREE.CylinderGeometry(
+
+        3.7,3.7,12,26,1,true
 
     ),
 
     new THREE.MeshBasicMaterial({
 
-        color:0xffdf45,
+        color:0xffdd3c,
 
         transparent:true,
 
@@ -1758,13 +1956,13 @@ new THREE.Mesh(
 
 );
 
-beam.position.y=5.5;
+checkpointBeam.position.y=6;
 
 checkpoint.add(
 
-    ring,
+    checkpointRing,
 
-    beam
+    checkpointBeam
 
 );
 
@@ -1780,29 +1978,25 @@ checkpoint.position.set(
 
 scene.add(checkpoint);
 
-/* =========================================================
+/* =====================================================
 
-   GAME STATE
+   STATE
 
-========================================================= */
+===================================================== */
 
 let mode="vehicle";
 
-let heading=0;
-
 let speed=0;
 
-/*
-
-Velocity angle gives the car
-
-a slight sideways slide.
-
-*/
+let heading=0;
 
 let velocityHeading=0;
 
+let steering=0;
+
 let playerHeading=0;
+
+let walkClock=0;
 
 const controls={
 
@@ -1814,31 +2008,39 @@ const controls={
 
     brake:false,
 
+    reverse:false,
+
     handbrake:false,
 
     run:false
 
 };
 
-const MAX_ROAD_SPEED=42;
+/*
 
-const MAX_GRASS_SPEED=19;
+Tuned for smoother mobile driving.
 
-const MAX_REVERSE=11;
+*/
 
-const ROAD_ACCEL=16;
+const MAX_SPEED=35;
 
-const GRASS_ACCEL=8;
+const MAX_REVERSE=9;
 
-const BRAKE_FORCE=30;
+const ACCELERATION=9.8;
 
-const REVERSE_ACCEL=10;
+const BRAKE_POWER=21;
 
-/* =========================================================
+const REVERSE_ACCEL=7.5;
 
-   HTML ELEMENTS
+const ROAD_DRAG=2.4;
 
-========================================================= */
+const GRASS_DRAG=7.2;
+
+/* =====================================================
+
+   UI
+
+===================================================== */
 
 const speedText =
 
@@ -1848,69 +2050,45 @@ const statusText =
 
 document.getElementById("status");
 
-const missionText =
-
-document.getElementById("mission");
-
 const surfaceText =
 
 document.getElementById("surface");
 
+const missionText =
+
+document.getElementById("mission");
+
 const vehicleControls =
 
-document.getElementById(
-
-    "vehicleControls"
-
-);
-
-const runButton =
-
-document.getElementById(
-
-    "run"
-
-);
+document.getElementById("vehicleControls");
 
 const actionButton =
 
-document.getElementById(
+document.getElementById("action");
 
-    "action"
+const runButton =
 
-);
+document.getElementById("run");
 
-/* =========================================================
+/* =====================================================
 
    JOYSTICK
 
-========================================================= */
+===================================================== */
 
 const stickArea =
 
-document.getElementById(
-
-    "stickArea"
-
-);
+document.getElementById("stickArea");
 
 const stick =
 
-document.getElementById(
+document.getElementById("stick");
 
-    "stick"
-
-);
-
-const STICK_RADIUS=44;
+const STICK_RADIUS=45;
 
 let stickPointer=null;
 
-function moveStick(
-
-    x,y
-
-){
+function updateStick(clientX,clientY){
 
     const rect =
 
@@ -1918,53 +2096,45 @@ function moveStick(
 
     const cx =
 
-    rect.left +
+    rect.left+
 
     rect.width/2;
 
     const cy =
 
-    rect.top +
+    rect.top+
 
     rect.height/2;
 
-    let dx=x-cx;
+    let dx=clientX-cx;
 
-    let dy=y-cy;
+    let dy=clientY-cy;
 
-    const len =
+    const length=
 
-    Math.hypot(
+    Math.hypot(dx,dy);
 
-        dx,dy
+    if(length>STICK_RADIUS){
 
-    );
+        dx =
 
-    if(
-
-        len>STICK_RADIUS
-
-    ){
-
-        dx=
-
-        dx/len*
+        dx/length*
 
         STICK_RADIUS;
 
-        dy=
+        dy =
 
-        dy/len*
+        dy/length*
 
         STICK_RADIUS;
 
     }
 
-    controls.joyX=
+    controls.joyX =
 
     dx/STICK_RADIUS;
 
-    controls.joyY=
+    controls.joyY =
 
     dy/STICK_RADIUS;
 
@@ -1994,15 +2164,11 @@ stickArea.addEventListener(
 
         e.preventDefault();
 
-        if(
+        if(stickPointer!==null)
 
-            stickPointer!==null
+            return;
 
-        ) return;
-
-        stickPointer=
-
-        e.pointerId;
+        stickPointer=e.pointerId;
 
         stickArea.setPointerCapture(
 
@@ -2010,7 +2176,7 @@ stickArea.addEventListener(
 
         );
 
-        moveStick(
+        updateStick(
 
             e.clientX,
 
@@ -2038,7 +2204,7 @@ stickArea.addEventListener(
 
         e.preventDefault();
 
-        moveStick(
+        updateStick(
 
             e.clientX,
 
@@ -2050,7 +2216,7 @@ stickArea.addEventListener(
 
 );
 
-function stickEnd(e){
+function joystickEnd(e){
 
     if(
 
@@ -2070,7 +2236,7 @@ stickArea.addEventListener(
 
     "pointerup",
 
-    stickEnd
+    joystickEnd
 
 );
 
@@ -2078,29 +2244,29 @@ stickArea.addEventListener(
 
     "pointercancel",
 
-    stickEnd
+    joystickEnd
 
 );
 
-/* =========================================================
+/* =====================================================
 
    HOLD BUTTONS
 
-========================================================= */
+===================================================== */
 
-function holdButton(
+function setupHoldButton(
 
     id,
 
-    control
+    controlName
 
 ){
 
-    const b=
+    const button =
 
     document.getElementById(id);
 
-    b.addEventListener(
+    button.addEventListener(
 
         "pointerdown",
 
@@ -2108,29 +2274,31 @@ function holdButton(
 
             e.preventDefault();
 
-            b.setPointerCapture(
+            controls[controlName]=true;
 
-                e.pointerId
+            try{
 
-            );
+                button.setPointerCapture(
 
-            controls[control]=true;
+                    e.pointerId
+
+                );
+
+            }catch{}
 
         }
 
     );
 
-    const release=
-
-    e=>{
+    function release(e){
 
         e.preventDefault();
 
-        controls[control]=false;
+        controls[controlName]=false;
 
-    };
+    }
 
-    b.addEventListener(
+    button.addEventListener(
 
         "pointerup",
 
@@ -2138,7 +2306,7 @@ function holdButton(
 
     );
 
-    b.addEventListener(
+    button.addEventListener(
 
         "pointercancel",
 
@@ -2146,9 +2314,23 @@ function holdButton(
 
     );
 
+    button.addEventListener(
+
+        "pointerleave",
+
+        e=>{
+
+            if(e.buttons===0)
+
+                controls[controlName]=false;
+
+        }
+
+    );
+
 }
 
-holdButton(
+setupHoldButton(
 
     "gas",
 
@@ -2156,7 +2338,7 @@ holdButton(
 
 );
 
-holdButton(
+setupHoldButton(
 
     "brake",
 
@@ -2164,7 +2346,15 @@ holdButton(
 
 );
 
-holdButton(
+setupHoldButton(
+
+    "reverse",
+
+    "reverse"
+
+);
+
+setupHoldButton(
 
     "handbrake",
 
@@ -2172,7 +2362,7 @@ holdButton(
 
 );
 
-holdButton(
+setupHoldButton(
 
     "run",
 
@@ -2180,57 +2370,51 @@ holdButton(
 
 );
 
-/* =========================================================
+/* =====================================================
 
    COLLISION
 
-========================================================= */
+===================================================== */
 
-function collidesWithBuilding(
+function hitsBuilding(
 
-    pos,
+    position,
 
     radius
 
 ){
 
-    const test =
+    const playerBox =
 
     new THREE.Box3(
 
         new THREE.Vector3(
 
-            pos.x-radius,
+            position.x-radius,
 
-            .05,
+            .02,
 
-            pos.z-radius
+            position.z-radius
 
         ),
 
         new THREE.Vector3(
 
-            pos.x+radius,
+            position.x+radius,
 
             3,
 
-            pos.z+radius
+            position.z+radius
 
         )
 
     );
 
-    for(
-
-        const box of
-
-        buildingBoxes
-
-    ){
+    for(const box of buildingBoxes){
 
         if(
 
-            test.intersectsBox(
+            playerBox.intersectsBox(
 
                 box
 
@@ -2248,69 +2432,45 @@ function collidesWithBuilding(
 
 }
 
-/* =========================================================
+/* =====================================================
 
-   VEHICLE PHYSICS V2
+   CAR PHYSICS V3
 
-========================================================= */
+===================================================== */
 
 function updateVehicle(dt){
 
-    const onRoad=
+    const onRoad =
 
-    isOnRoad(
+    isOnRoad(car.position);
 
-        car.position
-
-    );
-
-    surfaceText.textContent=
+    surfaceText.textContent =
 
     onRoad
 
     ? "ROAD"
 
-    : "GRASS";
-
-    const maxSpeed=
-
-    onRoad
-
-    ? MAX_ROAD_SPEED
-
-    : MAX_GRASS_SPEED;
-
-    const accel=
-
-    onRoad
-
-    ? ROAD_ACCEL
-
-    : GRASS_ACCEL;
+    : "OFF ROAD";
 
     /*
 
-    ACCELERATION
+    THROTTLE
 
     */
 
-    if(
-
-        controls.gas
-
-    ){
+    if(controls.gas){
 
         if(speed<0){
 
             speed +=
 
-            BRAKE_FORCE*dt;
+            BRAKE_POWER*dt;
 
         }else{
 
             speed +=
 
-            accel*dt;
+            ACCELERATION*dt;
 
         }
 
@@ -2318,21 +2478,53 @@ function updateVehicle(dt){
 
     /*
 
-    BRAKE AND REVERSE
+    BRAKE ONLY BRAKES.
+
+    It does NOT reverse anymore.
 
     */
 
-    if(
+    if(controls.brake){
 
-        controls.brake
-
-    ){
-
-        if(speed>.6){
+        if(speed>0){
 
             speed -=
 
-            BRAKE_FORCE*dt;
+            BRAKE_POWER*dt;
+
+            if(speed<0)
+
+                speed=0;
+
+        }
+
+        else if(speed<0){
+
+            speed +=
+
+            BRAKE_POWER*dt;
+
+            if(speed>0)
+
+                speed=0;
+
+        }
+
+    }
+
+    /*
+
+    SEPARATE REVERSE
+
+    */
+
+    if(controls.reverse){
+
+        if(speed>0){
+
+            speed -=
+
+            BRAKE_POWER*dt;
 
         }else{
 
@@ -2346,7 +2538,7 @@ function updateVehicle(dt){
 
     /*
 
-    NATURAL DRAG
+    DRAG
 
     */
 
@@ -2354,23 +2546,21 @@ function updateVehicle(dt){
 
         !controls.gas &&
 
-        !controls.brake
+        !controls.reverse
 
     ){
 
-        const drag=
+        const drag =
 
         onRoad
 
-        ? 3.3
+        ? ROAD_DRAG
 
-        : 8;
+        : GRASS_DRAG;
 
         if(speed>0){
 
-            speed -=
-
-            drag*dt;
+            speed -= drag*dt;
 
             if(speed<0)
 
@@ -2380,9 +2570,7 @@ function updateVehicle(dt){
 
         else if(speed<0){
 
-            speed +=
-
-            drag*dt;
+            speed += drag*dt;
 
             if(speed>0)
 
@@ -2394,51 +2582,17 @@ function updateVehicle(dt){
 
     /*
 
-    GRASS SPEED LOSS
+    OFFROAD LIMIT
 
     */
 
-    if(
+    const maxForward =
 
-        !onRoad
+    onRoad
 
-    ){
+    ? MAX_SPEED
 
-        speed *=
-
-        Math.pow(
-
-            .72,
-
-            dt
-
-        );
-
-    }
-
-    /*
-
-    HANDBRAKE
-
-    */
-
-    if(
-
-        controls.handbrake
-
-    ){
-
-        speed *=
-
-        Math.pow(
-
-            .31,
-
-            dt
-
-        );
-
-    }
+    : 16;
 
     speed =
 
@@ -2448,21 +2602,31 @@ function updateVehicle(dt){
 
         -MAX_REVERSE,
 
-        maxSpeed
+        maxForward
 
     );
 
-    const absSpeed=
+    /*
 
-    Math.abs(speed);
+    HANDBRAKE
 
-    const speedRatio=
+    */
+
+    if(controls.handbrake){
+
+        speed *=
+
+        Math.pow(.56,dt);
+
+    }
+
+    const speedRatio =
 
     Math.min(
 
-        absSpeed/
+        Math.abs(speed)/
 
-        MAX_ROAD_SPEED,
+        MAX_SPEED,
 
         1
 
@@ -2470,61 +2634,101 @@ function updateVehicle(dt){
 
     /*
 
-    STEERING
+    SMOOTH ANALOG STEERING.
 
-    Very responsive at lower
+    Instead of instantly using joystick X,
 
-    speed, calmer at high speed.
+    steering gradually approaches joystick X.
 
     */
 
-    let steerStrength=
+    const steeringResponse =
+
+    controls.handbrake
+
+    ? 8
+
+    : 5.2;
+
+    steering =
 
     THREE.MathUtils.lerp(
 
-        2.0,
+        steering,
 
-        .72,
+        controls.joyX,
 
-        speedRatio
+        Math.min(
+
+            1,
+
+            steeringResponse*dt
+
+        )
 
     );
 
     /*
 
-    less grip on grass
-
-    */
-
-    if(!onRoad)
-
-        steerStrength*=.74;
-
-    /*
-
-    more rotation during
-
-    handbrake turn
+    Automatically return steering toward center.
 
     */
 
     if(
 
-        controls.handbrake
+        Math.abs(controls.joyX)<.04
 
     ){
 
-        steerStrength*=1.85;
+        steering =
+
+        THREE.MathUtils.lerp(
+
+            steering,
+
+            0,
+
+            Math.min(
+
+                1,
+
+                7*dt
+
+            )
+
+        );
 
     }
 
-    if(
+    /*
 
-        absSpeed>.2
+    High-speed steering becomes softer.
 
-    ){
+    */
 
-        const reverse=
+    let steeringRate =
+
+    THREE.MathUtils.lerp(
+
+        1.65,
+
+        .53,
+
+        speedRatio
+
+    );
+
+    if(!onRoad)
+
+        steeringRate*=.68;
+
+    if(controls.handbrake)
+
+        steeringRate*=1.6;
+
+    if(Math.abs(speed)>.25){
+
+        const movementDirection =
 
         speed>=0
 
@@ -2534,11 +2738,11 @@ function updateVehicle(dt){
 
         heading -=
 
-        controls.joyX *
+        steering*
 
-        steerStrength *
+        steeringRate*
 
-        reverse *
+        movementDirection*
 
         dt;
 
@@ -2546,91 +2750,69 @@ function updateVehicle(dt){
 
     /*
 
-    STEERING WHEEL VISUAL
+    FRONT WHEELS
 
     */
 
-    const wheelTurn=
+    const frontAngle =
 
-    controls.joyX*.48;
+    steering*.46;
 
-    fl.rotation.y=
+    wheelFL.rotation.y =
 
-    wheelTurn;
+    frontAngle;
 
-    fr.rotation.y=
+    wheelFR.rotation.y =
 
-    wheelTurn;
+    frontAngle;
 
     /*
 
-    TRACTION / SLIDE
+    TRACTION
 
-    velocityHeading follows the
+    Normal driving sticks to heading.
 
-    car heading more slowly when
-
-    handbraking or on grass.
+    Handbrake allows sideways slide.
 
     */
 
-    let traction=
+    let traction =
 
     onRoad
 
-    ? 8
+    ? 7.5
 
-    : 3.3;
+    : 3.2;
 
     if(
 
         controls.handbrake &&
 
-        absSpeed>5
+        Math.abs(speed)>5
 
     ){
 
-        traction=.75;
+        traction=1.05;
 
     }
 
-    let angleDifference=
+    let angleDiff =
 
     heading-
 
     velocityHeading;
 
-    while(
+    while(angleDiff>Math.PI)
 
-        angleDifference>
+        angleDiff-=Math.PI*2;
 
-        Math.PI
+    while(angleDiff<-Math.PI)
 
-    ){
-
-        angleDifference-=
-
-        Math.PI*2;
-
-    }
-
-    while(
-
-        angleDifference<
-
-        -Math.PI
-
-    ){
-
-        angleDifference+=
-
-        Math.PI*2;
-
-    }
+        angleDiff+=Math.PI*2;
 
     velocityHeading +=
 
-    angleDifference *
+    angleDiff*
 
     Math.min(
 
@@ -2640,21 +2822,37 @@ function updateVehicle(dt){
 
     );
 
-    const movementHeading=
+    if(Math.abs(speed)<1){
 
-    absSpeed<1
+        velocityHeading =
+
+        THREE.MathUtils.lerp(
+
+            velocityHeading,
+
+            heading,
+
+            Math.min(1,10*dt)
+
+        );
+
+    }
+
+    const movementAngle =
+
+    Math.abs(speed)<.7
 
     ? heading
 
     : velocityHeading;
 
-    const dir =
+    const forward =
 
     new THREE.Vector3(
 
         -Math.sin(
 
-            movementHeading
+            movementAngle
 
         ),
 
@@ -2662,25 +2860,27 @@ function updateVehicle(dt){
 
         -Math.cos(
 
-            movementHeading
+            movementAngle
 
         )
 
     );
 
-    const oldPos=
+    const oldPosition =
 
     car.position.clone();
 
-    car.position.addScaledVector(
+    car.position
 
-        dir,
+    .addScaledVector(
+
+        forward,
 
         speed*dt
 
     );
 
-    car.position.x=
+    car.position.x =
 
     THREE.MathUtils.clamp(
 
@@ -2692,7 +2892,7 @@ function updateVehicle(dt){
 
     );
 
-    car.position.z=
+    car.position.z =
 
     THREE.MathUtils.clamp(
 
@@ -2708,19 +2908,15 @@ function updateVehicle(dt){
 
     BUILDING COLLISION
 
-    revert position and kill
-
-    most momentum.
-
     */
 
     if(
 
-        collidesWithBuilding(
+        hitsBuilding(
 
             car.position,
 
-            1.45
+            1.4
 
         )
 
@@ -2728,65 +2924,61 @@ function updateVehicle(dt){
 
         car.position.copy(
 
-            oldPos
+            oldPosition
 
         );
 
-        speed *= -.08;
+        speed *= -.06;
 
-        velocityHeading=
-
-        heading;
+        velocityHeading=heading;
 
     }
 
-    car.rotation.y=
-
-    heading;
+    car.rotation.y=heading;
 
     /*
 
-    BODY ROLL
+    BODY LEAN
 
     */
 
-    const targetRoll=
+    const desiredRoll =
 
-    -controls.joyX *
+    -steering*
 
-    speedRatio *
+    speedRatio*
 
-    .07;
+    .055;
 
-    car.rotation.z=
+    car.rotation.z =
 
     THREE.MathUtils.lerp(
 
         car.rotation.z,
 
-        targetRoll,
+        desiredRoll,
 
-        .1
+        .07
 
     );
 
     /*
 
-    BRAKE / ACCEL PITCH
+    ACCEL/BRAKE PITCH
 
     */
 
-    let targetPitch=0;
+    let desiredPitch=0;
 
     if(
 
         controls.brake &&
 
-        speed>2
+        speed>1
 
     ){
 
-        targetPitch=-.04;
+        desiredPitch=-.03;
 
     }
 
@@ -2794,51 +2986,41 @@ function updateVehicle(dt){
 
         controls.gas &&
 
-        speed>0
+        speed>1
 
     ){
 
-        targetPitch=.025;
+        desiredPitch=.018;
 
     }
 
-    car.rotation.x=
+    car.rotation.x =
 
     THREE.MathUtils.lerp(
 
         car.rotation.x,
 
-        targetPitch,
+        desiredPitch,
 
-        .08
+        .07
 
     );
 
-    /*
-
-    Slight suspension bounce
-
-    */
-
-    car.position.y=
+    car.position.y =
 
     .02+
 
     Math.sin(
 
-        performance.now()*.012
+        performance.now()*.01
 
-    ) *
+    )*
 
-    Math.min(
+    speedRatio*
 
-        speedRatio*.025,
+    .012;
 
-        .025
-
-    );
-
-    speedText.textContent=
+    speedText.textContent =
 
     Math.round(
 
@@ -2852,107 +3034,97 @@ function updateVehicle(dt){
 
 }
 
-/* =========================================================
+/* =====================================================
 
-   PLAYER WALKING
+   HUMAN WALKING
 
-========================================================= */
+===================================================== */
 
 function updatePlayer(dt){
 
-    const x=
+    const x=controls.joyX;
 
-    controls.joyX;
+    const y=controls.joyY;
 
-    const y=
-
-    controls.joyY;
-
-    const amount=
+    const amount =
 
     Math.min(
 
         1,
 
-        Math.hypot(
-
-            x,y
-
-        )
+        Math.hypot(x,y)
 
     );
 
-    if(
+    if(amount>.08){
 
-        amount>.08
-
-    ){
-
-        const forward=
+        const cameraForward =
 
         new THREE.Vector3();
 
         camera.getWorldDirection(
 
-            forward
+            cameraForward
 
         );
 
-        forward.y=0;
+        cameraForward.y=0;
 
-        forward.normalize();
+        cameraForward.normalize();
 
-        const right=
+        const cameraRight =
 
         new THREE.Vector3(
 
-            -forward.z,
+            -cameraForward.z,
 
             0,
 
-            forward.x
+            cameraForward.x
 
         );
 
-        const move=
+        const movement =
 
         new THREE.Vector3();
 
-        move.addScaledVector(
+        movement.addScaledVector(
 
-            right,
+            cameraRight,
 
             x
 
         );
 
-        move.addScaledVector(
+        movement.addScaledVector(
 
-            forward,
+            cameraForward,
 
             -y
 
         );
 
-        move.normalize();
+        movement.normalize();
 
-        const walkSpeed=
+        const movementSpeed =
 
         controls.run
 
-        ? 7.0
+        ? 6.3
 
-        : 3.7;
+        : 3.2;
 
-        const oldPos=
+        const oldPosition =
 
         player.position.clone();
 
-        player.position.addScaledVector(
+        player.position
 
-            move,
+        .addScaledVector(
 
-            walkSpeed*
+            movement,
+
+            movementSpeed*
 
             amount*
 
@@ -2962,11 +3134,11 @@ function updatePlayer(dt){
 
         if(
 
-            collidesWithBuilding(
+            hitsBuilding(
 
                 player.position,
 
-                .5
+                .42
 
             )
 
@@ -2974,27 +3146,85 @@ function updatePlayer(dt){
 
             player.position.copy(
 
-                oldPos
+                oldPosition
 
             );
 
         }
 
-        playerHeading=
+        playerHeading =
 
         Math.atan2(
 
-            move.x,
+            movement.x,
 
-            move.z
+            movement.z
 
         );
 
-        player.rotation.y=
+        player.rotation.y =
 
         playerHeading;
 
-        speedText.textContent=
+        /*
+
+        Walking animation.
+
+        */
+
+        walkClock +=
+
+        dt*
+
+        (
+
+            controls.run
+
+            ? 11
+
+            : 7
+
+        );
+
+        const swing =
+
+        Math.sin(walkClock)*
+
+        (
+
+            controls.run
+
+            ? .72
+
+            : .48
+
+        );
+
+        legL.rotation.x=swing;
+
+        legR.rotation.x=-swing;
+
+        armL.rotation.x=-swing*.72;
+
+        armR.rotation.x=swing*.72;
+
+        /*
+
+        small up/down movement
+
+        */
+
+        torso.position.y =
+
+        1.72+
+
+        Math.abs(
+
+            Math.sin(walkClock)
+
+        )*.025;
+
+        speedText.textContent =
 
         controls.run
 
@@ -3006,55 +3236,119 @@ function updatePlayer(dt){
 
     else{
 
-        speedText.textContent=
+        /*
+
+        return body to neutral
+
+        */
+
+        legL.rotation.x =
+
+        THREE.MathUtils.lerp(
+
+            legL.rotation.x,
+
+            0,
+
+            .18
+
+        );
+
+        legR.rotation.x =
+
+        THREE.MathUtils.lerp(
+
+            legR.rotation.x,
+
+            0,
+
+            .18
+
+        );
+
+        armL.rotation.x =
+
+        THREE.MathUtils.lerp(
+
+            armL.rotation.x,
+
+            0,
+
+            .18
+
+        );
+
+        armR.rotation.x =
+
+        THREE.MathUtils.lerp(
+
+            armR.rotation.x,
+
+            0,
+
+            .18
+
+        );
+
+        torso.position.y =
+
+        THREE.MathUtils.lerp(
+
+            torso.position.y,
+
+            1.72,
+
+            .2
+
+        );
+
+        speedText.textContent =
 
         "ON FOOT";
 
     }
 
-    updateEnterButton();
+    updateEnterCarButton();
 
 }
 
-/* =========================================================
+/* =====================================================
 
-   ENTER / EXIT
+   EXIT / ENTER
 
-========================================================= */
+===================================================== */
 
-function exitVehicle(){
+function exitCar(){
 
-    if(
+    if(mode!=="vehicle")
 
-        mode!=="vehicle"
+        return;
 
-    ) return;
+    /*
 
-    if(
+    If moving a little, pressing EXIT
 
-        Math.abs(speed)>2.2
+    stops the car first instead of making
 
-    ){
+    the button appear broken.
 
-        actionButton.textContent=
+    */
 
-        "SLOW DOWN";
+    if(Math.abs(speed)>4){
+
+        actionButton.textContent =
+
+        "STOP CAR";
+
+        speed *= .35;
 
         setTimeout(()=>{
 
-            if(
+            if(mode==="vehicle")
 
-                mode==="vehicle"
+                actionButton.textContent="EXIT";
 
-            ){
-
-                actionButton.textContent=
-
-                "EXIT";
-
-            }
-
-        },700);
+        },500);
 
         return;
 
@@ -3062,11 +3356,19 @@ function exitVehicle(){
 
     speed=0;
 
+    steering=0;
+
     velocityHeading=heading;
 
     mode="walking";
 
-    const leftSide=
+    /*
+
+    Driver-side spawn position.
+
+    */
+
+    const left =
 
     new THREE.Vector3(
 
@@ -3086,11 +3388,47 @@ function exitVehicle(){
 
     player.position.addScaledVector(
 
-        leftSide,
+        left,
 
-        2.2
+        2.25
 
     );
+
+    /*
+
+    If that side is blocked,
+
+    try the opposite side.
+
+    */
+
+    if(
+
+        hitsBuilding(
+
+            player.position,
+
+            .45
+
+        )
+
+    ){
+
+        player.position.copy(
+
+            car.position
+
+        );
+
+        player.position.addScaledVector(
+
+            left,
+
+            -2.25
+
+        );
+
+    }
 
     player.position.y=0;
 
@@ -3108,10 +3446,6 @@ function exitVehicle(){
 
     "block";
 
-    actionButton.style.display=
-
-    "none";
-
     statusText.textContent=
 
     "ON FOOT";
@@ -3120,31 +3454,35 @@ function exitVehicle(){
 
     "";
 
+    actionButton.style.display=
+
+    "block";
+
+    actionButton.textContent=
+
+    "ENTER CAR";
+
     resetStick();
 
 }
 
-function enterVehicle(){
+function enterCar(){
 
-    if(
-
-        mode!=="walking"
-
-    ) return;
-
-    if(
-
-        player.position.distanceTo(
-
-            car.position
-
-        )>4.5
-
-    ){
+    if(mode!=="walking")
 
         return;
 
-    }
+    const distance =
+
+    player.position.distanceTo(
+
+        car.position
+
+    );
+
+    if(distance>4.7)
+
+        return;
 
     mode="vehicle";
 
@@ -3154,9 +3492,7 @@ function enterVehicle(){
 
     car.rotation.y;
 
-    velocityHeading=
-
-    heading;
+    velocityHeading=heading;
 
     vehicleControls.style.display=
 
@@ -3182,15 +3518,13 @@ function enterVehicle(){
 
 }
 
-function updateEnterButton(){
+function updateEnterCarButton(){
 
-    if(
+    if(mode!=="walking")
 
-        mode!=="walking"
+        return;
 
-    ) return;
-
-    const distance=
+    const distance =
 
     player.position.distanceTo(
 
@@ -3198,11 +3532,7 @@ function updateEnterButton(){
 
     );
 
-    if(
-
-        distance<=4.5
-
-    ){
+    if(distance<=4.7){
 
         actionButton.style.display=
 
@@ -3224,67 +3554,63 @@ function updateEnterButton(){
 
 }
 
+/*
+
+Use pointerup rather than the previous
+
+pointerdown implementation.
+
+This is more reliable for the iPhone
+
+action button.
+
+*/
+
 actionButton.addEventListener(
 
-    "pointerdown",
+    "pointerup",
 
     e=>{
 
         e.preventDefault();
 
-        if(
+        if(mode==="vehicle")
 
-            mode==="vehicle"
+            exitCar();
 
-        ){
+        else
 
-            exitVehicle();
-
-        }
-
-        else{
-
-            enterVehicle();
-
-        }
+            enterCar();
 
     }
 
 );
 
-/* =========================================================
+/* =====================================================
 
-   IMPROVED CAMERA
+   CAMERA
 
-========================================================= */
+===================================================== */
 
-const desiredCamera=
-
-new THREE.Vector3();
-
-const cameraLook=
+const desiredCamera =
 
 new THREE.Vector3();
 
-const cameraForward=
+const lookAtPoint =
 
 new THREE.Vector3();
 
 function updateCamera(dt){
 
-    if(
+    if(mode==="vehicle"){
 
-        mode==="vehicle"
-
-    ){
-
-        const speedRatio=
+        const speedRatio =
 
         Math.min(
 
             Math.abs(speed)/
 
-            MAX_ROAD_SPEED,
+            MAX_SPEED,
 
             1
 
@@ -3292,45 +3618,37 @@ function updateCamera(dt){
 
         /*
 
-        Camera gets farther away
+        GTA-style chase distance
 
-        as speed increases.
+        changes gently with speed.
 
         */
 
-        const distance=
+        const distance =
 
         THREE.MathUtils.lerp(
 
-            8.6,
+            8.7,
 
-            11.5,
+            11,
 
             speedRatio
 
         );
 
-        const height=
+        const height =
 
         THREE.MathUtils.lerp(
 
-            4.4,
+            4.5,
 
-            5.8,
+            5.4,
 
             speedRatio
 
         );
 
-        /*
-
-        camera remains behind
-
-        actual car heading
-
-        */
-
-        const back=
+        const behind =
 
         new THREE.Vector3(
 
@@ -3348,31 +3666,31 @@ function updateCamera(dt){
 
         );
 
-        desiredCamera.addScaledVector(
+        desiredCamera
 
-            back,
+        .addScaledVector(
+
+            behind,
 
             distance
 
         );
 
-        desiredCamera.y+=height;
+        desiredCamera.y += height;
 
         /*
 
-        Smooth positional camera
+        Lower follow strength = smoother camera.
 
         */
 
-        const follow=
+        const followStrength =
 
         1-
 
-        Math.pow(
+        Math.exp(
 
-            .0025,
-
-            dt
+            -4.5*dt
 
         );
 
@@ -3380,23 +3698,11 @@ function updateCamera(dt){
 
             desiredCamera,
 
-            follow
+            followStrength
 
         );
 
-        cameraLook.copy(
-
-            car.position
-
-        );
-
-        /*
-
-        look slightly ahead
-
-        */
-
-        const forward=
+        const ahead =
 
         new THREE.Vector3(
 
@@ -3408,47 +3714,45 @@ function updateCamera(dt){
 
         );
 
-        cameraLook.addScaledVector(
+        lookAtPoint.copy(
 
-            forward,
-
-            3+
-
-            speedRatio*4
+            car.position
 
         );
 
-        cameraLook.y=
+        lookAtPoint.addScaledVector(
 
-        1.25;
+            ahead,
+
+            2.4+
+
+            speedRatio*3
+
+        );
+
+        lookAtPoint.y=1.1;
 
         camera.lookAt(
 
-            cameraLook
+            lookAtPoint
 
         );
 
-        /*
+        const desiredFov =
 
-        Speed FOV effect
+        65+
 
-        */
+        speedRatio*5;
 
-        const targetFov=
-
-        66+
-
-        speedRatio*7;
-
-        camera.fov=
+        camera.fov =
 
         THREE.MathUtils.lerp(
 
             camera.fov,
 
-            targetFov,
+            desiredFov,
 
-            .06
+            .035
 
         );
 
@@ -3458,7 +3762,7 @@ function updateCamera(dt){
 
     else{
 
-        const back=
+        const behind =
 
         new THREE.Vector3(
 
@@ -3484,15 +3788,17 @@ function updateCamera(dt){
 
         );
 
-        desiredCamera.addScaledVector(
+        desiredCamera
 
-            back,
+        .addScaledVector(
 
-            5.3
+            behind,
+
+            5.4
 
         );
 
-        desiredCamera.y+=3.5;
+        desiredCamera.y += 3.3;
 
         camera.position.lerp(
 
@@ -3500,39 +3806,37 @@ function updateCamera(dt){
 
             1-
 
-            Math.pow(
+            Math.exp(
 
-                .004,
-
-                dt
+                -5*dt
 
             )
 
         );
 
-        cameraLook.copy(
+        lookAtPoint.copy(
 
             player.position
 
         );
 
-        cameraLook.y=1.3;
+        lookAtPoint.y=1.45;
 
         camera.lookAt(
 
-            cameraLook
+            lookAtPoint
 
         );
 
-        camera.fov=
+        camera.fov =
 
         THREE.MathUtils.lerp(
 
             camera.fov,
 
-            66,
+            65,
 
-            .08
+            .05
 
         );
 
@@ -3542,13 +3846,11 @@ function updateCamera(dt){
 
 }
 
-/* =========================================================
+/* =====================================================
 
-   MISSION
+   MISSIONS
 
-========================================================= */
-
-let missionNumber=1;
+===================================================== */
 
 const missionPoints=[
 
@@ -3578,11 +3880,15 @@ const missionPoints=[
 
 ];
 
+let missionNumber=1;
+
+let missionCooldown=false;
+
 function updateMission(time){
 
-    ring.rotation.z+=.012;
+    checkpointRing.rotation.z += .01;
 
-    ring.position.y=
+    checkpointRing.position.y =
 
     1.5+
 
@@ -3590,9 +3896,9 @@ function updateMission(time){
 
         time*.003
 
-    )*.3;
+    )*.28;
 
-    const pos=
+    const position =
 
     mode==="vehicle"
 
@@ -3600,63 +3906,77 @@ function updateMission(time){
 
     : player.position;
 
-    const dist=
+    const distance =
 
-    pos.distanceTo(
+    position.distanceTo(
 
         checkpoint.position
 
     );
 
-    missionText.textContent=
-
-    "MISSION "+
-
-    missionNumber+
-
-    ": Reach checkpoint — "+
-
-    Math.round(dist)+
-
-    " m";
-
-    if(
-
-        dist<7
-
-    ){
+    if(!missionCooldown){
 
         missionText.textContent=
 
-        "MISSION COMPLETE! +$500";
+        "MISSION "+
 
-        missionNumber++;
+        missionNumber+
 
-        const next=
+        ": Reach checkpoint — "+
 
-        missionPoints[
+        Math.round(distance)+
 
-            (missionNumber-1)%
+        " m";
 
-            missionPoints.length
+    }
 
-        ];
+    if(
 
-        checkpoint.position.copy(
+        distance<7 &&
 
-            next
+        !missionCooldown
 
-        );
+    ){
+
+        missionCooldown=true;
+
+        missionText.textContent=
+
+        "MISSION COMPLETE — $500";
+
+        setTimeout(()=>{
+
+            missionNumber++;
+
+            const next =
+
+            missionPoints[
+
+                (missionNumber-1)%
+
+                missionPoints.length
+
+            ];
+
+            checkpoint.position.copy(
+
+                next
+
+            );
+
+            missionCooldown=false;
+
+        },1600);
 
     }
 
 }
 
-/* =========================================================
+/* =====================================================
 
-   INITIAL CAMERA
+   START CAMERA
 
-========================================================= */
+===================================================== */
 
 camera.position.set(
 
@@ -3674,13 +3994,13 @@ camera.lookAt(
 
 );
 
-/* =========================================================
+/* =====================================================
 
-   MAIN LOOP
+   LOOP
 
-========================================================= */
+===================================================== */
 
-const clock=
+const clock =
 
 new THREE.Clock();
 
@@ -3692,11 +4012,11 @@ function animate(time){
 
     );
 
-    let dt=
+    let dt =
 
     clock.getDelta();
 
-    dt=
+    dt =
 
     Math.min(
 
@@ -3706,21 +4026,13 @@ function animate(time){
 
     );
 
-    if(
-
-        mode==="vehicle"
-
-    ){
+    if(mode==="vehicle")
 
         updateVehicle(dt);
 
-    }
-
-    else{
+    else
 
         updatePlayer(dt);
-
-    }
 
     updateCamera(dt);
 
@@ -3742,11 +4054,11 @@ requestAnimationFrame(
 
 );
 
-/* =========================================================
+/* =====================================================
 
    RESIZE
 
-========================================================= */
+===================================================== */
 
 window.addEventListener(
 
@@ -3754,7 +4066,7 @@ window.addEventListener(
 
     ()=>{
 
-        camera.aspect=
+        camera.aspect =
 
         innerWidth/
 
