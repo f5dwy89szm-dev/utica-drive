@@ -4,111 +4,93 @@
 
 <head>
 
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
 
-  <meta
+  <meta name="viewport"
 
-    name="viewport"
-
-    content="width=device-width,
-
-    initial-scale=1,
-
-    maximum-scale=1,
-
-    user-scalable=no,
-
-    viewport-fit=cover"
-
-  >
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
   <title>Utica Drive</title>
 
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css" />
 
 </head>
 
 <body>
 
+  <div id="game"></div>
+
   <div id="loading">
 
-    LOADING UTICA...
+    <div class="loading-box">
+
+      <div class="title">UTICA DRIVE</div>
+
+      <div id="loadingText">Loading Utica, New York...</div>
+
+      <div class="loader"></div>
+
+    </div>
 
   </div>
 
   <div id="hud">
 
-    <div>
+    <div id="locationLabel">UTICA, NY</div>
 
-      <div id="cityName">UTICA, NEW YORK</div>
+    <div id="modeLabel">DRIVING</div>
 
-      <div id="mode">DRIVE</div>
+    <div id="speedLabel">0 MPH</div>
+
+  </div>
+
+  <!-- Walking joystick -->
+
+  <div id="joystickArea">
+
+    <div id="joystickBase">
+
+      <div id="joystickKnob"></div>
 
     </div>
 
-    <div id="speed">0 MPH</div>
+  </div>
+
+  <!-- Driving steering -->
+
+  <div id="steeringArea">
+
+    <button id="leftBtn" class="control round">◀</button>
+
+    <button id="rightBtn" class="control round">▶</button>
 
   </div>
 
-  <!-- EXIT / ENTER -->
+  <!-- Vehicle buttons -->
 
-  <button id="exitBtn" class="utilityButton">
+  <div id="pedals">
 
-    EXIT
+    <button id="gasBtn" class="control pedal gas">GAS</button>
 
-  </button>
+    <button id="brakeBtn" class="control pedal brake">BRAKE</button>
 
-  <!-- LEFT SIDE STEERING -->
-
-  <div id="steeringControls">
-
-    <button id="leftBtn" class="roundButton">
-
-      ◀
-
-    </button>
-
-    <button id="rightBtn" class="roundButton">
-
-      ▶
-
-    </button>
+    <button id="reverseBtn" class="control pedal reverse">REVERSE</button>
 
   </div>
 
-  <!-- RIGHT SIDE PEDALS -->
+  <!-- Interaction buttons -->
 
-  <div id="pedalControls">
+  <div id="actions">
 
-    <button id="gasBtn" class="roundButton pedal">
+    <button id="enterExitBtn" class="control action">EXIT</button>
 
-      ▲
-
-      <span>GAS</span>
-
-    </button>
-
-    <button id="brakeBtn" class="roundButton pedal">
-
-      ▼
-
-      <span>BRAKE</span>
-
-    </button>
-
-    <button id="reverseBtn">
-
-      REVERSE
-
-    </button>
+    <button id="runBtn" class="control action">RUN</button>
 
   </div>
 
-  <div id="notice"></div>
+  <div id="message"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-
-  <script src="./app.js"></script>
+  <script type="module" src="./app.js"></script>
 
 </body>
 
