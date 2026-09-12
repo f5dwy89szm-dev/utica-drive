@@ -4,8 +4,6 @@
 
   -webkit-tap-highlight-color: transparent;
 
-  user-select: none;
-
 }
 
 html,
@@ -14,23 +12,33 @@ body {
 
   margin: 0;
 
+  padding: 0;
+
   width: 100%;
 
   height: 100%;
 
   overflow: hidden;
 
-  background: #0b0c0e;
+  background: #000;
 
   font-family:
 
-    Arial,
+    -apple-system,
 
-    Helvetica,
+    BlinkMacSystemFont,
+
+    "Segoe UI",
+
+    Arial,
 
     sans-serif;
 
   touch-action: none;
+
+  user-select: none;
+
+  -webkit-user-select: none;
 
 }
 
@@ -40,147 +48,33 @@ body {
 
   inset: 0;
 
+  width: 100%;
+
+  height: 100%;
+
 }
 
 canvas {
 
-  width: 100%;
-
-  height: 100%;
-
   display: block;
 
-}
+  width: 100% !important;
 
-/* =========================
+  height: 100% !important;
 
-   LOADING
-
-   ========================= */
-
-#loading {
-
-  position: fixed;
-
-  inset: 0;
-
-  z-index: 1000;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  background:
-
-    radial-gradient(
-
-      circle at 50% 35%,
-
-      #3d4147,
-
-      #111317 70%
-
-    );
+  touch-action: none;
 
 }
 
-.loadingCard {
-
-  width: min(84vw, 420px);
-
-  text-align: center;
-
-  color: white;
-
-}
-
-.gameTitle {
-
-  font-size: 34px;
-
-  font-weight: 900;
-
-  letter-spacing: 4px;
-
-  text-shadow:
-
-    0 3px 14px rgba(0,0,0,.8);
-
-}
-
-#loadingText {
-
-  margin-top: 18px;
-
-  font-size: 14px;
-
-  opacity: .86;
-
-}
-
-.loadingTrack {
-
-  width: 100%;
-
-  height: 6px;
-
-  margin-top: 18px;
-
-  overflow: hidden;
-
-  border-radius: 999px;
-
-  background:
-
-    rgba(255,255,255,.14);
-
-}
-
-.loadingBar {
-
-  width: 34%;
-
-  height: 100%;
-
-  background: white;
-
-  animation:
-
-    loadingMove 1.3s infinite ease-in-out;
-
-}
-
-@keyframes loadingMove {
-
-  from {
-
-    transform: translateX(-110%);
-
-  }
-
-  to {
-
-    transform: translateX(310%);
-
-  }
-
-}
-
-/* =========================
-
-   HUD
-
-   ========================= */
+/* ---------------- HUD ---------------- */
 
 #hud {
 
   position: fixed;
 
-  left: 16px;
+  top: max(20px, env(safe-area-inset-top));
 
-  top: 16px;
+  left: 18px;
 
   z-index: 20;
 
@@ -188,297 +82,293 @@ canvas {
 
   text-shadow:
 
-    0 2px 6px black;
+    0 2px 4px black,
+
+    0 0 4px black;
 
   pointer-events: none;
 
 }
 
-.hudCity {
+#location {
 
-  font-size: 13px;
+  font-size: 21px;
 
-  font-weight: 900;
+  font-weight: 700;
 
   letter-spacing: 1px;
 
 }
 
-#modeLabel {
+#modeText {
 
-  margin-top: 5px;
+  margin-top: 6px;
 
-  font-size: 11px;
+  font-size: 14px;
 
-  font-weight: 800;
-
-  opacity: .82;
+  opacity: 0.9;
 
 }
 
-#speedLabel {
+#speedText {
 
-  margin-top: 4px;
+  margin-top: 3px;
 
-  font-size: 26px;
+  font-size: 18px;
 
-  font-weight: 900;
+  font-weight: 700;
 
 }
 
-/* =========================
+/* ---------------- BUTTONS ---------------- */
 
-   BUTTONS
+button {
 
-   ========================= */
-
-.gameButton {
-
-  border:
-
-    2px solid
-
-    rgba(255,255,255,.3);
+  border: none;
 
   color: white;
 
-  background:
+  background: rgba(20, 20, 24, 0.76);
 
-    rgba(12,14,17,.72);
-
-  font-weight: 900;
-
-  backdrop-filter: blur(8px);
-
-  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid rgba(255, 255, 255, 0.25);
 
   box-shadow:
 
-    0 5px 18px
+    0 4px 14px rgba(0,0,0,0.4);
 
-    rgba(0,0,0,.25);
+  backdrop-filter: blur(6px);
 
-  touch-action: none;
+  -webkit-backdrop-filter: blur(6px);
 
-}
-
-.gameButton.active,
-
-.gameButton:active {
-
-  transform: scale(.94);
-
-  background:
-
-    rgba(255,255,255,.24);
+  font-weight: 800;
 
 }
 
-/* =========================
+button:active {
 
-   STEERING
+  transform: scale(0.94);
 
-   ========================= */
-
-#steeringControls {
-
-  position: fixed;
-
-  left: 16px;
-
-  bottom: 22px;
-
-  z-index: 30;
-
-  display: flex;
-
-  gap: 12px;
+  background: rgba(255,255,255,0.25);
 
 }
 
-.roundButton {
+.controlButton {
 
-  width: 72px;
+  width: 62px;
 
-  height: 72px;
+  height: 62px;
 
   border-radius: 50%;
 
-  font-size: 27px;
-
-}
-
-/* =========================
-
-   PEDALS
-
-   ========================= */
-
-#pedalControls {
-
-  position: fixed;
-
-  right: 15px;
-
-  bottom: 20px;
-
-  z-index: 30;
-
-  display: grid;
-
-  grid-template-columns:
-
-    78px
-
-    78px;
-
-  gap: 9px;
-
-}
-
-.pedal {
-
-  width: 78px;
-
-  height: 71px;
-
-  border-radius: 17px;
-
-  font-size: 11px;
-
-}
-
-.tallPedal {
-
-  width: 78px;
-
-  height: 151px;
-
-  grid-row: span 2;
-
-  border-radius: 20px;
-
-  font-size: 13px;
-
-}
-
-/* =========================
-
-   ACTIONS
-
-   ========================= */
-
-#actionControls {
-
-  position: fixed;
-
-  right: 16px;
-
-  top: 95px;
-
-  z-index: 30;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 9px;
+  font-size: 25px;
 
 }
 
 .actionButton {
 
-  width: 82px;
+  min-width: 100px;
 
-  height: 47px;
+  height: 52px;
 
-  border-radius: 14px;
+  border-radius: 16px;
 
-  font-size: 11px;
+  padding: 0 20px;
+
+  font-size: 17px;
 
 }
 
-/* =========================
+/* ---------------- WALK CONTROLS ---------------- */
 
-   WALKING JOYSTICK
-
-   ========================= */
-
-#joystickArea {
+#walkControls {
 
   position: fixed;
 
-  left: 16px;
+  inset: 0;
 
-  bottom: 18px;
+  z-index: 30;
 
-  width: 155px;
-
-  height: 155px;
-
-  z-index: 29;
-
-  display: none;
+  pointer-events: none;
 
 }
 
-#joystickBase {
+.joystick-area {
 
   position: absolute;
 
-  left: 12px;
+  left: 18px;
 
-  top: 12px;
+  bottom:
 
-  width: 130px;
+    calc(
 
-  height: 130px;
+      28px +
 
-  border-radius: 50%;
+      env(safe-area-inset-bottom)
 
-  background:
+    );
 
-    rgba(18,20,24,.45);
+  width: 190px;
 
-  border:
+  display: flex;
 
-    2px solid
+  flex-direction: column;
 
-    rgba(255,255,255,.22);
+  align-items: center;
+
+  gap: 5px;
+
+  pointer-events: auto;
 
 }
 
-#joystickKnob {
+.middleRow {
+
+  display: flex;
+
+  gap: 60px;
+
+}
+
+#driveButton {
 
   position: absolute;
 
-  left: 37px;
+  right: 22px;
 
-  top: 37px;
+  bottom:
 
-  width: 54px;
+    calc(
 
-  height: 54px;
+      45px +
 
-  border-radius: 50%;
+      env(safe-area-inset-bottom)
 
-  background:
+    );
 
-    rgba(255,255,255,.78);
+  pointer-events: auto;
 
-  box-shadow:
-
-    0 5px 14px
-
-    rgba(0,0,0,.28);
+  background: rgba(30, 115, 220, 0.85);
 
 }
 
-/* =========================
+/* ---------------- CAR CONTROLS ---------------- */
 
-   MESSAGE
+#carControls {
 
-   ========================= */
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 40;
+
+  pointer-events: none;
+
+}
+
+.exitButton {
+
+  position: absolute;
+
+  top:
+
+    calc(
+
+      80px +
+
+      env(safe-area-inset-top)
+
+    );
+
+  right: 20px;
+
+  pointer-events: auto;
+
+  background: rgba(175, 40, 40, 0.8);
+
+}
+
+.steering {
+
+  position: absolute;
+
+  left: 18px;
+
+  bottom:
+
+    calc(
+
+      45px +
+
+      env(safe-area-inset-bottom)
+
+    );
+
+  display: flex;
+
+  gap: 20px;
+
+  pointer-events: auto;
+
+}
+
+.pedals {
+
+  position: absolute;
+
+  right: 18px;
+
+  bottom:
+
+    calc(
+
+      38px +
+
+      env(safe-area-inset-bottom)
+
+    );
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 85px);
+
+  gap: 10px;
+
+  pointer-events: auto;
+
+}
+
+.pedal {
+
+  height: 58px;
+
+  border-radius: 17px;
+
+  font-size: 15px;
+
+}
+
+.gas {
+
+  background: rgba(15, 140, 65, 0.82);
+
+}
+
+.brake {
+
+  background: rgba(190, 50, 45, 0.84);
+
+}
+
+.reverse {
+
+  grid-column: span 2;
+
+  background: rgba(60, 65, 75, 0.88);
+
+}
+
+/* ---------------- MESSAGE ---------------- */
 
 #message {
 
@@ -486,63 +376,71 @@ canvas {
 
   left: 50%;
 
-  bottom: 190px;
+  bottom:
 
-  transform:
+    calc(
 
-    translateX(-50%);
+      150px +
+
+      env(safe-area-inset-bottom)
+
+    );
+
+  transform: translateX(-50%);
 
   z-index: 50;
 
   color: white;
 
+  background: rgba(0, 0, 0, 0.65);
+
+  padding: 9px 16px;
+
+  border-radius: 10px;
+
+  font-weight: 700;
+
   font-size: 14px;
 
-  font-weight: 900;
-
-  text-shadow:
-
-    0 2px 7px black;
-
-  opacity: 0;
-
-  transition:
-
-    opacity .18s;
+  text-align: center;
 
   pointer-events: none;
+
+  text-shadow: 0 1px 3px black;
+
+}
+
+.hidden {
+
+  display: none !important;
 
 }
 
 @media (max-width: 430px) {
 
-  .roundButton {
+  #location {
 
-    width: 67px;
-
-    height: 67px;
+    font-size: 18px;
 
   }
 
-  #pedalControls {
+  .controlButton {
 
-    grid-template-columns:
+    width: 57px;
 
-      73px
-
-      73px;
+    height: 57px;
 
   }
 
-  .pedal {
+  .middleRow {
 
-    width: 73px;
+    gap: 48px;
 
   }
 
-  .tallPedal {
+  .joystick-area {
 
-    width: 73px;
+    width: 175px;
 
   }
 
