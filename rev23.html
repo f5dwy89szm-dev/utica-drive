@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#101820">
+  <title>Utica Drive</title>
+  <link rel="stylesheet" href="./style.css?v=21">
+</head>
+<body>
+  <canvas id="game" aria-label="Utica Drive game"></canvas>
+  <section id="loading">
+    <div class="logo"><span>UTICA</span><strong>DRIVE</strong></div>
+    <div class="loadbar"><i></i></div>
+    <p id="loadingText">Building downtown Utica…</p>
+  </section>
+  <div id="errorBox" role="alert"></div>
+  <header id="topHud">
+    <div class="location"><small>UTICA, NEW YORK · BUILD 23</small><strong id="street">GENESEE STREET</strong><span id="clockHud">2:15 PM · CLEAR</span></div>
+    <div class="stats"><span>♥ <b id="health">100</b></span><span class="cash">$<b id="money">500</b></span></div>
+  </header>
+  <aside id="missionCard">
+    <small>MISSION</small><strong id="mission">Walk to your M4</strong>
+    <div><i id="missionProgress"></i></div>
+  </aside>
+  <canvas id="minimap" width="240" height="240" aria-label="Utica minimap"></canvas>
+  <div id="speedometer"><strong id="speed">0</strong><small>MPH</small></div>
+  <div id="hint">Use the joystick to move</div>
+  <div id="controls" class="walking">
+    <div id="joystick" aria-label="Movement joystick"><div id="stick"></div></div>
+    <div id="lookPad" aria-label="Camera look area"></div>
+    <button id="runBtn" class="round" aria-label="Run">RUN</button>
+    <button id="enterBtn" aria-label="Enter or exit vehicle">ENTER</button>
+    <button id="actionBtn" class="round" aria-label="Action">✦</button>
+    <button id="brakeBtn" class="pedal brake" aria-label="Brake or reverse"><span>▼</span>REVERSE</button>
+    <button id="gasBtn" class="pedal gas" aria-label="Accelerate"><span>▲</span>GAS</button>
+  </div>
+  <script>
+    const showError = message => { const box = document.getElementById('errorBox'); box.style.display = 'block'; box.textContent = 'Game error: ' + message + '. Refresh the page to try again.'; };
+    addEventListener('error', event => showError(event.message));
+    addEventListener('unhandledrejection', event => showError(String(event.reason)));
+  </script>
+  <script type="module" src="./app.js?v=rev23"></script>
+</body>
+</html>
