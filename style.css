@@ -1,25 +1,23 @@
 * {
   box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+  margin: 0;
+  padding: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-
   width: 100%;
   height: 100%;
-
   overflow: hidden;
 
-  background: #000;
+  background: #87b8e6;
 
   font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
     Arial,
+    Helvetica,
     sans-serif;
 
   touch-action: none;
@@ -27,248 +25,286 @@ body {
 
 #game {
   position: fixed;
-
   inset: 0;
 
   width: 100%;
   height: 100%;
 
-  background: #76aadb;
-
   z-index: 1;
 }
 
-canvas {
+#game canvas {
   display: block;
 
-  width: 100%;
-  height: 100%;
-
-  touch-action: none;
+  width: 100% !important;
+  height: 100% !important;
 }
+
+/* HUD */
 
 #hud {
   position: fixed;
 
+  top: 60px;
   left: 18px;
-  top: max(72px, env(safe-area-inset-top));
 
   z-index: 20;
 
   color: white;
 
   text-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.9);
+    0 2px 4px black,
+    0 0 8px black;
+
+  pointer-events: none;
 }
 
 #cityName {
-  font-size: 23px;
-  font-weight: 900;
+  font-size: 22px;
+  font-weight: 700;
 
-  letter-spacing: 1px;
+  margin-bottom: 8px;
 }
 
 #modeText {
-  margin-top: 8px;
+  font-size: 17px;
 
-  font-size: 15px;
-  font-weight: 500;
+  margin-bottom: 4px;
 }
 
 #speedText {
-  margin-top: 4px;
-
-  font-size: 22px;
-  font-weight: 900;
+  font-size: 30px;
+  font-weight: 800;
 }
+
+/* MESSAGE */
 
 #message {
   position: fixed;
 
   left: 50%;
-  bottom: 220px;
+  bottom: 175px;
 
   transform: translateX(-50%);
 
-  z-index: 20;
+  z-index: 25;
 
   color: white;
 
-  font-size: 17px;
-  font-weight: 900;
+  font-size: 18px;
+  font-weight: 800;
+
+  text-shadow:
+    0 2px 4px black,
+    0 0 6px black;
 
   white-space: nowrap;
 
-  text-shadow:
-    0 2px 5px rgba(0, 0, 0, 1);
-
   pointer-events: none;
 }
 
-#controls {
+/* WALKING */
+
+#walkControls {
   position: fixed;
 
   left: 20px;
-  bottom: calc(85px + env(safe-area-inset-bottom));
-
-  width: 190px;
-  height: 190px;
+  bottom: 28px;
 
   z-index: 30;
 
-  pointer-events: none;
-}
-
-.control-btn {
-  position: absolute;
-
-  width: 66px;
-  height: 66px;
-
-  border-radius: 50%;
-
-  border: 3px solid rgba(255, 255, 255, 0.28);
-
-  background: rgba(15, 15, 18, 0.82);
-
-  color: white;
-
-  font-size: 27px;
-  font-weight: bold;
+  width: 170px;
 
   display: flex;
+  flex-direction: column;
+
   align-items: center;
-  justify-content: center;
 
-  pointer-events: auto;
-
-  user-select: none;
-
-  -webkit-user-select: none;
-
-  box-shadow:
-    0 3px 9px rgba(0, 0, 0, 0.4);
+  gap: 6px;
 }
 
-.control-btn:active,
-.control-btn.active {
-  transform: scale(0.93);
+.middleRow {
+  width: 100%;
 
-  background: rgba(65, 65, 72, 0.95);
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
 }
 
-.up {
-  left: 62px;
-  top: 0;
-}
+.controlButton {
+  width: 55px;
+  height: 55px;
 
-.left {
-  left: 0;
-  top: 62px;
-}
+  border-radius: 12px;
 
-.right {
-  right: 0;
-  top: 62px;
-}
+  border: 2px solid rgba(255,255,255,0.7);
 
-.down {
-  left: 62px;
-  bottom: 0;
-}
-
-#actionBtn {
-  position: fixed;
-
-  right: 20px;
-  bottom: calc(100px + env(safe-area-inset-bottom));
-
-  min-width: 112px;
-  height: 62px;
-
-  padding: 0 22px;
-
-  z-index: 30;
-
-  border-radius: 22px;
-
-  border: 3px solid rgba(110, 180, 255, 0.85);
-
-  background: rgba(18, 103, 200, 0.95);
+  background: rgba(20,20,20,0.65);
 
   color: white;
 
-  font-size: 20px;
-  font-weight: 900;
+  font-size: 24px;
+  font-weight: bold;
 
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.35);
-
-  user-select: none;
-
-  -webkit-user-select: none;
+  touch-action: none;
 }
 
-#actionBtn:active {
-  transform: scale(0.96);
+.controlButton:active {
+  background: rgba(255,255,255,0.25);
 }
 
-#loading {
+/* VEHICLE BUTTON */
+
+#vehicleButton {
   position: fixed;
 
-  left: 50%;
-  top: 50%;
+  right: 22px;
+  bottom: 45px;
 
-  transform: translate(-50%, -50%);
+  z-index: 35;
 
-  z-index: 100;
+  min-width: 120px;
+  height: 58px;
+
+  padding: 0 15px;
+
+  border: 2px solid white;
+  border-radius: 12px;
+
+  background: rgba(15,15,15,0.75);
 
   color: white;
 
-  background: rgba(0, 0, 0, 0.72);
-
-  padding: 16px 22px;
-
-  border-radius: 14px;
-
+  font-size: 15px;
   font-weight: 800;
+
+  display: none;
+
+  touch-action: manipulation;
 }
 
-#errorBox {
-  position: fixed;
+/* DRIVING */
 
-  left: 12px;
-  right: 12px;
-  top: 160px;
-
-  z-index: 200;
-
-  padding: 12px;
-
-  border-radius: 10px;
-
-  background: rgba(170, 0, 0, 0.9);
-
-  color: white;
-
-  font-size: 13px;
-
+#driveControls {
   display: none;
 }
 
-@media (max-height: 700px) {
+#steering {
+  position: fixed;
 
-  #controls {
-    transform: scale(0.85);
+  left: 20px;
+  bottom: 30px;
 
-    transform-origin: left bottom;
+  z-index: 35;
+
+  display: flex;
+  gap: 12px;
+}
+
+.driveButton {
+  width: 76px;
+  height: 76px;
+
+  border-radius: 50%;
+
+  border: 2px solid white;
+
+  background: rgba(20,20,20,0.65);
+
+  color: white;
+
+  font-size: 28px;
+
+  touch-action: none;
+}
+
+#pedals {
+  position: fixed;
+
+  right: 20px;
+  bottom: 25px;
+
+  z-index: 35;
+
+  display: flex;
+
+  align-items: flex-end;
+
+  gap: 8px;
+}
+
+.gasButton,
+.brakeButton,
+.reverseButton {
+  border: 2px solid white;
+
+  color: white;
+
+  font-weight: 800;
+
+  touch-action: none;
+}
+
+.gasButton {
+  width: 74px;
+  height: 100px;
+
+  border-radius: 16px;
+
+  background: rgba(25,120,40,0.75);
+}
+
+.brakeButton {
+  width: 66px;
+  height: 82px;
+
+  border-radius: 16px;
+
+  background: rgba(170,30,30,0.78);
+}
+
+.reverseButton {
+  width: 78px;
+  height: 70px;
+
+  border-radius: 16px;
+
+  background: rgba(30,60,160,0.8);
+
+  font-size: 11px;
+}
+
+/* SMALL PHONE */
+
+@media (max-width: 430px) {
+
+  #hud {
+    top: 55px;
+    left: 14px;
   }
 
-  #actionBtn {
-    bottom: 70px;
+  #cityName {
+    font-size: 19px;
   }
 
-  #message {
-    bottom: 185px;
+  #speedText {
+    font-size: 27px;
   }
+
+  #walkControls {
+    transform: scale(0.9);
+    transform-origin: bottom left;
+  }
+
+  #steering {
+    transform: scale(0.9);
+    transform-origin: bottom left;
+  }
+
+  #pedals {
+    transform: scale(0.88);
+    transform-origin: bottom right;
+  }
+
 }
