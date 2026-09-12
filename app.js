@@ -124,11 +124,31 @@ function makeBrickTexture() {
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
 }
+function makeConcreteTexture() {
+  const canvas = document.createElement("canvas"); canvas.width = canvas.height = 256;
+  const ctx = canvas.getContext("2d"); ctx.fillStyle = "#9b9d9d"; ctx.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 1800; i++) {
+    const v = 115 + Math.floor(Math.random() * 48);
+    ctx.fillStyle = `rgba(${v},${v + 1},${v + 2},${.08 + Math.random() * .18})`;
+    ctx.fillRect(Math.random() * 256, Math.random() * 256, .6 + Math.random() * 2.4, .6 + Math.random() * 2.4);
+  }
+  ctx.strokeStyle = "rgba(45,48,49,.23)"; ctx.lineWidth = 1;
+  for (let i = 0; i < 18; i++) { ctx.beginPath(); ctx.moveTo(Math.random() * 256, Math.random() * 256); ctx.lineTo(Math.random() * 256, Math.random() * 256); ctx.stroke(); }
+  const texture = new THREE.CanvasTexture(canvas); texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(5, 24); texture.colorSpace = THREE.SRGBColorSpace; return texture;
+}
+function makeGrassTexture() {
+  const canvas = document.createElement("canvas"); canvas.width = canvas.height = 256;
+  const ctx = canvas.getContext("2d"); ctx.fillStyle = "#526c42"; ctx.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 3200; i++) { const g = 70 + Math.floor(Math.random() * 45); ctx.fillStyle = `rgba(${36 + Math.floor(Math.random() * 24)},${g},${32 + Math.floor(Math.random() * 20)},${.18 + Math.random() * .28})`; ctx.fillRect(Math.random() * 256, Math.random() * 256, 1 + Math.random() * 2, 1 + Math.random() * 2); }
+  const texture = new THREE.CanvasTexture(canvas); texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(18, 18); texture.colorSpace = THREE.SRGBColorSpace; return texture;
+}
 const roadTexture = makeRoadTexture();
 const brickTexture = makeBrickTexture();
+const concreteTexture = makeConcreteTexture();
+const grassTexture = makeGrassTexture();
 const roadMat = new THREE.MeshStandardMaterial({ color: 0x73787c, map: roadTexture, roughness: .38, metalness: .17 });
-const sidewalkMat = mat(0xa5a7a2, 1);
-const grassMat = mat(0x506d42, 1);
+const sidewalkMat = new THREE.MeshStandardMaterial({ color: 0xb1b1ad, map: concreteTexture, roughness: .92, metalness: 0 });
+const grassMat = new THREE.MeshStandardMaterial({ color: 0x4f6c40, map: grassTexture, roughness: 1, metalness: 0 });
 const stripeMat = mat(0xe3b72c, .8);
 const whiteMat = mat(0xdddcd1, .8);
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(1800, 1800), grassMat);
