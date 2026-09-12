@@ -20,9 +20,15 @@ body {
 
   overflow: hidden;
 
-  background: #111;
+  background: #0b0c0e;
 
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+
+    Arial,
+
+    Helvetica,
+
+    sans-serif;
 
   touch-action: none;
 
@@ -38,15 +44,19 @@ body {
 
 canvas {
 
-  display: block;
-
   width: 100%;
 
   height: 100%;
 
+  display: block;
+
 }
 
-/* Loading */
+/* =========================
+
+   LOADING
+
+   ========================= */
 
 #loading {
 
@@ -54,13 +64,7 @@ canvas {
 
   inset: 0;
 
-  z-index: 100;
-
-  background:
-
-    linear-gradient(rgba(0,0,0,.68), rgba(0,0,0,.78)),
-
-    radial-gradient(circle at center, #444, #111);
+  z-index: 1000;
 
   display: flex;
 
@@ -68,105 +72,135 @@ canvas {
 
   justify-content: center;
 
+  background:
+
+    radial-gradient(
+
+      circle at 50% 35%,
+
+      #3d4147,
+
+      #111317 70%
+
+    );
+
+}
+
+.loadingCard {
+
+  width: min(84vw, 420px);
+
+  text-align: center;
+
   color: white;
 
 }
 
-.loading-box {
+.gameTitle {
 
-  text-align: center;
-
-  width: 85%;
-
-  max-width: 420px;
-
-}
-
-.title {
-
-  font-size: 38px;
+  font-size: 34px;
 
   font-weight: 900;
 
-  letter-spacing: 3px;
+  letter-spacing: 4px;
 
-  margin-bottom: 18px;
+  text-shadow:
+
+    0 3px 14px rgba(0,0,0,.8);
 
 }
 
 #loadingText {
 
-  font-size: 15px;
+  margin-top: 18px;
 
-  opacity: .85;
+  font-size: 14px;
+
+  opacity: .86;
 
 }
 
-.loader {
+.loadingTrack {
 
   width: 100%;
 
-  height: 5px;
+  height: 6px;
 
-  margin-top: 20px;
+  margin-top: 18px;
 
   overflow: hidden;
 
-  border-radius: 10px;
+  border-radius: 999px;
 
-  background: rgba(255,255,255,.18);
+  background:
+
+    rgba(255,255,255,.14);
 
 }
 
-.loader::after {
+.loadingBar {
 
-  content: "";
-
-  display: block;
-
-  width: 35%;
+  width: 34%;
 
   height: 100%;
 
   background: white;
 
-  animation: loading 1.2s infinite ease-in-out;
+  animation:
+
+    loadingMove 1.3s infinite ease-in-out;
 
 }
 
-@keyframes loading {
+@keyframes loadingMove {
 
-  from { transform: translateX(-100%); }
+  from {
 
-  to { transform: translateX(320%); }
+    transform: translateX(-110%);
+
+  }
+
+  to {
+
+    transform: translateX(310%);
+
+  }
 
 }
 
-/* HUD */
+/* =========================
+
+   HUD
+
+   ========================= */
 
 #hud {
 
   position: fixed;
 
-  top: 18px;
+  left: 16px;
 
-  left: 18px;
+  top: 16px;
 
-  z-index: 15;
+  z-index: 20;
 
   color: white;
 
-  text-shadow: 0 2px 5px black;
+  text-shadow:
+
+    0 2px 6px black;
 
   pointer-events: none;
 
 }
 
-#locationLabel {
+.hudCity {
 
-  font-size: 15px;
+  font-size: 13px;
 
   font-weight: 900;
+
+  letter-spacing: 1px;
 
 }
 
@@ -174,9 +208,11 @@ canvas {
 
   margin-top: 5px;
 
-  font-size: 12px;
+  font-size: 11px;
 
-  opacity: .8;
+  font-weight: 800;
+
+  opacity: .82;
 
 }
 
@@ -184,53 +220,75 @@ canvas {
 
   margin-top: 4px;
 
-  font-size: 24px;
+  font-size: 26px;
 
   font-weight: 900;
 
 }
 
-/* Generic buttons */
+/* =========================
 
-.control {
+   BUTTONS
 
-  border: 2px solid rgba(255,255,255,.35);
+   ========================= */
 
-  background: rgba(18,18,18,.72);
+.gameButton {
 
-  backdrop-filter: blur(7px);
+  border:
 
-  -webkit-backdrop-filter: blur(7px);
+    2px solid
+
+    rgba(255,255,255,.3);
 
   color: white;
 
+  background:
+
+    rgba(12,14,17,.72);
+
   font-weight: 900;
+
+  backdrop-filter: blur(8px);
+
+  -webkit-backdrop-filter: blur(8px);
+
+  box-shadow:
+
+    0 5px 18px
+
+    rgba(0,0,0,.25);
 
   touch-action: none;
 
 }
 
-.control:active,
+.gameButton.active,
 
-.control.active {
+.gameButton:active {
 
   transform: scale(.94);
 
-  background: rgba(255,255,255,.3);
+  background:
+
+    rgba(255,255,255,.24);
 
 }
 
-/* Steering */
+/* =========================
 
-#steeringArea {
+   STEERING
+
+   ========================= */
+
+#steeringControls {
 
   position: fixed;
 
-  z-index: 20;
-
   left: 16px;
 
-  bottom: 24px;
+  bottom: 22px;
+
+  z-index: 30;
 
   display: flex;
 
@@ -238,7 +296,7 @@ canvas {
 
 }
 
-.round {
+.roundButton {
 
   width: 72px;
 
@@ -250,23 +308,31 @@ canvas {
 
 }
 
-/* Pedals */
+/* =========================
 
-#pedals {
+   PEDALS
+
+   ========================= */
+
+#pedalControls {
 
   position: fixed;
 
-  z-index: 20;
-
-  right: 16px;
+  right: 15px;
 
   bottom: 20px;
 
+  z-index: 30;
+
   display: grid;
 
-  grid-template-columns: 78px 78px;
+  grid-template-columns:
 
-  gap: 10px;
+    78px
+
+    78px;
+
+  gap: 9px;
 
 }
 
@@ -274,75 +340,83 @@ canvas {
 
   width: 78px;
 
-  height: 72px;
+  height: 71px;
 
-  border-radius: 18px;
+  border-radius: 17px;
 
-  font-size: 12px;
+  font-size: 11px;
 
 }
 
-.gas {
+.tallPedal {
+
+  width: 78px;
+
+  height: 151px;
 
   grid-row: span 2;
 
-  height: 154px;
+  border-radius: 20px;
+
+  font-size: 13px;
 
 }
 
-.reverse {
+/* =========================
 
-  height: 72px;
+   ACTIONS
 
-}
+   ========================= */
 
-/* Actions */
-
-#actions {
+#actionControls {
 
   position: fixed;
 
-  right: 18px;
+  right: 16px;
 
   top: 95px;
 
-  z-index: 20;
+  z-index: 30;
 
   display: flex;
 
   flex-direction: column;
 
-  gap: 10px;
+  gap: 9px;
 
 }
 
-.action {
+.actionButton {
 
   width: 82px;
 
-  height: 48px;
+  height: 47px;
 
   border-radius: 14px;
 
-  font-size: 12px;
+  font-size: 11px;
 
 }
 
-/* Joystick */
+/* =========================
+
+   WALKING JOYSTICK
+
+   ========================= */
 
 #joystickArea {
 
   position: fixed;
 
-  left: 18px;
+  left: 16px;
 
-  bottom: 24px;
+  bottom: 18px;
 
-  z-index: 19;
+  width: 155px;
 
-  width: 150px;
+  height: 155px;
 
-  height: 150px;
+  z-index: 29;
 
   display: none;
 
@@ -352,19 +426,25 @@ canvas {
 
   position: absolute;
 
+  left: 12px;
+
+  top: 12px;
+
   width: 130px;
 
   height: 130px;
 
-  left: 10px;
-
-  top: 10px;
-
   border-radius: 50%;
 
-  background: rgba(20,20,20,.48);
+  background:
 
-  border: 2px solid rgba(255,255,255,.25);
+    rgba(18,20,24,.45);
+
+  border:
+
+    2px solid
+
+    rgba(255,255,255,.22);
 
 }
 
@@ -372,63 +452,97 @@ canvas {
 
   position: absolute;
 
-  width: 56px;
+  left: 37px;
 
-  height: 56px;
+  top: 37px;
+
+  width: 54px;
+
+  height: 54px;
 
   border-radius: 50%;
 
-  left: 35px;
+  background:
 
-  top: 35px;
+    rgba(255,255,255,.78);
 
-  background: rgba(255,255,255,.78);
+  box-shadow:
+
+    0 5px 14px
+
+    rgba(0,0,0,.28);
 
 }
 
-/* Message */
+/* =========================
+
+   MESSAGE
+
+   ========================= */
 
 #message {
 
   position: fixed;
 
-  bottom: 190px;
-
   left: 50%;
 
-  transform: translateX(-50%);
+  bottom: 190px;
 
-  z-index: 30;
+  transform:
+
+    translateX(-50%);
+
+  z-index: 50;
 
   color: white;
 
-  font-weight: 800;
+  font-size: 14px;
 
-  text-shadow: 0 2px 5px #000;
+  font-weight: 900;
 
-  text-align: center;
+  text-shadow:
 
-  pointer-events: none;
+    0 2px 7px black;
 
   opacity: 0;
 
-  transition: opacity .2s;
+  transition:
+
+    opacity .18s;
+
+  pointer-events: none;
 
 }
 
-@media (max-width: 500px) {
+@media (max-width: 430px) {
 
-  .title {
+  .roundButton {
 
-    font-size: 30px;
+    width: 67px;
+
+    height: 67px;
 
   }
 
-  .round {
+  #pedalControls {
 
-    width: 68px;
+    grid-template-columns:
 
-    height: 68px;
+      73px
+
+      73px;
+
+  }
+
+  .pedal {
+
+    width: 73px;
+
+  }
+
+  .tallPedal {
+
+    width: 73px;
 
   }
 
