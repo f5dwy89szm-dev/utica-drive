@@ -4,9 +4,10 @@ const $ = id => document.getElementById(id);
 const ui = {
   loading: $("loading"), loadingText: $("loadingText"), street: $("street"),
   clock: $("clockHud"),
+  minimap: $("minimap"),
   mission: $("mission"), progress: $("missionProgress"), speed: $("speed"),
   speedometer: $("speedometer"), hint: $("hint"), controls: $("controls"),
-  joystick: $("joystick"), stick: $("stick"), enter: $("enterBtn"),
+  joystick: $("joystick"), stick: $("stick"), lookPad: $("lookPad"), enter: $("enterBtn"),
   run: $("runBtn"), action: $("actionBtn"), gas: $("gasBtn"), brake: $("brakeBtn")
 };
 
@@ -23,7 +24,7 @@ renderer.toneMappingExposure = 1.05;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x8bb6d3);
 scene.fog = new THREE.FogExp2(0x9dbacf, 0.00165);
-const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.1, 1100);
+const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.1, 1800);
 const clock = new THREE.Clock();
 
 const hemi = new THREE.HemisphereLight(0xdff2ff, 0x52604a, 2.1);
@@ -62,17 +63,17 @@ const cylinder = (rt, rb, h, sides, material) => {
 };
 
 ui.loadingText.textContent = "Laying out Utica streets…";
-const WORLD = 600;
-const ROAD_STEP = 82;
+const WORLD = 1400;
+const ROAD_STEP = 150;
 const ROAD_WIDTH = 22;
-const roadCoords = [-246, -164, -82, 0, 82, 164, 246];
+const roadCoords = [-600, -450, -300, -150, 0, 150, 300, 450, 600];
 const northSouthNames = [
   "CORNELIA STREET", "STATE STREET", "GENESEE STREET", "ONEIDA STREET",
-  "MOHAWK STREET", "KOSSUTH AVENUE", "CULVER AVENUE"
+  "MOHAWK STREET", "NORTH STREET", "BROAD STREET", "EAGLE STREET", "SCHUYLER STREET"
 ];
 const eastWestNames = [
   "COURT STREET", "COLUMBIA STREET", "LAFAYETTE STREET", "ORISKANY STREET",
-  "BROAD STREET", "BLEECKER STREET", "RUTGER STREET"
+  "ALBANY STREET", "RUTGER STREET", "BLEECKER STREET", "BURRSTONE ROAD", "HOPPER STREET"
 ];
 function makeRoadTexture() {
   const canvas = document.createElement("canvas");
@@ -124,10 +125,14 @@ const sidewalkMat = mat(0xa5a7a2, 1);
 const grassMat = mat(0x506d42, 1);
 const stripeMat = mat(0xe3b72c, .8);
 const whiteMat = mat(0xdddcd1, .8);
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), grassMat);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(1800, 1800), grassMat);
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
+const river = new THREE.Mesh(new THREE.PlaneGeometry(1500, 70), new THREE.MeshStandardMaterial({ color: 0x244b62, roughness: .18, metalness: .22, emissive: 0x071c2b, emissiveIntensity: .3 }));
+river.rotation.x = -Math.PI / 2; river.position.set(0, .045, -695); scene.add(river);
+const riverBank = box(1500, .35, 9, mat(0x6d6652, .95)); riverBank.position.set(0, .18, -656); scene.add(riverBank);
+const bridge = box(155, .42, 28, mat(0x49494a, .78, .15)); bridge.position.set(-150, .42, -695); scene.add(bridge);
 
 for (const c of roadCoords) {
   const verticalWalk = box(ROAD_WIDTH + 8, .16, WORLD, sidewalkMat);
@@ -142,7 +147,7 @@ for (const c of roadCoords) {
   const horizontal = box(WORLD, .2, ROAD_WIDTH, roadMat);
   horizontal.position.set(0, .2, c);
   scene.add(horizontal);
-  for (let p = -286; p <= 286; p += 16) {
+  for (let p = -686; p <= 686; p += 16) {
     if (roadCoords.some(v => Math.abs(p - v) < 15)) continue;
     const vStripe = box(.2, .025, 7, stripeMat);
     vStripe.position.set(c, .32, p);
@@ -270,6 +275,18 @@ for (let i = 0; i < roadCoords.length; i += 2) {
   addStreetSign(roadCoords[i] + 13, 13, northSouthNames[i]);
   addStreetSign(13, roadCoords[i] + 13, eastWestNames[i], true);
 }
+function addLandmark(x, z, name, width, depth, height, color) {
+  const building = box(width, height, depth, mat(color, .78));
+  building.position.set(x, height / 2 + .2, z); scene.add(building);
+  const roof = box(width + 2, .35, depth + 2, mat(0x25282b, .7, .15));
+  roof.position.set(x, height + .4, z); scene.add(roof);
+  const sign = makeLabel(name, "#ffe59a");
+  sign.scale.set(Math.min(18, width * .72), 2.6, 1);
+  sign.position.set(x, height + 3.2, z + depth / 2 + .2); scene.add(sign);
+}
+addLandmark(-300, -150, "UNION STATION", 34, 20, 12, 0x8a8178);
+addLandmark(300, 150, "STANLEY THEATRE", 42, 26, 16, 0x6f625e);
+addLandmark(0, 300, "ADIRONDACK BANK CENTER", 52, 34, 11, 0x56636c);
 
 function addTree(x, z) {
   const trunk = cylinder(.28, .38, 2.7, 8, mat(0x60452c));
@@ -282,7 +299,7 @@ function addTree(x, z) {
 for (let i = 0; i < 70; i++) {
   const axis = seedRandom() > .5;
   const road = roadCoords[Math.floor(seedRandom() * roadCoords.length)];
-  const along = -280 + seedRandom() * 560;
+  const along = -660 + seedRandom() * 1320;
   if (roadCoords.some(v => Math.abs(along - v) < 18)) continue;
   addTree(axis ? road + (seedRandom() > .5 ? 15 : -15) : along, axis ? along : road + (seedRandom() > .5 ? 15 : -15));
 }
@@ -316,10 +333,18 @@ function createCar(color = 0x36a7d8, functionalLights = false) {
   const glass = new THREE.MeshStandardMaterial({ color: 0x15242e, roughness: .08, metalness: .4, transparent: true, opacity: .92 });
   const headlightMaterial = new THREE.MeshStandardMaterial({ color: 0xe7f3ff, emissive: 0xbadfff, emissiveIntensity: 1.15 });
   const tailMaterial = new THREE.MeshStandardMaterial({ color: 0xdd1414, emissive: 0x8b0505, emissiveIntensity: 1.05 });
-  const body = box(4.35, .72, 8.4, paint); body.position.y = 1.05; car.add(body);
+  const bodyShape = new THREE.Shape();
+  bodyShape.moveTo(-2.08, .7); bodyShape.lineTo(2.08, .7);
+  bodyShape.quadraticCurveTo(2.27, .72, 2.27, 1.02);
+  bodyShape.lineTo(2.12, 1.48); bodyShape.quadraticCurveTo(1.95, 1.62, 1.62, 1.63);
+  bodyShape.lineTo(-1.62, 1.63); bodyShape.quadraticCurveTo(-1.95, 1.62, -2.12, 1.48);
+  bodyShape.lineTo(-2.27, 1.02); bodyShape.quadraticCurveTo(-2.27, .72, -2.08, .7);
+  const bodyGeometry = new THREE.ExtrudeGeometry(bodyShape, { depth: 8.2, bevelEnabled: true, bevelSegments: 3, bevelSize: .12, bevelThickness: .1, curveSegments: 4 });
+  bodyGeometry.translate(0, 0, -4.1);
+  const body = new THREE.Mesh(bodyGeometry, paint); body.castShadow = body.receiveShadow = true; car.add(body);
   const lowerBody = box(4.5, .34, 7.55, dark); lowerBody.position.set(0, .68, -.08); car.add(lowerBody);
   const hood = box(4.15, .28, 2.6, paint); hood.position.set(0, 1.54, 2.25); hood.rotation.x = -.04; car.add(hood);
-  const roof = box(3.55, 1.12, 3.6, paint); roof.position.set(0, 2.05, -.55); car.add(roof);
+  const roof = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 12), paint); roof.scale.set(1.78, .94, 1.68); roof.position.set(0, 2.05, -.55); car.add(roof);
   const windshield = box(3.35, .92, .08, glass); windshield.position.set(0, 2.08, 1.27); windshield.rotation.x = -.35; car.add(windshield);
   const rearGlass = box(3.35, .84, .08, glass); rearGlass.position.set(0, 2.06, -2.38); rearGlass.rotation.x = .35; car.add(rearGlass);
   for (const side of [-1, 1]) {
@@ -401,12 +426,24 @@ function createPerson() {
 }
 
 const car = createCar(0x36a7d8, true);
-car.position.set(0, .05, 31);
+car.position.set(4.5, .05, 9);
 scene.add(car);
 const player = createPerson();
-player.position.set(8, 0, -1);
-player.scale.setScalar(.82);
+player.position.set(.5, 0, 5.5);
+player.scale.setScalar(.72);
 scene.add(player);
+
+const pedestrians = [];
+for (let i = 0; i < 10; i++) {
+  const pedestrian = createPerson();
+  pedestrian.scale.setScalar(.64 + (i % 3) * .025);
+  const axis = i % 2 === 0;
+  const road = roadCoords[(i + 1) % roadCoords.length];
+  const direction = i % 3 ? 1 : -1;
+  pedestrian.position.set(axis ? road + (i % 3 ? 15 : -15) : -610 + i * 120, 0, axis ? -620 + i * 126 : road + (i % 3 ? 15 : -15));
+  pedestrian.userData.walk = { axis, direction, speed: 1.05 + (i % 3) * .22, phase: i * .7 };
+  scene.add(pedestrian); pedestrians.push(pedestrian);
+}
 
 // Light traffic gives the streets motion while keeping draw calls phone-friendly.
 const traffic = [];
@@ -417,12 +454,12 @@ for (let i = 0; i < 12; i++) {
   const direction = i % 2 ? 1 : -1;
   if (i < 7) {
     const vertical = i % 3 !== 0;
-    vehicle.position.set(vertical ? road + direction * 5.6 : -260 + i * 68, .03, vertical ? -255 + i * 71 : road + direction * 5.6);
+    vehicle.position.set(vertical ? road + direction * 5.6 : -620 + i * 125, .03, vertical ? -620 + i * 126 : road + direction * 5.6);
     vehicle.rotation.y = vertical ? (direction > 0 ? 0 : Math.PI) : (direction > 0 ? Math.PI / 2 : -Math.PI / 2);
     vehicle.userData.traffic = { vertical, direction, speed: 7.5 + (i % 3) * 1.4 };
     traffic.push(vehicle);
   } else {
-    vehicle.position.set(road + direction * 6.2, .03, -238 + (i - 7) * 104);
+    vehicle.position.set(road + direction * 6.2, .03, -580 + (i - 7) * 165);
     vehicle.rotation.y = direction > 0 ? 0 : Math.PI;
   }
   scene.add(vehicle);
@@ -438,12 +475,21 @@ marker.position.copy(car.position); scene.add(marker);
 
 const input = { x: 0, y: 0, gas: false, brake: false, run: false };
 let joystickPointer = null;
+let lookPointer = null;
+let lastLookX = 0;
+let lastLookY = 0;
+let cameraOrbit = 0;
+let cameraPitch = .22;
 function updateJoystick(clientX, clientY) {
   const rect = ui.joystick.getBoundingClientRect();
   let x = (clientX - (rect.left + rect.width / 2)) / (rect.width * .34);
   let y = (clientY - (rect.top + rect.height / 2)) / (rect.height * .34);
   const length = Math.hypot(x, y);
   if (length > 1) { x /= length; y /= length; }
+  const deadZone = .1;
+  const adjusted = Math.max(0, length - deadZone) / (1 - deadZone);
+  if (length > deadZone) { x = x / length * adjusted; y = y / length * adjusted; }
+  else { x = 0; y = 0; }
   input.x = x; input.y = -y;
   ui.stick.style.transform = `translate(calc(-50% + ${x * 35}px), calc(-50% + ${-input.y * 35}px))`;
 }
@@ -457,11 +503,28 @@ function resetJoystick(e) {
 ui.joystick.addEventListener("pointerup", resetJoystick);
 ui.joystick.addEventListener("pointercancel", resetJoystick);
 
+ui.lookPad.addEventListener("pointerdown", e => {
+  lookPointer = e.pointerId; lastLookX = e.clientX; lastLookY = e.clientY;
+  ui.lookPad.setPointerCapture(e.pointerId);
+});
+ui.lookPad.addEventListener("pointermove", e => {
+  if (e.pointerId !== lookPointer) return;
+  cameraOrbit -= (e.clientX - lastLookX) * .008;
+  cameraPitch = THREE.MathUtils.clamp(cameraPitch + (e.clientY - lastLookY) * .004, -.08, .62);
+  lastLookX = e.clientX; lastLookY = e.clientY;
+});
+function resetLook(e) {
+  if (lookPointer !== null && (!e || e.pointerId === lookPointer)) lookPointer = null;
+}
+ui.lookPad.addEventListener("pointerup", resetLook);
+ui.lookPad.addEventListener("pointercancel", resetLook);
+
 function bindHold(element, key) {
   const set = value => { input[key] = value; element.classList.toggle("pressed", value); };
   element.addEventListener("pointerdown", e => { e.preventDefault(); element.setPointerCapture(e.pointerId); set(true); });
   element.addEventListener("pointerup", () => set(false));
   element.addEventListener("pointercancel", () => set(false));
+  element.addEventListener("lostpointercapture", () => set(false));
 }
 bindHold(ui.gas, "gas"); bindHold(ui.brake, "brake"); bindHold(ui.run, "run");
 
@@ -479,7 +542,36 @@ let playerYaw = 0;
 let missionStage = 0;
 let walkCycle = 0;
 let hintTimer = 4;
-const targetPosition = new THREE.Vector3(-164, 0, -82);
+const targetPosition = new THREE.Vector3(-300, 0, -150);
+const minimapCtx = ui.minimap.getContext("2d");
+let minimapTimer = 0;
+function drawMinimap(dt) {
+  minimapTimer -= dt;
+  if (minimapTimer > 0) return;
+  minimapTimer = .12;
+  const ctx = minimapCtx;
+  const size = ui.minimap.width;
+  ctx.clearRect(0, 0, size, size);
+  ctx.fillStyle = "#11171d"; ctx.fillRect(0, 0, size, size);
+  const center = size / 2, scale = 108 / 720;
+  ctx.strokeStyle = "#b9bec2"; ctx.lineWidth = 5;
+  for (const road of roadCoords) {
+    const p = center + road * scale;
+    ctx.beginPath(); ctx.moveTo(p, 8); ctx.lineTo(p, size - 8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(8, p); ctx.lineTo(size - 8, p); ctx.stroke();
+  }
+  ctx.strokeStyle = "#2c6176"; ctx.lineWidth = 7;
+  const riverY = center - 695 * scale; ctx.beginPath(); ctx.moveTo(8, riverY); ctx.lineTo(size - 8, riverY); ctx.stroke();
+  const subject = driving ? car.position : player.position;
+  const dot = (position, color, radius) => {
+    const x = center + position.x * scale, y = center + position.z * scale;
+    ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+  };
+  if (marker.visible) dot(targetPosition, "#f3b51b", 5);
+  dot(car.position, "#6fc9ff", driving ? 5 : 4);
+  dot(subject, driving ? "#ffffff" : "#74ee8d", 4);
+  ctx.fillStyle = "#fff"; ctx.font = "bold 13px sans-serif"; ctx.fillText("N", center - 5, 15);
+}
 
 function setMode(isDriving) {
   driving = isDriving;
@@ -571,13 +663,31 @@ function updateTraffic(dt) {
     const data = vehicle.userData.traffic;
     if (data.vertical) vehicle.position.z += data.direction * data.speed * dt;
     else vehicle.position.x += data.direction * data.speed * dt;
-    if (vehicle.position.x > 305) vehicle.position.x = -305;
-    if (vehicle.position.x < -305) vehicle.position.x = 305;
-    if (vehicle.position.z > 305) vehicle.position.z = -305;
-    if (vehicle.position.z < -305) vehicle.position.z = 305;
+    if (vehicle.position.x > 690) vehicle.position.x = -690;
+    if (vehicle.position.x < -690) vehicle.position.x = 690;
+    if (vehicle.position.z > 690) vehicle.position.z = -690;
+    if (vehicle.position.z < -690) vehicle.position.z = 690;
     for (const wheel of vehicle.userData.wheels) wheel.rotation.x += data.speed * data.direction * dt / .82;
     vehicle.userData.headlightMaterial.emissiveIntensity = .35 + nightAmount * 1.9;
     vehicle.userData.tailMaterial.emissiveIntensity = .65 + nightAmount * 1.4;
+  }
+}
+
+function updatePedestrians(dt) {
+  for (const pedestrian of pedestrians) {
+    const data = pedestrian.userData.walk;
+    if (data.axis) pedestrian.position.z += data.direction * data.speed * dt;
+    else pedestrian.position.x += data.direction * data.speed * dt;
+    if (pedestrian.position.x > 660) pedestrian.position.x = -660;
+    if (pedestrian.position.x < -660) pedestrian.position.x = 660;
+    if (pedestrian.position.z > 660) pedestrian.position.z = -660;
+    if (pedestrian.position.z < -660) pedestrian.position.z = 660;
+    data.phase += dt * data.speed * 4;
+    const swing = Math.sin(data.phase) * .28;
+    pedestrian.userData.limbs.arms[0].rotation.x = swing;
+    pedestrian.userData.limbs.arms[1].rotation.x = -swing;
+    pedestrian.userData.limbs.legs[0].rotation.x = -swing;
+    pedestrian.userData.limbs.legs[1].rotation.x = swing;
   }
 }
 
@@ -590,8 +700,7 @@ function updatePlayer(dt) {
   const iy = (keys.KeyW || keys.ArrowUp ? 1 : 0) - (keys.KeyS || keys.ArrowDown ? 1 : 0) + input.y;
   const length = Math.min(1, Math.hypot(ix, iy));
   if (length > .08) {
-    const camDirection = new THREE.Vector3();
-    camera.getWorldDirection(camDirection); camDirection.y = 0; camDirection.normalize();
+    const camDirection = new THREE.Vector3(Math.sin(cameraOrbit + playerYaw), 0, Math.cos(cameraOrbit + playerYaw));
     right.set(camDirection.z, 0, -camDirection.x);
     const move = camDirection.multiplyScalar(iy).add(right.multiplyScalar(ix)).normalize();
     const pace = (input.run || keys.ShiftLeft ? 9 : 5.2) * length;
@@ -605,6 +714,7 @@ function updatePlayer(dt) {
     player.userData.limbs.arms[1].rotation.x = -swing;
     player.userData.limbs.legs[0].rotation.x = -swing;
     player.userData.limbs.legs[1].rotation.x = swing;
+    cameraOrbit *= Math.pow(.996, dt * 60);
   } else {
     for (const limb of [...player.userData.limbs.arms, ...player.userData.limbs.legs]) limb.rotation.x *= .82;
   }
@@ -662,12 +772,12 @@ function nearestStreet(position) {
 
 function updateCamera(dt) {
   const subject = driving ? car.position : player.position;
-  const yaw = driving ? car.rotation.y : playerYaw;
+  const yaw = (driving ? car.rotation.y : playerYaw) + cameraOrbit;
   forward.set(Math.sin(yaw), 0, Math.cos(yaw));
   const distance = driving ? 14 + Math.abs(speed) * .08 : 8.8;
-  const height = driving ? 6.4 : 5.8;
-  desiredCamera.copy(subject).addScaledVector(forward, -distance);
-  desiredCamera.y += height;
+  const height = driving ? 4.8 : 4.7;
+  desiredCamera.copy(subject).addScaledVector(forward, -distance * Math.cos(cameraPitch));
+  desiredCamera.y += height + distance * Math.sin(cameraPitch);
   const smoothing = 1 - Math.exp(-(driving ? 4.2 : 6.5) * dt);
   camera.position.lerp(desiredCamera, smoothing);
   cameraTarget.copy(subject); cameraTarget.y += driving ? 1.3 : 2.15;
@@ -681,8 +791,10 @@ function animate() {
   const dt = Math.min(clock.getDelta(), .05);
   updateAtmosphere(dt);
   updateTraffic(dt);
+  updatePedestrians(dt);
   if (driving) updateCar(dt); else updatePlayer(dt);
   updateCamera(dt);
+  drawMinimap(dt);
   marker.rotation.y += dt * .7;
   markerRing.position.y = .5 + Math.sin(clock.elapsedTime * 2) * .15;
   streetTimer -= dt;
