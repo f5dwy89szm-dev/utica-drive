@@ -612,7 +612,7 @@ function showHint(text, seconds = 3) {
 }
 
 function collides(position, radius = 1) {
-  if (Math.abs(position.x) > 292 || Math.abs(position.z) > 292) return true;
+  if (Math.abs(position.x) > 688 || Math.abs(position.z) > 688) return true;
   return buildingBounds.some(b => position.x + radius > b.minX && position.x - radius < b.maxX && position.z + radius > b.minZ && position.z - radius < b.maxZ);
 }
 
