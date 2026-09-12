@@ -1,32 +1,29 @@
 "use strict";
 
 // ============================================================
-// UTICA DRIVE
-// Fresh standalone Three.js build
+// UTICA DRIVE - REAL OPENSTREETMAP VERSION
 // ============================================================
 
 if (typeof THREE === "undefined") {
-  alert("Three.js did not load. Check your internet connection.");
+  alert("Three.js did not load.");
   throw new Error("Three.js missing");
 }
 
 // ============================================================
-// BASIC THREE SETUP
+// GAME SETUP
 // ============================================================
 
 const container = document.getElementById("game");
 
 const scene = new THREE.Scene();
-
-scene.background = new THREE.Color(0x87b8e6);
-
-scene.fog = new THREE.Fog(0x9fc3df, 180, 650);
+scene.background = new THREE.Color(0x8fc4eb);
+scene.fog = new THREE.Fog(0xa9cbe0, 300, 1400);
 
 const camera = new THREE.PerspectiveCamera(
   60,
   window.innerWidth / window.innerHeight,
   0.1,
-  1500
+  2500
 );
 
 const renderer = new THREE.WebGLRenderer({
@@ -35,7 +32,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 
 renderer.setPixelRatio(
-  Math.min(window.devicePixelRatio || 1, 2)
+  Math.min(window.devicePixelRatio || 1, 1.5)
 );
 
 renderer.setSize(
@@ -44,12 +41,7 @@ renderer.setSize(
 );
 
 renderer.shadowMap.enabled = true;
-
-renderer.shadowMap.type =
-  THREE.PCFSoftShadowMap;
-
-renderer.outputEncoding =
-  THREE.sRGBEncoding;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 container.appendChild(renderer.domElement);
 
@@ -57,114 +49,243 @@ container.appendChild(renderer.domElement);
 // LIGHTING
 // ============================================================
 
-const hemisphere = new THREE.HemisphereLight(
-  0xcce9ff,
-  0x586348,
+scene.add(
+  new THREE.HemisphereLight(
+    0xd7efff,
+    0x526747,
+    1.3
+  )
+);
+
+const sun = new THREE.DirectionalLight(
+  0xfff4d6,
   1.2
 );
 
-scene.add(hemisphere);
-
-const sun = new THREE.DirectionalLight(
-  0xfff3d6,
-  1.25
-);
-
-sun.position.set(
-  -100,
-  180,
-  80
-);
-
+sun.position.set(-150, 260, 100);
 sun.castShadow = true;
 
-sun.shadow.mapSize.width = 2048;
-sun.shadow.mapSize.height = 2048;
-
-sun.shadow.camera.left = -220;
-sun.shadow.camera.right = 220;
-sun.shadow.camera.top = 220;
-sun.shadow.camera.bottom = -220;
+sun.shadow.mapSize.width = 1024;
+sun.shadow.mapSize.height = 1024;
 
 scene.add(sun);
 
 // ============================================================
-// HELPERS
+// UTICA MAP CENTER
 // ============================================================
 
-function material(color, roughness = 0.8) {
+// Downtown / central Utica reference
+const ORIGIN_LAT = 43.1009;
+const ORIGIN_LON = -75.2327;
 
-  return new THREE.MeshStandardMaterial({
-    color: color,
-    roughness: roughness,
-    metalness: 0.05
-  });
+const METERS_PER_LAT = 111320;
 
-}
+const METERS_PER_LON =
+  111320 *
+  Math.cos(
+    ORIGIN_LAT *
+    Math.PI / 180
+  );
 
-function box(
-  width,
-  height,
-  depth,
-  color
-) {
+// OpenStreetMap tiles loaded around the player
+const TILE_SIZE_DEGREES = 0.010;
 
-  const geometry =
-    new THREE.BoxGeometry(
-      width,
-      height,
-      depth
-    );
-
-  const mesh =
-    new THREE.Mesh(
-      geometry,
-      material(color)
-    );
-
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-
-  return mesh;
-}
+// Approximate city limits used to stop useless requests
+const CITY_BOUNDS = {
+  south: 43.045,
+  north: 43.165,
+  west: -75.315,
+  east: -75.145
+};
 
 // ============================================================
 // WORLD
 // ============================================================
 
-const world = new THREE.Group();
+const mapWorld = new THREE.Group();
+scene.add(mapWorld);
 
-scene.add(world);
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(
+    5000,
+    5000
+  ),
+  new THREE.MeshStandardMaterial({
+    color: 0x63844e,
+    roughness: 1
+  })
+);
 
-// Ground
-
-const ground =
-  new THREE.Mesh(
-    new THREE.PlaneGeometry(
-      1200,
-      1200
-    ),
-    material(0x52733e)
-  );
-
-ground.rotation.x =
-  -Math.PI / 2;
-
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -0.08;
 ground.receiveShadow = true;
 
-world.add(ground);
+scene.add(ground);
 
 // ============================================================
-// ROADS
+// COORDINATE CONVERSION
 // ============================================================
 
-function makeRoad(
-  x,
-  z,
+function geoToWorld(lat, lon) {
+
+  const x =
+    (lon - ORIGIN_LON) *
+    METERS_PER_LON;
+
+  const z =
+    -(lat - ORIGIN_LAT) *
+    METERS_PER_LAT;
+
+  return new THREE.Vector3(
+    x,
+    0,
+    z
+  );
+}
+
+function worldToGeo(x, z) {
+
+  return {
+    lat:
+      ORIGIN_LAT -
+      z / METERS_PER_LAT,
+
+    lon:
+      ORIGIN_LON +
+      x / METERS_PER_LON
+  };
+}
+
+// ============================================================
+// MATERIALS
+// ============================================================
+
+const roadMaterials = {};
+
+function roadMaterial(type) {
+
+  if (roadMaterials[type]) {
+    return roadMaterials[type];
+  }
+
+  let color = 0x55585b;
+
+  if (
+    type === "motorway" ||
+    type === "trunk"
+  ) {
+    color = 0x4b4d50;
+  }
+
+  if (
+    type === "primary" ||
+    type === "secondary"
+  ) {
+    color = 0x484b4e;
+  }
+
+  if (
+    type === "residential"
+  ) {
+    color = 0x5e6062;
+  }
+
+  roadMaterials[type] =
+    new THREE.MeshStandardMaterial({
+      color,
+      roughness: 0.95
+    });
+
+  return roadMaterials[type];
+}
+
+const buildingMaterials = [
+  new THREE.MeshStandardMaterial({
+    color: 0xa87d62,
+    roughness: 0.9
+  }),
+
+  new THREE.MeshStandardMaterial({
+    color: 0xb29b83,
+    roughness: 0.9
+  }),
+
+  new THREE.MeshStandardMaterial({
+    color: 0x978c80,
+    roughness: 0.9
+  }),
+
+  new THREE.MeshStandardMaterial({
+    color: 0xb76e50,
+    roughness: 0.9
+  }),
+
+  new THREE.MeshStandardMaterial({
+    color: 0x8b9294,
+    roughness: 0.9
+  })
+];
+
+// ============================================================
+// ROAD WIDTH
+// ============================================================
+
+function getRoadWidth(type) {
+
+  switch (type) {
+
+    case "motorway":
+      return 12;
+
+    case "trunk":
+      return 11;
+
+    case "primary":
+      return 10;
+
+    case "secondary":
+      return 9;
+
+    case "tertiary":
+      return 8;
+
+    case "residential":
+      return 6.5;
+
+    case "service":
+      return 4;
+
+    case "living_street":
+      return 5;
+
+    default:
+      return 5.5;
+  }
+}
+
+// ============================================================
+// ROAD GEOMETRY
+// ============================================================
+
+function createRoadSegment(
+  a,
+  b,
   width,
-  length,
-  rotation = 0
+  type
 ) {
+
+  const dx = b.x - a.x;
+  const dz = b.z - a.z;
+
+  const length =
+    Math.sqrt(
+      dx * dx +
+      dz * dz
+    );
+
+  if (length < 0.4) {
+    return;
+  }
 
   const road =
     new THREE.Mesh(
@@ -172,455 +293,675 @@ function makeRoad(
         width,
         length
       ),
-      material(0x303236)
+      roadMaterial(type)
     );
+
+  const centerX =
+    (a.x + b.x) / 2;
+
+  const centerZ =
+    (a.z + b.z) / 2;
+
+  road.position.set(
+    centerX,
+    0.015,
+    centerZ
+  );
 
   road.rotation.x =
     -Math.PI / 2;
 
   road.rotation.z =
-    rotation;
-
-  road.position.set(
-    x,
-    0.025,
-    z
-  );
+    Math.atan2(
+      dz,
+      dx
+    ) -
+    Math.PI / 2;
 
   road.receiveShadow = true;
 
-  world.add(road);
+  mapWorld.add(road);
 
   return road;
 }
-
-function makeRoadLine(
-  x,
-  z,
-  width,
-  length,
-  rotation = 0
-) {
-
-  const line =
-    new THREE.Mesh(
-      new THREE.PlaneGeometry(
-        width,
-        length
-      ),
-      new THREE.MeshBasicMaterial({
-        color: 0xf0d348
-      })
-    );
-
-  line.rotation.x =
-    -Math.PI / 2;
-
-  line.rotation.z =
-    rotation;
-
-  line.position.set(
-    x,
-    0.04,
-    z
-  );
-
-  world.add(line);
-}
-
-// Main north/south road
-
-makeRoad(
-  0,
-  0,
-  22,
-  1000
-);
-
-// Center marking
-
-for (
-  let z = -490;
-  z <= 490;
-  z += 18
-) {
-
-  makeRoadLine(
-    0,
-    z,
-    0.35,
-    8
-  );
-
-}
-
-// Cross streets
-
-const crossStreets = [
-  -360,
-  -270,
-  -180,
-  -90,
-  0,
-  90,
-  180,
-  270,
-  360
-];
-
-crossStreets.forEach((z) => {
-
-  makeRoad(
-    0,
-    z,
-    18,
-    900,
-    Math.PI / 2
-  );
-
-});
-
-// ============================================================
-// SIDEWALKS
-// ============================================================
-
-function sidewalk(
-  x,
-  z,
-  width,
-  depth
-) {
-
-  const walk =
-    box(
-      width,
-      0.18,
-      depth,
-      0xaaaaaa
-    );
-
-  walk.position.set(
-    x,
-    0.09,
-    z
-  );
-
-  walk.receiveShadow = true;
-
-  world.add(walk);
-}
-
-// Main road sidewalks
-
-sidewalk(
-  -14,
-  0,
-  5,
-  1000
-);
-
-sidewalk(
-  14,
-  0,
-  5,
-  1000
-);
 
 // ============================================================
 // BUILDINGS
 // ============================================================
 
-const buildingColors = [
-  0xa94e3c,
-  0xb6a88d,
-  0x8d7560,
-  0xc3b9a4,
-  0x84766c,
-  0x8f999e,
-  0xb07851,
-  0x786f65
-];
+function getBuildingHeight(tags) {
 
-function createBuilding(
-  x,
-  z,
-  width,
-  height,
-  depth,
-  color
-) {
+  if (tags.height) {
 
-  const building =
-    box(
-      width,
-      height,
-      depth,
-      color
-    );
+    const value =
+      parseFloat(tags.height);
 
-  building.position.set(
-    x,
-    height / 2,
-    z
-  );
-
-  world.add(building);
-
-  // roof
-  const roof =
-    box(
-      width + 0.8,
-      0.6,
-      depth + 0.8,
-      0x3f4142
-    );
-
-  roof.position.set(
-    x,
-    height + 0.3,
-    z
-  );
-
-  world.add(roof);
-
-  // door
-  const door =
-    box(
-      2,
-      3,
-      0.18,
-      0x3a2b22
-    );
-
-  door.position.set(
-    x,
-    1.5,
-    z + depth / 2 + 0.1
-  );
-
-  world.add(door);
-
-  // front windows
-  const windowMaterial =
-    new THREE.MeshStandardMaterial({
-      color: 0x93bad0,
-      roughness: 0.25,
-      metalness: 0.1
-    });
-
-  const floors =
-    Math.max(
-      1,
-      Math.floor(height / 4)
-    );
-
-  for (
-    let floor = 0;
-    floor < floors;
-    floor++
-  ) {
-
-    const y =
-      2.5 + floor * 4;
-
-    [-width * 0.23,
-      width * 0.23]
-      .forEach(offset => {
-
-        const windowMesh =
-          new THREE.Mesh(
-            new THREE.BoxGeometry(
-              1.8,
-              1.6,
-              0.12
-            ),
-            windowMaterial
-          );
-
-        windowMesh.position.set(
-          x + offset,
-          y,
-          z + depth / 2 + 0.11
-        );
-
-        world.add(windowMesh);
-
-      });
-
+    if (!isNaN(value)) {
+      return Math.min(
+        Math.max(value, 2.5),
+        100
+      );
+    }
   }
 
+  if (tags["building:levels"]) {
+
+    const levels =
+      parseFloat(
+        tags["building:levels"]
+      );
+
+    if (!isNaN(levels)) {
+
+      return Math.min(
+        Math.max(
+          levels * 3.1,
+          3
+        ),
+        90
+      );
+    }
+  }
+
+  switch (tags.building) {
+
+    case "house":
+    case "detached":
+    case "residential":
+      return 7.5;
+
+    case "garage":
+    case "garages":
+      return 3.2;
+
+    case "commercial":
+    case "retail":
+      return 8;
+
+    case "industrial":
+      return 9;
+
+    case "church":
+      return 15;
+
+    default:
+      return 7;
+  }
+}
+
+function createBuilding(
+  geometry,
+  tags
+) {
+
+  if (
+    !geometry ||
+    geometry.length < 3
+  ) {
+    return;
+  }
+
+  const points =
+    geometry.map(
+      point =>
+        geoToWorld(
+          point.lat,
+          point.lon
+        )
+    );
+
+  const shape =
+    new THREE.Shape();
+
+  shape.moveTo(
+    points[0].x,
+    -points[0].z
+  );
+
+  for (
+    let i = 1;
+    i < points.length;
+    i++
+  ) {
+
+    shape.lineTo(
+      points[i].x,
+      -points[i].z
+    );
+  }
+
+  const height =
+    getBuildingHeight(tags);
+
+  let hash = 0;
+
+  if (tags.name) {
+
+    for (
+      let i = 0;
+      i < tags.name.length;
+      i++
+    ) {
+
+      hash +=
+        tags.name.charCodeAt(i);
+    }
+  }
+
+  const mat =
+    buildingMaterials[
+      Math.abs(hash) %
+      buildingMaterials.length
+    ];
+
+  const geometry3d =
+    new THREE.ExtrudeGeometry(
+      shape,
+      {
+        depth: height,
+        bevelEnabled: false
+      }
+    );
+
+  geometry3d.rotateX(
+    -Math.PI / 2
+  );
+
+  const mesh =
+    new THREE.Mesh(
+      geometry3d,
+      mat
+    );
+
+  mesh.castShadow = false;
+  mesh.receiveShadow = true;
+
+  mapWorld.add(mesh);
+
+  if (
+    tags.name &&
+    height > 5
+  ) {
+
+    const center =
+      getCenter(points);
+
+    createLabel(
+      tags.name,
+      center.x,
+      height + 2,
+      center.z,
+      6
+    );
+  }
 }
 
 // ============================================================
-// UTICA-STYLE CITY BLOCKS
+// LABELS
 // ============================================================
 
-function generateCity() {
+const labels = [];
 
-  const blockZ =
-    [
-      -405,
-      -315,
-      -225,
-      -135,
-      -45,
-      45,
-      135,
-      225,
-      315,
-      405
-    ];
+function createLabel(
+  text,
+  x,
+  y,
+  z,
+  scale = 5
+) {
 
-  const xPositions =
-    [
-      -180,
-      -125,
-      -70,
-      -38,
-      38,
-      70,
-      125,
-      180
-    ];
+  if (!text) {
+    return;
+  }
 
-  blockZ.forEach((z, zi) => {
+  if (text.length > 38) {
+    return;
+  }
 
-    xPositions.forEach((x, xi) => {
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
 
-      // keep intersections clearer
+  canvas.width = 512;
+  canvas.height = 96;
+
+  const ctx =
+    canvas.getContext("2d");
+
+  ctx.fillStyle =
+    "rgba(0,0,0,0.65)";
+
+  ctx.fillRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  ctx.font =
+    "bold 38px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.textBaseline =
+    "middle";
+
+  ctx.fillStyle =
+    "#ffffff";
+
+  ctx.fillText(
+    text,
+    256,
+    48
+  );
+
+  const texture =
+    new THREE.CanvasTexture(
+      canvas
+    );
+
+  const sprite =
+    new THREE.Sprite(
+      new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        depthTest: false
+      })
+    );
+
+  sprite.position.set(
+    x,
+    y,
+    z
+  );
+
+  sprite.scale.set(
+    scale * 3.8,
+    scale * 0.7,
+    1
+  );
+
+  sprite.userData.labelText =
+    text;
+
+  scene.add(sprite);
+
+  labels.push(sprite);
+
+  return sprite;
+}
+
+function getCenter(points) {
+
+  let x = 0;
+  let z = 0;
+
+  points.forEach(p => {
+    x += p.x;
+    z += p.z;
+  });
+
+  return {
+    x: x / points.length,
+    z: z / points.length
+  };
+}
+
+// ============================================================
+// MAP DATA
+// ============================================================
+
+const loadedTiles =
+  new Set();
+
+const loadingTiles =
+  new Set();
+
+let mapStatus =
+  "Loading Utica...";
+
+const namedRoads = [];
+
+function tileKey(latIndex, lonIndex) {
+
+  return (
+    latIndex +
+    "_" +
+    lonIndex
+  );
+}
+
+function buildOverpassQuery(
+  south,
+  west,
+  north,
+  east
+) {
+
+  const bbox =
+    `${south},${west},${north},${east}`;
+
+  return `
+[out:json][timeout:25];
+(
+  way["highway"](${bbox});
+  way["building"](${bbox});
+  node["amenity"]["name"](${bbox});
+  node["shop"]["name"](${bbox});
+  node["tourism"]["name"](${bbox});
+  node["historic"]["name"](${bbox});
+  node["leisure"]["name"](${bbox});
+);
+out tags geom;
+`;
+}
+
+async function loadMapTile(
+  latIndex,
+  lonIndex
+) {
+
+  const key =
+    tileKey(
+      latIndex,
+      lonIndex
+    );
+
+  if (
+    loadedTiles.has(key) ||
+    loadingTiles.has(key)
+  ) {
+    return;
+  }
+
+  const south =
+    latIndex *
+    TILE_SIZE_DEGREES;
+
+  const north =
+    south +
+    TILE_SIZE_DEGREES;
+
+  const west =
+    lonIndex *
+    TILE_SIZE_DEGREES;
+
+  const east =
+    west +
+    TILE_SIZE_DEGREES;
+
+  if (
+    north < CITY_BOUNDS.south ||
+    south > CITY_BOUNDS.north ||
+    east < CITY_BOUNDS.west ||
+    west > CITY_BOUNDS.east
+  ) {
+
+    loadedTiles.add(key);
+    return;
+  }
+
+  loadingTiles.add(key);
+
+  try {
+
+    const query =
+      buildOverpassQuery(
+        south,
+        west,
+        north,
+        east
+      );
+
+    const url =
+      "https://overpass-api.de/api/interpreter";
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/x-www-form-urlencoded"
+          },
+
+          body:
+            "data=" +
+            encodeURIComponent(query)
+        }
+      );
+
+    if (!response.ok) {
+      throw new Error(
+        "Map server error"
+      );
+    }
+
+    const data =
+      await response.json();
+
+    processMapData(data);
+
+    loadedTiles.add(key);
+
+    mapStatus =
+      "UTICA, NEW YORK";
+  }
+
+  catch (error) {
+
+    console.error(
+      "Utica map load error:",
+      error
+    );
+
+    mapStatus =
+      "MAP RETRYING...";
+  }
+
+  finally {
+
+    loadingTiles.delete(key);
+  }
+}
+
+// ============================================================
+// PROCESS OSM
+// ============================================================
+
+function processMapData(data) {
+
+  if (
+    !data ||
+    !data.elements
+  ) {
+    return;
+  }
+
+  data.elements.forEach(
+    element => {
+
+      const tags =
+        element.tags || {};
+
+      // ROADS
+
       if (
-        Math.abs(x) < 25
+        element.type === "way" &&
+        tags.highway &&
+        element.geometry &&
+        element.geometry.length >= 2
       ) {
+
+        const roadPoints =
+          element.geometry.map(
+            p =>
+              geoToWorld(
+                p.lat,
+                p.lon
+              )
+          );
+
+        const width =
+          getRoadWidth(
+            tags.highway
+          );
+
+        for (
+          let i = 0;
+          i <
+          roadPoints.length - 1;
+          i++
+        ) {
+
+          createRoadSegment(
+            roadPoints[i],
+            roadPoints[i + 1],
+            width,
+            tags.highway
+          );
+        }
+
+        if (tags.name) {
+
+          const center =
+            roadPoints[
+              Math.floor(
+                roadPoints.length / 2
+              )
+            ];
+
+          namedRoads.push({
+            name: tags.name,
+            points: roadPoints
+          });
+
+          // Only put floating labels
+          // on more important roads.
+
+          if (
+            [
+              "primary",
+              "secondary",
+              "tertiary"
+            ].includes(
+              tags.highway
+            )
+          ) {
+
+            createLabel(
+              tags.name,
+              center.x,
+              1.7,
+              center.z,
+              4
+            );
+          }
+        }
+
         return;
       }
 
-      const seed =
-        Math.abs(
-          Math.sin(
-            x * 12.45 +
-            z * 2.31
-          )
-        );
+      // BUILDINGS
 
-      const width =
-        18 +
-        seed * 20;
-
-      const depth =
-        20 +
-        (
-          Math.abs(
-            Math.cos(
-              x + z
-            )
-          )
-        ) * 18;
-
-      let height =
-        8 +
-        seed * 20;
-
-      // slightly larger downtown
       if (
-        Math.abs(z) < 170 &&
-        Math.abs(x) < 130
+        element.type === "way" &&
+        tags.building &&
+        element.geometry
       ) {
 
-        height *= 1.65;
+        createBuilding(
+          element.geometry,
+          tags
+        );
 
+        return;
       }
 
-      const color =
-        buildingColors[
-          (zi + xi) %
-          buildingColors.length
-        ];
+      // NAMED PLACES
 
-      createBuilding(
-        x,
-        z,
-        width,
-        height,
-        depth,
-        color
+      if (
+        element.type === "node" &&
+        tags.name &&
+        element.lat &&
+        element.lon
+      ) {
+
+        const pos =
+          geoToWorld(
+            element.lat,
+            element.lon
+          );
+
+        createLabel(
+          tags.name,
+          pos.x,
+          3,
+          pos.z,
+          4
+        );
+      }
+
+    }
+  );
+}
+
+// ============================================================
+// LOAD MAP AROUND PLAYER
+// ============================================================
+
+function requestNearbyTiles() {
+
+  const target =
+    driving
+      ? car.position
+      : player.position;
+
+  const geo =
+    worldToGeo(
+      target.x,
+      target.z
+    );
+
+  const centerLat =
+    Math.floor(
+      geo.lat /
+      TILE_SIZE_DEGREES
+    );
+
+  const centerLon =
+    Math.floor(
+      geo.lon /
+      TILE_SIZE_DEGREES
+    );
+
+  // 3 x 3 section around player
+  for (
+    let y = -1;
+    y <= 1;
+    y++
+  ) {
+
+    for (
+      let x = -1;
+      x <= 1;
+      x++
+    ) {
+
+      loadMapTile(
+        centerLat + y,
+        centerLon + x
       );
-
-    });
-
-  });
-
-}
-
-generateCity();
-
-// ============================================================
-// TREES
-// ============================================================
-
-function createTree(
-  x,
-  z
-) {
-
-  const trunk =
-    box(
-      0.7,
-      3.5,
-      0.7,
-      0x654321
-    );
-
-  trunk.position.set(
-    x,
-    1.75,
-    z
-  );
-
-  world.add(trunk);
-
-  const leaves =
-    new THREE.Mesh(
-      new THREE.SphereGeometry(
-        2.7,
-        10,
-        8
-      ),
-      material(0x376b32)
-    );
-
-  leaves.position.set(
-    x,
-    5,
-    z
-  );
-
-  leaves.castShadow = true;
-
-  world.add(leaves);
-
-}
-
-for (
-  let z = -450;
-  z <= 450;
-  z += 35
-) {
-
-  createTree(
-    -19,
-    z
-  );
-
-  createTree(
-    19,
-    z + 14
-  );
-
+    }
+  }
 }
 
 // ============================================================
 // PLAYER
-// About 1.8 meters tall
 // ============================================================
 
 const player =
@@ -628,86 +969,79 @@ const player =
 
 scene.add(player);
 
-// legs
+const skin =
+  new THREE.MeshStandardMaterial({
+    color: 0xc58a65
+  });
 
-const leftLeg =
-  box(
-    0.28,
-    0.8,
-    0.35,
-    0x222831
-  );
+const shirt =
+  new THREE.MeshStandardMaterial({
+    color: 0x263f70
+  });
 
-leftLeg.position.set(
-  -0.18,
-  0.4,
-  0
-);
-
-player.add(leftLeg);
-
-const rightLeg =
-  box(
-    0.28,
-    0.8,
-    0.35,
-    0x222831
-  );
-
-rightLeg.position.set(
-  0.18,
-  0.4,
-  0
-);
-
-player.add(rightLeg);
-
-// torso
+const pants =
+  new THREE.MeshStandardMaterial({
+    color: 0x20242b
+  });
 
 const torso =
-  box(
-    0.85,
-    0.85,
-    0.42,
-    0x284f8f
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      0.55,
+      0.72,
+      0.28
+    ),
+    shirt
   );
 
-torso.position.y =
-  1.18;
-
+torso.position.y = 1.15;
 player.add(torso);
-
-// head
 
 const head =
   new THREE.Mesh(
     new THREE.SphereGeometry(
-      0.32,
-      16,
-      12
+      0.22,
+      12,
+      10
     ),
-    material(0xc98f68)
+    skin
   );
 
-head.position.y =
-  1.9;
-
-head.castShadow = true;
-
+head.position.y = 1.72;
 player.add(head);
 
+const leg1 =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      0.19,
+      0.78,
+      0.22
+    ),
+    pants
+  );
+
+leg1.position.set(
+  -0.14,
+  0.39,
+  0
+);
+
+player.add(leg1);
+
+const leg2 =
+  leg1.clone();
+
+leg2.position.x = 0.14;
+player.add(leg2);
+
 player.position.set(
-  -6,
   0,
-  14
+  0,
+  20
 );
 
 // ============================================================
 // CAR
-// Realistic scale:
-// ~4.7m long
-// ~1.85m wide
-// ~1.4m high
 // ============================================================
 
 const car =
@@ -715,154 +1049,93 @@ const car =
 
 scene.add(car);
 
-// lower body
+const bodyMaterial =
+  new THREE.MeshStandardMaterial({
+    color: 0x214fa5,
+    metalness: 0.25,
+    roughness: 0.4
+  });
 
 const carBody =
-  box(
-    1.85,
-    0.58,
-    4.7,
-    0x2047a0
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      1.85,
+      0.55,
+      4.65
+    ),
+    bodyMaterial
   );
 
-carBody.position.y =
-  0.68;
+carBody.position.y = 0.65;
+carBody.castShadow = true;
 
 car.add(carBody);
 
-// cabin
-
 const cabin =
-  box(
-    1.65,
-    0.65,
-    2.25,
-    0x18366f
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      1.55,
+      0.62,
+      2.15
+    ),
+    new THREE.MeshStandardMaterial({
+      color: 0x152b4a,
+      metalness: 0.2,
+      roughness: 0.35
+    })
   );
 
 cabin.position.set(
   0,
-  1.18,
+  1.15,
   -0.15
 );
 
 car.add(cabin);
 
-// windshield
+function addWheel(x, z) {
 
-const windshield =
-  box(
-    1.45,
-    0.42,
-    0.08,
-    0x8fc7dc
-  );
-
-windshield.position.set(
-  0,
-  1.25,
-  1.02
-);
-
-windshield.rotation.x =
-  -0.2;
-
-car.add(windshield);
-
-// wheels
-
-function wheel(
-  x,
-  z
-) {
-
-  const geometry =
-    new THREE.CylinderGeometry(
-      0.37,
-      0.37,
-      0.28,
-      16
-    );
-
-  const mesh =
+  const wheel =
     new THREE.Mesh(
-      geometry,
-      material(0x151515)
+      new THREE.CylinderGeometry(
+        0.36,
+        0.36,
+        0.28,
+        14
+      ),
+      new THREE.MeshStandardMaterial({
+        color: 0x151515
+      })
     );
 
-  mesh.rotation.z =
+  wheel.rotation.z =
     Math.PI / 2;
 
-  mesh.position.set(
+  wheel.position.set(
     x,
-    0.42,
+    0.38,
     z
   );
 
-  mesh.castShadow = true;
-
-  car.add(mesh);
-
+  car.add(wheel);
 }
 
-wheel(
-  -0.95,
-  1.45
-);
-
-wheel(
-  0.95,
-  1.45
-);
-
-wheel(
-  -0.95,
-  -1.45
-);
-
-wheel(
-  0.95,
-  -1.45
-);
+addWheel(-0.96, 1.4);
+addWheel(0.96, 1.4);
+addWheel(-0.96, -1.4);
+addWheel(0.96, -1.4);
 
 car.position.set(
-  1.5,
+  3,
   0,
-  0
+  8
 );
 
 // ============================================================
-// GAME STATE
+// CONTROLS
 // ============================================================
 
-let driving = false;
-
-let vehicleSpeed = 0;
-
-let steerAmount = 0;
-
-const maxForwardSpeed =
-  0.45;
-
-const maxReverseSpeed =
-  -0.20;
-
-const acceleration =
-  0.007;
-
-const braking =
-  0.014;
-
-const friction =
-  0.0045;
-
-const playerSpeed =
-  0.10;
-
-const keys = {};
-
 const input = {
-
   forward: false,
   backward: false,
   left: false,
@@ -874,11 +1147,123 @@ const input = {
 
   steerLeft: false,
   steerRight: false
-
 };
 
+const keys = {};
+
+let driving = false;
+
+let speed = 0;
+let steering = 0;
+
+const MAX_SPEED = 0.60;
+const MAX_REVERSE = -0.25;
+
+const ACCELERATION = 0.008;
+const FRICTION = 0.0045;
+const BRAKE_FORCE = 0.016;
+
+function holdButton(
+  id,
+  property
+) {
+
+  const element =
+    document.getElementById(id);
+
+  if (!element) {
+    return;
+  }
+
+  function down(event) {
+
+    event.preventDefault();
+    input[property] = true;
+  }
+
+  function up(event) {
+
+    if (event) {
+      event.preventDefault();
+    }
+
+    input[property] = false;
+  }
+
+  element.addEventListener(
+    "touchstart",
+    down,
+    { passive: false }
+  );
+
+  element.addEventListener(
+    "touchend",
+    up,
+    { passive: false }
+  );
+
+  element.addEventListener(
+    "touchcancel",
+    up,
+    { passive: false }
+  );
+
+  element.addEventListener(
+    "mousedown",
+    down
+  );
+
+  element.addEventListener(
+    "mouseup",
+    up
+  );
+
+  element.addEventListener(
+    "mouseleave",
+    up
+  );
+}
+
+holdButton("walkUp", "forward");
+holdButton("walkDown", "backward");
+holdButton("walkLeft", "left");
+holdButton("walkRight", "right");
+
+holdButton("gasButton", "gas");
+holdButton("brakeButton", "brake");
+holdButton("reverseButton", "reverse");
+
+holdButton(
+  "steerLeft",
+  "steerLeft"
+);
+
+holdButton(
+  "steerRight",
+  "steerRight"
+);
+
+window.addEventListener(
+  "keydown",
+  e => {
+
+    keys[e.code] = true;
+
+    if (e.code === "KeyE") {
+      toggleVehicle();
+    }
+  }
+);
+
+window.addEventListener(
+  "keyup",
+  e => {
+    keys[e.code] = false;
+  }
+);
+
 // ============================================================
-// HUD
+// UI
 // ============================================================
 
 const cityName =
@@ -899,742 +1284,4 @@ const speedText =
 const message =
   document.getElementById(
     "message"
-  );
-
-const walkControls =
-  document.getElementById(
-    "walkControls"
-  );
-
-const driveControls =
-  document.getElementById(
-    "driveControls"
-  );
-
-const vehicleButton =
-  document.getElementById(
-    "vehicleButton"
-  );
-
-// ============================================================
-// MOBILE BUTTON INPUT
-// ============================================================
-
-function holdButton(
-  id,
-  property
-) {
-
-  const element =
-    document.getElementById(id);
-
-  function start(event) {
-
-    event.preventDefault();
-
-    input[property] = true;
-
-  }
-
-  function stop(event) {
-
-    if (event) {
-      event.preventDefault();
-    }
-
-    input[property] = false;
-
-  }
-
-  element.addEventListener(
-    "touchstart",
-    start,
-    {
-      passive: false
-    }
-  );
-
-  element.addEventListener(
-    "touchend",
-    stop,
-    {
-      passive: false
-    }
-  );
-
-  element.addEventListener(
-    "touchcancel",
-    stop,
-    {
-      passive: false
-    }
-  );
-
-  element.addEventListener(
-    "mousedown",
-    start
-  );
-
-  element.addEventListener(
-    "mouseup",
-    stop
-  );
-
-  element.addEventListener(
-    "mouseleave",
-    stop
-  );
-
-}
-
-holdButton(
-  "walkUp",
-  "forward"
-);
-
-holdButton(
-  "walkDown",
-  "backward"
-);
-
-holdButton(
-  "walkLeft",
-  "left"
-);
-
-holdButton(
-  "walkRight",
-  "right"
-);
-
-holdButton(
-  "gasButton",
-  "gas"
-);
-
-holdButton(
-  "brakeButton",
-  "brake"
-);
-
-holdButton(
-  "reverseButton",
-  "reverse"
-);
-
-holdButton(
-  "steerLeft",
-  "steerLeft"
-);
-
-holdButton(
-  "steerRight",
-  "steerRight"
-);
-
-// ============================================================
-// KEYBOARD
-// ============================================================
-
-window.addEventListener(
-  "keydown",
-  function(event) {
-
-    keys[
-      event.code
-    ] = true;
-
-    if (
-      event.code === "KeyE"
-    ) {
-
-      toggleVehicle();
-
-    }
-
-  }
-);
-
-window.addEventListener(
-  "keyup",
-  function(event) {
-
-    keys[
-      event.code
-    ] = false;
-
-  }
-);
-
-// ============================================================
-// ENTER / EXIT VEHICLE
-// ============================================================
-
-vehicleButton.addEventListener(
-  "click",
-  toggleVehicle
-);
-
-function distanceToCar() {
-
-  const dx =
-    player.position.x -
-    car.position.x;
-
-  const dz =
-    player.position.z -
-    car.position.z;
-
-  return Math.sqrt(
-    dx * dx +
-    dz * dz
-  );
-
-}
-
-function toggleVehicle() {
-
-  if (!driving) {
-
-    if (
-      distanceToCar() >
-      4
-    ) {
-
-      return;
-
-    }
-
-    driving = true;
-
-    player.visible =
-      false;
-
-    walkControls.style.display =
-      "none";
-
-    driveControls.style.display =
-      "block";
-
-    vehicleButton.style.display =
-      "block";
-
-    vehicleButton.textContent =
-      "EXIT CAR";
-
-    modeText.textContent =
-      "DRIVING";
-
-    message.textContent =
-      "";
-
-  }
-
-  else {
-
-    driving = false;
-
-    vehicleSpeed = 0;
-
-    player.visible =
-      true;
-
-    const exitOffset =
-      new THREE.Vector3(
-        -2.2,
-        0,
-        0
-      );
-
-    exitOffset.applyAxisAngle(
-      new THREE.Vector3(
-        0,
-        1,
-        0
-      ),
-      car.rotation.y
-    );
-
-    player.position.copy(
-      car.position
-    );
-
-    player.position.add(
-      exitOffset
-    );
-
-    walkControls.style.display =
-      "flex";
-
-    driveControls.style.display =
-      "none";
-
-    vehicleButton.textContent =
-      "ENTER CAR";
-
-    modeText.textContent =
-      "WALKING";
-
-  }
-
-}
-
-// ============================================================
-// WALKING
-// ============================================================
-
-function updateWalking() {
-
-  let moveForward =
-    input.forward ||
-    keys["KeyW"] ||
-    keys["ArrowUp"];
-
-  let moveBack =
-    input.backward ||
-    keys["KeyS"] ||
-    keys["ArrowDown"];
-
-  let turnLeft =
-    input.left ||
-    keys["KeyA"] ||
-    keys["ArrowLeft"];
-
-  let turnRight =
-    input.right ||
-    keys["KeyD"] ||
-    keys["ArrowRight"];
-
-  if (turnLeft) {
-
-    player.rotation.y +=
-      0.045;
-
-  }
-
-  if (turnRight) {
-
-    player.rotation.y -=
-      0.045;
-
-  }
-
-  let movement = 0;
-
-  if (moveForward) {
-
-    movement =
-      playerSpeed;
-
-  }
-
-  if (moveBack) {
-
-    movement =
-      -playerSpeed * 0.7;
-
-  }
-
-  if (
-    movement !== 0
-  ) {
-
-    player.position.x +=
-      Math.sin(
-        player.rotation.y
-      ) *
-      movement;
-
-    player.position.z +=
-      Math.cos(
-        player.rotation.y
-      ) *
-      movement;
-
-  }
-
-}
-
-// ============================================================
-// VEHICLE PHYSICS
-// ============================================================
-
-function updateCar() {
-
-  const gas =
-    input.gas ||
-    keys["KeyW"] ||
-    keys["ArrowUp"];
-
-  const reverse =
-    input.reverse ||
-    keys["KeyS"] ||
-    keys["ArrowDown"];
-
-  const brake =
-    input.brake ||
-    keys["Space"];
-
-  const left =
-    input.steerLeft ||
-    keys["KeyA"] ||
-    keys["ArrowLeft"];
-
-  const right =
-    input.steerRight ||
-    keys["KeyD"] ||
-    keys["ArrowRight"];
-
-  // acceleration
-
-  if (gas) {
-
-    vehicleSpeed +=
-      acceleration;
-
-  }
-
-  if (reverse) {
-
-    vehicleSpeed -=
-      acceleration * 0.7;
-
-  }
-
-  // brake
-
-  if (brake) {
-
-    if (
-      vehicleSpeed > 0
-    ) {
-
-      vehicleSpeed -=
-        braking;
-
-    }
-
-    else if (
-      vehicleSpeed < 0
-    ) {
-
-      vehicleSpeed +=
-        braking;
-
-    }
-
-  }
-
-  // natural friction
-
-  if (
-    !gas &&
-    !reverse
-  ) {
-
-    if (
-      vehicleSpeed > 0
-    ) {
-
-      vehicleSpeed -=
-        friction;
-
-      if (
-        vehicleSpeed < 0
-      ) {
-        vehicleSpeed = 0;
-      }
-
-    }
-
-    if (
-      vehicleSpeed < 0
-    ) {
-
-      vehicleSpeed +=
-        friction;
-
-      if (
-        vehicleSpeed > 0
-      ) {
-        vehicleSpeed = 0;
-      }
-
-    }
-
-  }
-
-  vehicleSpeed =
-    THREE.MathUtils.clamp(
-      vehicleSpeed,
-      maxReverseSpeed,
-      maxForwardSpeed
-    );
-
-  // progressive steering
-
-  let targetSteer = 0;
-
-  if (left) {
-    targetSteer = 1;
-  }
-
-  if (right) {
-    targetSteer = -1;
-  }
-
-  steerAmount +=
-    (
-      targetSteer -
-      steerAmount
-    ) *
-    0.12;
-
-  const speedPercent =
-    Math.min(
-      Math.abs(
-        vehicleSpeed
-      ) /
-      maxForwardSpeed,
-      1
-    );
-
-  if (
-    Math.abs(
-      vehicleSpeed
-    ) >
-    0.003
-  ) {
-
-    const steeringStrength =
-      0.027 *
-      (
-        1 -
-        speedPercent * 0.45
-      );
-
-    const direction =
-      vehicleSpeed >= 0
-        ? 1
-        : -1;
-
-    car.rotation.y +=
-      steerAmount *
-      steeringStrength *
-      direction;
-
-  }
-
-  // movement
-
-  car.position.x +=
-    Math.sin(
-      car.rotation.y
-    ) *
-    vehicleSpeed;
-
-  car.position.z +=
-    Math.cos(
-      car.rotation.y
-    ) *
-    vehicleSpeed;
-
-}
-
-// ============================================================
-// CAMERA
-// ============================================================
-
-const cameraTarget =
-  new THREE.Vector3();
-
-const cameraPosition =
-  new THREE.Vector3();
-
-function updateCamera() {
-
-  const target =
-    driving
-      ? car
-      : player;
-
-  const distance =
-    driving
-      ? 9.5
-      : 5.5;
-
-  const height =
-    driving
-      ? 4.2
-      : 3.2;
-
-  cameraPosition.set(
-    -Math.sin(
-      target.rotation.y
-    ) * distance,
-    height,
-    -Math.cos(
-      target.rotation.y
-    ) * distance
-  );
-
-  cameraPosition.add(
-    target.position
-  );
-
-  camera.position.lerp(
-    cameraPosition,
-    0.09
-  );
-
-  cameraTarget.set(
-    target.position.x,
-    driving
-      ? 1.0
-      : 1.3,
-    target.position.z
-  );
-
-  camera.lookAt(
-    cameraTarget
-  );
-
-}
-
-// ============================================================
-// USER INTERFACE
-// ============================================================
-
-function updateUI() {
-
-  if (driving) {
-
-    const mph =
-      Math.round(
-        Math.abs(
-          vehicleSpeed
-        ) *
-        105
-      );
-
-    speedText.textContent =
-      mph +
-      " MPH";
-
-    vehicleButton.style.display =
-      "block";
-
-    return;
-
-  }
-
-  speedText.textContent =
-    "0 MPH";
-
-  const distance =
-    distanceToCar();
-
-  if (
-    distance < 4
-  ) {
-
-    vehicleButton.style.display =
-      "block";
-
-    vehicleButton.textContent =
-      "ENTER CAR";
-
-    message.textContent =
-      "TAP ENTER CAR";
-
-  }
-
-  else {
-
-    vehicleButton.style.display =
-      "none";
-
-    message.textContent =
-      "WALK TO THE CAR";
-
-  }
-
-}
-
-// ============================================================
-// ANIMATION
-// ============================================================
-
-function animate() {
-
-  requestAnimationFrame(
-    animate
-  );
-
-  if (driving) {
-
-    updateCar();
-
-  }
-
-  else {
-
-    updateWalking();
-
-  }
-
-  updateCamera();
-
-  updateUI();
-
-  renderer.render(
-    scene,
-    camera
-  );
-
-}
-
-updateCamera();
-
-animate();
-
-// ============================================================
-// WINDOW RESIZE
-// ============================================================
-
-window.addEventListener(
-  "resize",
-  function() {
-
-    camera.aspect =
-      window.innerWidth /
-      window.innerHeight;
-
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(
-      window.innerWidth,
-      window.innerHeight
-    );
-
-  }
-);
-
-// ============================================================
-// STOP STUCK BUTTONS
-// ============================================================
-
-window.addEventListener(
-  "blur",
-  function() {
-
-    Object.keys(
-      input
-    ).forEach(
-      key => {
-        input[key] = false;
-      }
-    );
-
-  }
-);
+ 
