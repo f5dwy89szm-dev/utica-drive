@@ -1,0 +1,29 @@
+name: Build Godot web game
+
+on:
+  push:
+    paths:
+      - "godot/**"
+      - ".github/workflows/godot-web.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export Godot Web
+        run: godot --headless --path godot --editor --quit && mkdir -p godot-web && godot --headless --path godot --export-release "Web" godot-web/index.html
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: godot-web
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
