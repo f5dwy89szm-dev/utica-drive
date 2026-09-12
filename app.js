@@ -146,6 +146,9 @@ const roadTexture = makeRoadTexture();
 const brickTexture = makeBrickTexture();
 const concreteTexture = makeConcreteTexture();
 const grassTexture = makeGrassTexture();
+for (const texture of [roadTexture, brickTexture, concreteTexture, grassTexture]) {
+  texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+}
 const roadMat = new THREE.MeshStandardMaterial({ color: 0x73787c, map: roadTexture, roughness: .38, metalness: .17 });
 const sidewalkMat = new THREE.MeshStandardMaterial({ color: 0xb1b1ad, map: concreteTexture, roughness: .92, metalness: 0 });
 const grassMat = new THREE.MeshStandardMaterial({ color: 0x4f6c40, map: grassTexture, roughness: 1, metalness: 0 });
@@ -359,7 +362,7 @@ for (let i = 0; i < roadCoords.length; i++) {
 ui.loadingText.textContent = "Preparing your M4…";
 function createCar(color = 0x36a7d8, functionalLights = false, bodyStyle = "coupe") {
   const car = new THREE.Group();
-  const paint = mat(color, .22, .72);
+  const paint = new THREE.MeshPhysicalMaterial({ color, roughness: .2, metalness: .68, clearcoat: .72, clearcoatRoughness: .14 });
   const dark = mat(0x090b0d, .25, .7);
   const glass = new THREE.MeshStandardMaterial({ color: 0x15242e, roughness: .08, metalness: .4, transparent: true, opacity: .92 });
   const headlightMaterial = new THREE.MeshStandardMaterial({ color: 0xe7f3ff, emissive: 0xbadfff, emissiveIntensity: 1.15 });
