@@ -1,93 +1,95 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8" />
 
-  <meta name="viewport"
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
 
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#101820" />
 
   <title>Utica Drive</title>
 
   <link rel="stylesheet" href="style.css" />
-
-  <script type="importmap">
-
-  {
-
-    "imports": {
-
-      "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js"
-
-    }
-
-  }
-
-  </script>
-
 </head>
 
 <body>
 
-  <div id="hud">
+  <div id="game"></div>
 
+  <!-- HUD -->
+  <div id="hud">
     <div id="location">UTICA, NEW YORK</div>
 
-    <div id="mode">DRIVING</div>
+    <div id="modeText">WALKING</div>
 
-    <div id="speed">0 MPH</div>
+    <div id="speedText">0 MPH</div>
+  </div>
+
+  <!-- WALK CONTROLS -->
+  <div id="walkControls">
+
+    <div class="joystick-area">
+      <button id="walkForward" class="controlButton arrow up">▲</button>
+
+      <div class="middleRow">
+        <button id="walkLeft" class="controlButton arrow">◀</button>
+        <button id="walkRight" class="controlButton arrow">▶</button>
+      </div>
+
+      <button id="walkBack" class="controlButton arrow down">▼</button>
+    </div>
+
+    <button id="driveButton" class="actionButton">
+      DRIVE
+    </button>
 
   </div>
 
-  <button id="exitButton">EXIT</button>
+  <!-- CAR CONTROLS -->
+  <div id="carControls" class="hidden">
 
-  <div id="steering">
+    <button id="exitButton" class="actionButton exitButton">
+      EXIT
+    </button>
 
-    <button id="leftButton">◀</button>
+    <div class="steering">
+      <button id="steerLeft" class="controlButton">
+        ◀
+      </button>
 
-    <button id="rightButton">▶</button>
+      <button id="steerRight" class="controlButton">
+        ▶
+      </button>
+    </div>
 
-  </div>
+    <div class="pedals">
 
-  <div id="pedControls">
+      <button id="gasButton" class="pedal gas">
+        GAS
+      </button>
 
-    <button id="walkLeft">◀</button>
+      <button id="brakeButton" class="pedal brake">
+        BRAKE
+      </button>
 
-    <button id="walkForward">▲</button>
-
-    <button id="walkRight">▶</button>
-
-  </div>
-
-  <div id="pedBackControls">
-
-    <button id="walkBack">▼</button>
-
-  </div>
-
-  <div id="driveControls">
-
-    <button id="gasButton">GAS</button>
-
-    <div id="secondaryDriveControls">
-
-      <button id="brakeButton">BRAKE</button>
-
-      <button id="reverseButton">REVERSE</button>
+      <button id="reverseButton" class="pedal reverse">
+        REVERSE
+      </button>
 
     </div>
 
   </div>
 
-  <div id="enterVehicleText">TAP DRIVE TO ENTER VEHICLE</div>
+  <div id="message">
+    WALK TO THE CAR
+  </div>
 
-  <button id="enterVehicleButton">DRIVE</button>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
 
-  <script type="module" src="app.js"></script>
+  <script src="app.js"></script>
 
 </body>
-
 </html>
