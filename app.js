@@ -24,7 +24,7 @@ renderer.toneMappingExposure = 1.38;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x8bb6d3);
 scene.fog = new THREE.FogExp2(0x9dbacf, 0.00165);
-const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.1, 1800);
+const camera = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.1, 3200);
 const clock = new THREE.Clock();
 
 const hemi = new THREE.HemisphereLight(0xdff2ff, 0x52604a, 2.1);
@@ -67,10 +67,12 @@ const cylinder = (rt, rb, h, sides, material) => {
 };
 
 ui.loadingText.textContent = "Laying out Utica streets…";
-const WORLD = 1400;
+// Utica's 2020 Census land area is 16.72 sq mi. At 10 ft per game unit,
+// this 2,600-unit footprint is approximately 4.9 x 4.9 miles.
+const WORLD = 2600;
 const ROAD_STEP = 150;
 const ROAD_WIDTH = 22;
-const roadCoords = [-660, -550, -440, -330, -220, -110, 0, 110, 220, 330, 440, 550, 660];
+const roadCoords = [-1200, -1000, -800, -600, -400, -200, 0, 200, 400, 600, 800, 1000, 1200];
 const northSouthNames = [
   "MAIN STREET", "CORNELIA STREET", "STATE STREET", "GENESEE STREET", "ONEIDA STREET",
   "DOHERTY AVENUE", "KENT STREET", "LENOX AVENUE", "PARK AVENUE", "HILTON AVENUE",
@@ -154,14 +156,14 @@ const sidewalkMat = new THREE.MeshStandardMaterial({ color: 0xb1b1ad, map: concr
 const grassMat = new THREE.MeshStandardMaterial({ color: 0x4f6c40, map: grassTexture, roughness: 1, metalness: 0 });
 const stripeMat = mat(0xe3b72c, .8);
 const whiteMat = mat(0xdddcd1, .8);
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(1800, 1800), grassMat);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(2800, 2800), grassMat);
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
-const river = new THREE.Mesh(new THREE.PlaneGeometry(1500, 70), new THREE.MeshStandardMaterial({ color: 0x244b62, roughness: .18, metalness: .22, emissive: 0x071c2b, emissiveIntensity: .3 }));
-river.rotation.x = -Math.PI / 2; river.position.set(0, .045, -695); scene.add(river);
-const riverBank = box(1500, .35, 9, mat(0x6d6652, .95)); riverBank.position.set(0, .18, -656); scene.add(riverBank);
-const bridge = box(155, .42, 28, mat(0x49494a, .78, .15)); bridge.position.set(-150, .42, -695); scene.add(bridge);
+const river = new THREE.Mesh(new THREE.PlaneGeometry(2800, 110), new THREE.MeshStandardMaterial({ color: 0x244b62, roughness: .18, metalness: .22, emissive: 0x071c2b, emissiveIntensity: .3 }));
+river.rotation.x = -Math.PI / 2; river.position.set(0, .045, -1290); scene.add(river);
+const riverBank = box(2800, .35, 12, mat(0x6d6652, .95)); riverBank.position.set(0, .18, -1235); scene.add(riverBank);
+const bridge = box(205, .42, 34, mat(0x49494a, .78, .15)); bridge.position.set(-200, .42, -1290); scene.add(bridge);
 
 for (const c of roadCoords) {
   const verticalWalk = box(ROAD_WIDTH + 8, .16, WORLD, sidewalkMat);
@@ -176,7 +178,7 @@ for (const c of roadCoords) {
   const horizontal = box(WORLD, .2, ROAD_WIDTH, roadMat);
   horizontal.position.set(0, .2, c);
   scene.add(horizontal);
-  for (let p = -686; p <= 686; p += 16) {
+  for (let p = -1286; p <= 1286; p += 16) {
     if (roadCoords.some(v => Math.abs(p - v) < 15)) continue;
     const vStripe = box(.2, .025, 7, stripeMat);
     vStripe.position.set(c, .32, p);
@@ -333,7 +335,7 @@ function addTree(x, z) {
 for (let i = 0; i < 70; i++) {
   const axis = seedRandom() > .5;
   const road = roadCoords[Math.floor(seedRandom() * roadCoords.length)];
-  const along = -660 + seedRandom() * 1320;
+  const along = -1260 + seedRandom() * 2520;
   if (roadCoords.some(v => Math.abs(along - v) < 18)) continue;
   addTree(axis ? road + (seedRandom() > .5 ? 15 : -15) : along, axis ? along : road + (seedRandom() > .5 ? 15 : -15));
 }
@@ -478,7 +480,7 @@ for (let i = 0; i < 10; i++) {
   const axis = i % 2 === 0;
   const road = roadCoords[(i + 1) % roadCoords.length];
   const direction = i % 3 ? 1 : -1;
-  pedestrian.position.set(axis ? road + (i % 3 ? 15 : -15) : -610 + i * 120, 0, axis ? -620 + i * 126 : road + (i % 3 ? 15 : -15));
+  pedestrian.position.set(axis ? road + (i % 3 ? 15 : -15) : -1140 + i * 220, 0, axis ? -1160 + i * 230 : road + (i % 3 ? 15 : -15));
   pedestrian.userData.walk = { axis, direction, speed: 1.05 + (i % 3) * .22, phase: i * .7 };
   scene.add(pedestrian); pedestrians.push(pedestrian);
 }
@@ -493,12 +495,12 @@ for (let i = 0; i < 12; i++) {
   const direction = i % 2 ? 1 : -1;
   if (i < 7) {
     const vertical = i % 3 !== 0;
-    vehicle.position.set(vertical ? road + direction * 5.6 : -620 + i * 125, .03, vertical ? -620 + i * 126 : road + direction * 5.6);
+    vehicle.position.set(vertical ? road + direction * 5.6 : -1140 + i * 220, .03, vertical ? -1140 + i * 230 : road + direction * 5.6);
     vehicle.rotation.y = vertical ? (direction > 0 ? 0 : Math.PI) : (direction > 0 ? Math.PI / 2 : -Math.PI / 2);
     vehicle.userData.traffic = { vertical, direction, speed: 7.5 + (i % 3) * 1.4 };
     traffic.push(vehicle);
   } else {
-    vehicle.position.set(road + direction * 6.2, .03, -580 + (i - 7) * 165);
+    vehicle.position.set(road + direction * 6.2, .03, -1120 + (i - 7) * 300);
     vehicle.rotation.y = direction > 0 ? 0 : Math.PI;
   }
   scene.add(vehicle);
@@ -592,7 +594,7 @@ function drawMinimap(dt) {
   const size = ui.minimap.width;
   ctx.clearRect(0, 0, size, size);
   ctx.fillStyle = "#11171d"; ctx.fillRect(0, 0, size, size);
-  const center = size / 2, scale = 108 / 720;
+  const center = size / 2, scale = 108 / 1320;
   ctx.strokeStyle = "#b9bec2"; ctx.lineWidth = 5;
   for (const road of roadCoords) {
     const p = center + road * scale;
@@ -600,7 +602,7 @@ function drawMinimap(dt) {
     ctx.beginPath(); ctx.moveTo(8, p); ctx.lineTo(size - 8, p); ctx.stroke();
   }
   ctx.strokeStyle = "#2c6176"; ctx.lineWidth = 7;
-  const riverY = center - 695 * scale; ctx.beginPath(); ctx.moveTo(8, riverY); ctx.lineTo(size - 8, riverY); ctx.stroke();
+  const riverY = center - 1290 * scale; ctx.beginPath(); ctx.moveTo(8, riverY); ctx.lineTo(size - 8, riverY); ctx.stroke();
   const subject = driving ? car.position : player.position;
   const dot = (position, color, radius) => {
     const x = center + position.x * scale, y = center + position.z * scale;
@@ -654,7 +656,7 @@ function showHint(text, seconds = 3) {
 }
 
 function collides(position, radius = 1) {
-  if (Math.abs(position.x) > 688 || Math.abs(position.z) > 688) return true;
+  if (Math.abs(position.x) > 1288 || Math.abs(position.z) > 1288) return true;
   return buildingBounds.some(b => position.x + radius > b.minX && position.x - radius < b.maxX && position.z + radius > b.minZ && position.z - radius < b.maxZ);
 }
 
@@ -706,10 +708,10 @@ function updateTraffic(dt) {
     const data = vehicle.userData.traffic;
     if (data.vertical) vehicle.position.z += data.direction * data.speed * dt;
     else vehicle.position.x += data.direction * data.speed * dt;
-    if (vehicle.position.x > 690) vehicle.position.x = -690;
-    if (vehicle.position.x < -690) vehicle.position.x = 690;
-    if (vehicle.position.z > 690) vehicle.position.z = -690;
-    if (vehicle.position.z < -690) vehicle.position.z = 690;
+    if (vehicle.position.x > 1290) vehicle.position.x = -1290;
+    if (vehicle.position.x < -1290) vehicle.position.x = 1290;
+    if (vehicle.position.z > 1290) vehicle.position.z = -1290;
+    if (vehicle.position.z < -1290) vehicle.position.z = 1290;
     for (const wheel of vehicle.userData.wheels) wheel.rotation.x += data.speed * data.direction * dt / .82;
     vehicle.userData.headlightMaterial.emissiveIntensity = .35 + nightAmount * 1.9;
     vehicle.userData.tailMaterial.emissiveIntensity = .65 + nightAmount * 1.4;
@@ -721,10 +723,10 @@ function updatePedestrians(dt) {
     const data = pedestrian.userData.walk;
     if (data.axis) pedestrian.position.z += data.direction * data.speed * dt;
     else pedestrian.position.x += data.direction * data.speed * dt;
-    if (pedestrian.position.x > 660) pedestrian.position.x = -660;
-    if (pedestrian.position.x < -660) pedestrian.position.x = 660;
-    if (pedestrian.position.z > 660) pedestrian.position.z = -660;
-    if (pedestrian.position.z < -660) pedestrian.position.z = 660;
+    if (pedestrian.position.x > 1260) pedestrian.position.x = -1260;
+    if (pedestrian.position.x < -1260) pedestrian.position.x = 1260;
+    if (pedestrian.position.z > 1260) pedestrian.position.z = -1260;
+    if (pedestrian.position.z < -1260) pedestrian.position.z = 1260;
     data.phase += dt * data.speed * 4;
     const swing = Math.sin(data.phase) * .28;
     pedestrian.userData.limbs.arms[0].rotation.x = swing;
