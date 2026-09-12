@@ -49,7 +49,9 @@ const nightSky = new THREE.Color(0x17283a);
 const dayFog = new THREE.Color(0x9dbacf);
 const nightFog = new THREE.Color(0x1b2b3b);
 const DAY_LENGTH = 360;
-let worldHours = 19.25;
+// Start in daylight so first-time players can actually see the city and learn
+// the controls; the live cycle still moves through sunset and night.
+let worldHours = 14.25;
 
 const mat = (color, roughness = .75, metalness = 0) =>
   new THREE.MeshStandardMaterial({ color, roughness, metalness });
