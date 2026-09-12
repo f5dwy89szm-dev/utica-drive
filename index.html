@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html lang="en">
 
@@ -6,9 +6,15 @@
 
   <meta charset="UTF-8" />
 
-  <meta name="viewport"
+  <meta
 
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    name="viewport"
+
+    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+
+  />
+
+  <meta name="theme-color" content="#111111" />
 
   <title>Utica Drive</title>
 
@@ -22,13 +28,25 @@
 
   <div id="loading">
 
-    <div class="loading-box">
+    <div class="loadingCard">
 
-      <div class="title">UTICA DRIVE</div>
+      <div class="gameTitle">
 
-      <div id="loadingText">Loading Utica, New York...</div>
+        UTICA DRIVE
 
-      <div class="loader"></div>
+      </div>
+
+      <div id="loadingText">
+
+        Loading Utica...
+
+      </div>
+
+      <div class="loadingTrack">
+
+        <div class="loadingBar"></div>
+
+      </div>
 
     </div>
 
@@ -36,15 +54,29 @@
 
   <div id="hud">
 
-    <div id="locationLabel">UTICA, NY</div>
+    <div class="hudCity">
 
-    <div id="modeLabel">DRIVING</div>
+      UTICA, NEW YORK
 
-    <div id="speedLabel">0 MPH</div>
+    </div>
+
+    <div id="modeLabel">
+
+      DRIVING
+
+    </div>
+
+    <div id="speedLabel">
+
+      0 MPH
+
+    </div>
 
   </div>
 
-  <!-- Walking joystick -->
+  <div id="message"></div>
+
+  <!-- WALKING -->
 
   <div id="joystickArea">
 
@@ -56,41 +88,111 @@
 
   </div>
 
-  <!-- Driving steering -->
+  <!-- DRIVING -->
 
-  <div id="steeringArea">
+  <div id="steeringControls">
 
-    <button id="leftBtn" class="control round">◀</button>
+    <button
 
-    <button id="rightBtn" class="control round">▶</button>
+      id="leftBtn"
 
-  </div>
+      class="gameButton roundButton"
 
-  <!-- Vehicle buttons -->
+    >
 
-  <div id="pedals">
+      ◀
 
-    <button id="gasBtn" class="control pedal gas">GAS</button>
+    </button>
 
-    <button id="brakeBtn" class="control pedal brake">BRAKE</button>
+    <button
 
-    <button id="reverseBtn" class="control pedal reverse">REVERSE</button>
+      id="rightBtn"
 
-  </div>
+      class="gameButton roundButton"
 
-  <!-- Interaction buttons -->
+    >
 
-  <div id="actions">
+      ▶
 
-    <button id="enterExitBtn" class="control action">EXIT</button>
-
-    <button id="runBtn" class="control action">RUN</button>
+    </button>
 
   </div>
 
-  <div id="message"></div>
+  <div id="pedalControls">
 
-  <script type="module" src="./app.js"></script>
+    <button
+
+      id="gasBtn"
+
+      class="gameButton tallPedal"
+
+    >
+
+      GAS
+
+    </button>
+
+    <button
+
+      id="brakeBtn"
+
+      class="gameButton pedal"
+
+    >
+
+      BRAKE
+
+    </button>
+
+    <button
+
+      id="reverseBtn"
+
+      class="gameButton pedal"
+
+    >
+
+      REVERSE
+
+    </button>
+
+  </div>
+
+  <div id="actionControls">
+
+    <button
+
+      id="enterExitBtn"
+
+      class="gameButton actionButton"
+
+    >
+
+      EXIT
+
+    </button>
+
+    <button
+
+      id="runBtn"
+
+      class="gameButton actionButton"
+
+    >
+
+      RUN
+
+    </button>
+
+  </div>
+
+  <script
+
+    type="module"
+
+    src="./app.js"
+
+  ></script>
 
 </body>
 
