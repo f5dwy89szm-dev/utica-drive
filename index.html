@@ -1,69 +1,762 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+<meta charset="UTF-8">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+>
+<title>Utica Drive</title>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-  />
+<style>
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #79afe0;
+  touch-action: none;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-  <meta name="theme-color" content="#111111" />
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+}
 
-  <title>Utica Drive</title>
+#hud {
+  position: fixed;
+  top: 38px;
+  left: 24px;
+  color: white;
+  z-index: 20;
+  pointer-events: none;
+  text-shadow:
+    0 3px 6px #000,
+    0 0 8px #000;
+}
 
-  <link rel="stylesheet" href="style.css" />
+#cityName {
+  font-size: 28px;
+  font-weight: 900;
+}
 
-  <!-- THREE.JS -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+#mode {
+  font-size: 22px;
+  margin-top: 12px;
+}
+
+#speed {
+  font-size: 34px;
+  font-weight: 900;
+  margin-top: 5px;
+}
+
+#street {
+  margin-top: 8px;
+  font-size: 16px;
+}
+
+#mission {
+  position: fixed;
+  left: 50%;
+  bottom: 235px;
+  transform: translateX(-50%);
+  z-index: 20;
+
+  color: white;
+  font-size: 22px;
+  font-weight: 900;
+  white-space: nowrap;
+
+  text-shadow:
+    0 3px 7px black,
+    0 0 7px black;
+}
+
+#controls {
+  position: fixed;
+  bottom: 45px;
+  left: 25px;
+  width: 205px;
+  height: 180px;
+  z-index: 30;
+}
+
+.control {
+  position: absolute;
+
+  width: 70px;
+  height: 70px;
+
+  border-radius: 18px;
+  border: 3px solid rgba(255,255,255,.65);
+
+  background: rgba(26,44,59,.82);
+  color: white;
+
+  font-size: 34px;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.control:active {
+  transform: scale(.94);
+  background: rgba(70,100,125,.95);
+}
+
+#up {
+  left: 68px;
+  top: 0;
+}
+
+#left {
+  left: 0;
+  top: 75px;
+}
+
+#down {
+  left: 68px;
+  top: 75px;
+}
+
+#right {
+  left: 136px;
+  top: 75px;
+}
+
+#action {
+  position: fixed;
+  right: 28px;
+  bottom: 75px;
+
+  width: 100px;
+  height: 70px;
+
+  border-radius: 22px;
+  border: 3px solid rgba(255,255,255,.75);
+
+  background: rgba(20,80,130,.9);
+  color: white;
+
+  z-index: 30;
+
+  font-size: 17px;
+  font-weight: 900;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  touch-action: none;
+}
+
+#action:active {
+  transform: scale(.95);
+}
+
+#reverseLabel {
+  position: fixed;
+  right: 34px;
+  bottom: 155px;
+  color: white;
+  z-index: 30;
+  font-weight: bold;
+  text-shadow: 0 2px 4px black;
+}
+</style>
 </head>
 
 <body>
 
-  <div id="game"></div>
+<div id="hud">
+  <div id="cityName">UTICA, NEW YORK</div>
+  <div id="mode">WALKING</div>
+  <div id="speed">0 MPH</div>
+  <div id="street">GENESEE STREET</div>
+</div>
 
-  <!-- TOP HUD -->
-  <div id="hud">
-    <div id="cityName">UTICA, NEW YORK</div>
-    <div id="modeText">WALKING</div>
-    <div id="speedText">0 MPH</div>
-  </div>
+<div id="mission">
+  WALK TO THE CAR
+</div>
 
-  <!-- WALK CONTROLS -->
-  <div id="walkControls">
+<div id="controls">
+  <div class="control" id="up">▲</div>
+  <div class="control" id="left">◀</div>
+  <div class="control" id="down">▼</div>
+  <div class="control" id="right">▶</div>
+</div>
 
-    <button id="walkUp" class="controlButton">▲</button>
+<div id="action">
+  DRIVE
+</div>
 
-    <div class="middleRow">
-      <button id="walkLeft" class="controlButton">◀</button>
-      <button id="walkDown" class="controlButton">▼</button>
-      <button id="walkRight" class="controlButton">▶</button>
-    </div>
+<script type="module">
 
-  </div>
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js";
 
-  <!-- DRIVE CONTROLS -->
-  <div id="driveControls">
+/* =====================================================
+   UTICA DRIVE
+   COMPLETE CLEAN REBUILD
+===================================================== */
 
-    <div id="steering">
-      <button id="steerLeft" class="driveButton">◀</button>
-      <button id="steerRight" class="driveButton">▶</button>
-    </div>
+const scene = new THREE.Scene();
 
-    <div id="pedals">
-      <button id="gasButton" class="gasButton">GAS</button>
-      <button id="brakeButton" class="brakeButton">BRAKE</button>
-      <button id="reverseButton" class="reverseButton">REVERSE</button>
-    </div>
+scene.background = new THREE.Color(0x86b7df);
 
-  </div>
+scene.fog = new THREE.Fog(
+  0x86b7df,
+  300,
+  1500
+);
 
-  <!-- ENTER / EXIT CAR -->
-  <button id="vehicleButton">ENTER CAR</button>
+/* CAMERA */
 
-  <div id="message">WALK TO THE CAR</div>
+const camera =
+  new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    3000
+  );
 
-  <script src="app.js"></script>
+/* RENDERER */
 
-</body>
-</html>
+const renderer =
+  new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference: "high-performance"
+  });
+
+renderer.setSize(
+  window.innerWidth,
+  window.innerHeight
+);
+
+renderer.setPixelRatio(
+  Math.min(
+    window.devicePixelRatio,
+    2
+  )
+);
+
+renderer.shadowMap.enabled = true;
+
+renderer.outputColorSpace =
+  THREE.SRGBColorSpace;
+
+document.body.prepend(
+  renderer.domElement
+);
+
+/* =====================================================
+   LIGHTING
+===================================================== */
+
+const skyLight =
+  new THREE.HemisphereLight(
+    0xd9efff,
+    0x54633e,
+    2.5
+  );
+
+scene.add(skyLight);
+
+const sun =
+  new THREE.DirectionalLight(
+    0xffffff,
+    3
+  );
+
+sun.position.set(
+  150,
+  300,
+  100
+);
+
+sun.castShadow = true;
+
+sun.shadow.mapSize.set(
+  2048,
+  2048
+);
+
+sun.shadow.camera.left = -500;
+sun.shadow.camera.right = 500;
+sun.shadow.camera.top = 500;
+sun.shadow.camera.bottom = -500;
+
+scene.add(sun);
+
+/* =====================================================
+   GROUND
+===================================================== */
+
+const grass =
+  new THREE.Mesh(
+    new THREE.PlaneGeometry(
+      2400,
+      2400
+    ),
+    new THREE.MeshStandardMaterial({
+      color: 0x52834b,
+      roughness: 1
+    })
+  );
+
+grass.rotation.x =
+  -Math.PI / 2;
+
+grass.receiveShadow = true;
+
+scene.add(grass);
+
+/* =====================================================
+   ROAD SYSTEM
+===================================================== */
+
+const roads = [];
+
+const roadMaterial =
+  new THREE.MeshStandardMaterial({
+    color: 0x33373c,
+    roughness: 1
+  });
+
+function road(
+  x,
+  z,
+  width,
+  length
+) {
+
+  const mesh =
+    new THREE.Mesh(
+      new THREE.PlaneGeometry(
+        width,
+        length
+      ),
+      roadMaterial
+    );
+
+  mesh.rotation.x =
+    -Math.PI / 2;
+
+  mesh.position.set(
+    x,
+    0.03,
+    z
+  );
+
+  mesh.receiveShadow = true;
+
+  scene.add(mesh);
+
+  roads.push(mesh);
+
+  return mesh;
+}
+
+/* GENESEE STREET */
+
+road(
+  0,
+  0,
+  32,
+  1800
+);
+
+/* PARALLEL ROADS */
+
+road(
+  -180,
+  0,
+  24,
+  1800
+);
+
+road(
+  180,
+  0,
+  24,
+  1800
+);
+
+road(
+  -360,
+  0,
+  24,
+  1800
+);
+
+road(
+  360,
+  0,
+  24,
+  1800
+);
+
+/* CROSS STREETS */
+
+for (
+  let z = -750;
+  z <= 750;
+  z += 150
+) {
+
+  const street =
+    road(
+      0,
+      z,
+      900,
+      24
+    );
+
+  street.rotation.z =
+    Math.PI / 2;
+}
+
+/* =====================================================
+   CENTER ROAD LINES
+===================================================== */
+
+const yellow =
+  new THREE.MeshStandardMaterial({
+    color: 0xffd83d
+  });
+
+for (
+  let z = -880;
+  z < 880;
+  z += 35
+) {
+
+  const marker =
+    new THREE.Mesh(
+      new THREE.PlaneGeometry(
+        0.6,
+        16
+      ),
+      yellow
+    );
+
+  marker.rotation.x =
+    -Math.PI / 2;
+
+  marker.position.set(
+    0,
+    0.055,
+    z
+  );
+
+  scene.add(marker);
+}
+
+/* =====================================================
+   SIDEWALKS
+===================================================== */
+
+const sidewalkMaterial =
+  new THREE.MeshStandardMaterial({
+    color: 0xa8a8a4
+  });
+
+function sidewalk(
+  x,
+  z,
+  width,
+  length
+) {
+
+  const s =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        width,
+        .18,
+        length
+      ),
+      sidewalkMaterial
+    );
+
+  s.position.set(
+    x,
+    .09,
+    z
+  );
+
+  s.receiveShadow = true;
+
+  scene.add(s);
+}
+
+sidewalk(
+  -21,
+  0,
+  9,
+  1800
+);
+
+sidewalk(
+  21,
+  0,
+  9,
+  1800
+);
+
+/* =====================================================
+   BUILDINGS
+===================================================== */
+
+const buildingColors = [
+  0xbfa98b,
+  0xc3b49d,
+  0xa97658,
+  0x9d9990,
+  0xd2c5ae,
+  0x8b8279,
+  0xb66f57,
+  0xb5b8b1
+];
+
+function building(
+  x,
+  z,
+  width,
+  depth,
+  height,
+  color
+) {
+
+  const group =
+    new THREE.Group();
+
+  const structure =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        width,
+        height,
+        depth
+      ),
+      new THREE.MeshStandardMaterial({
+        color,
+        roughness: .8
+      })
+    );
+
+  structure.position.y =
+    height / 2;
+
+  structure.castShadow = true;
+  structure.receiveShadow = true;
+
+  group.add(structure);
+
+  /* WINDOWS */
+
+  if (height > 18) {
+
+    const windowMaterial =
+      new THREE.MeshStandardMaterial({
+        color: 0x9fc7dc,
+        roughness: .25,
+        metalness: .15
+      });
+
+    for (
+      let floor = 5;
+      floor < height - 2;
+      floor += 5
+    ) {
+
+      for (
+        let wx = -width / 2 + 4;
+        wx < width / 2 - 2;
+        wx += 7
+      ) {
+
+        const window =
+          new THREE.Mesh(
+            new THREE.BoxGeometry(
+              3,
+              2.2,
+              .1
+            ),
+            windowMaterial
+          );
+
+        window.position.set(
+          wx,
+          floor,
+          -depth / 2 - .06
+        );
+
+        group.add(window);
+      }
+    }
+  }
+
+  group.position.set(
+    x,
+    0,
+    z
+  );
+
+  scene.add(group);
+}
+
+/* CREATE CITY */
+
+for (
+  let z = -700;
+  z <= 700;
+  z += 150
+) {
+
+  for (
+    let x = -520;
+    x <= 520;
+    x += 85
+  ) {
+
+    const closeMain =
+      Math.abs(x) < 45;
+
+    const closeOtherRoad =
+      Math.abs(
+        Math.abs(x) - 180
+      ) < 35 ||
+      Math.abs(
+        Math.abs(x) - 360
+      ) < 35;
+
+    if (
+      closeMain ||
+      closeOtherRoad
+    ) {
+      continue;
+    }
+
+    const downtown =
+      Math.abs(x) < 170 &&
+      Math.abs(z) < 330;
+
+    const h =
+      downtown
+        ? 30 + Math.random() * 90
+        : 10 + Math.random() * 28;
+
+    const w =
+      38 + Math.random() * 30;
+
+    const d =
+      45 + Math.random() * 35;
+
+    const color =
+      buildingColors[
+        Math.floor(
+          Math.random() *
+          buildingColors.length
+        )
+      ];
+
+    building(
+      x,
+      z + 55,
+      w,
+      d,
+      h,
+      color
+    );
+  }
+}
+
+/* =====================================================
+   LANDMARK STYLE BUILDINGS
+===================================================== */
+
+building(
+  -95,
+  -120,
+  95,
+  75,
+  78,
+  0xb69b78
+);
+
+building(
+  95,
+  -100,
+  75,
+  75,
+  120,
+  0x8c8d89
+);
+
+building(
+  -100,
+  120,
+  105,
+  70,
+  54,
+  0xc5b18f
+);
+
+building(
+  95,
+  125,
+  80,
+  65,
+  88,
+  0x846f62
+);
+
+/* =====================================================
+   PLAYER
+===================================================== */
+
+const player =
+  new THREE.Group();
+
+const legs =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      .85,
+      1,
+      .55
+    ),
+    new THREE.MeshStandardMaterial({
+      color: 0x20252c
+    })
+  );
+
+legs.position.y = .5;
+legs.castShadow = true;
+
+player.add(legs);
+
+const torso =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      1,
+      1.15,
+      .65
+    ),
+    new THREE.MeshStandardMaterial({
+      color: 0x2e5d89
+    })
+  );
+
+torso.position.y
