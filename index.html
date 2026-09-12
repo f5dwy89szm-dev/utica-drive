@@ -1,110 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-  />
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0,
+    minimum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  >
 
   <title>Utica Drive</title>
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three":
+      "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"
+    }
+  }
+  </script>
 </head>
 
 <body>
 
-<div id="game"></div>
+<canvas id="game"></canvas>
 
-<div id="loading">
-  <div class="loading-title">UTICA DRIVE</div>
+<div id="loadingScreen">
+  <div class="loadingTitle">UTICA DRIVE</div>
   <div id="loadingText">Loading Utica...</div>
-  <div class="loading-bar">
-    <div></div>
+  <div class="loadingBar">
+    <div id="loadingProgress"></div>
   </div>
 </div>
 
 <div id="hud">
 
-  <div id="topLeft">
-    <div id="city">UTICA, NEW YORK</div>
-    <div id="street">GENESEE STREET</div>
+  <div id="hudLeft">
+    <div class="hudCity">UTICA, NEW YORK</div>
+    <div id="streetName">GENESEE STREET</div>
 
-    <div class="hudRow">
-      <span class="money">$</span>
-      <span id="money">00000500</span>
+    <div class="money">
+      $ <span id="money">00000500</span>
     </div>
 
-    <div class="hudRow">
+    <div>
       ❤️ <span id="health">100</span>
     </div>
 
-    <div id="wanted">☆☆☆☆☆</div>
-  </div>
-
-  <div id="clock">22:27</div>
-
-  <div id="weaponBox">
-    <div id="weaponIcon">🔫</div>
-    <div id="ammo">12 / 48</div>
-  </div>
-
-  <div id="missionBox">
-    <div class="missionTitle">MAIN MISSION</div>
-    <div id="missionText">Find your M4</div>
-  </div>
-
-  <div id="speedBox">
-    <span id="speed">0</span>
-    <small>MPH</small>
-  </div>
-
-  <canvas id="minimap" width="180" height="180"></canvas>
-
-  <div id="walkControls">
-
-    <div id="joystick">
-      <div id="stick"></div>
+    <div id="wanted">
+      ☆☆☆☆☆
     </div>
 
-    <button id="enterCar" class="round action">
-      🚗
-      <span>ENTER</span>
-    </button>
+    <div id="gameClock">
+      12:00
+    </div>
 
-    <button id="attack" class="round action">👊</button>
+    <div>
+      🔫 <span id="ammo">12 / 48</span>
+    </div>
 
-    <button id="run" class="round action">🏃</button>
+    <div class="missionHeader">
+      MAIN MISSION
+    </div>
 
-  </div>
+    <div id="missionText">
+      Find your M4
+    </div>
 
-  <div id="driveControls">
+    <div>
+      <span id="speed">0</span> MPH
+    </div>
 
-    <button id="steerLeft" class="driveButton">◀</button>
-
-    <button id="steerRight" class="driveButton">▶</button>
-
-    <button id="brake" class="pedal brake">
-      BRAKE
-      <span>REVERSE</span>
-    </button>
-
-    <button id="gas" class="pedal gas">
-      GAS
-    </button>
-
-    <button id="exitCar" class="round exit">
-      EXIT
-    </button>
+    <div id="zoneText">
+      DOWNTOWN
+    </div>
 
   </div>
 
-  <div id="notification"></div>
+  <div id="miniMapWrap">
+    <canvas
+      id="miniMap"
+      width="180"
+      height="180">
+    </canvas>
+  </div>
 
 </div>
 
-<script type="module" src="app.js"></script>
+<div id="mobileControls">
+
+  <div id="leftSide">
+
+    <div id="joystick">
+      <div id="joystickKnob"></div>
+    </div>
+
+    <button
+      id="sprintButton"
+      class="smallButton">
+      🏃
+    </button>
+
+  </div>
+
+  <div id="rightSide">
+
+    <button
+      id="actionButton"
+      class="actionButton">
+      🚘 ENTER
+    </button>
+
+    <button
+      id="attackButton"
+      class="smallButton">
+      👊
+    </button>
+
+    <button
+      id="weaponButton"
+      class="smallButton">
+      🔫
+    </button>
+
+    <div id="carControls">
+
+      <button
+        id="reverseButton"
+        class="pedal reverse">
+        REVERSE
+      </button>
+
+      <button
+        id="gasButton"
+        class="pedal gas">
+        GAS
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div id="message"></div>
+
+<script
+  type="module"
+  src="app.js">
+</script>
 
 </body>
 </html>
