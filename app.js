@@ -70,14 +70,16 @@ ui.loadingText.textContent = "Laying out Utica streets…";
 const WORLD = 1400;
 const ROAD_STEP = 150;
 const ROAD_WIDTH = 22;
-const roadCoords = [-600, -450, -300, -150, 0, 150, 300, 450, 600];
+const roadCoords = [-660, -550, -440, -330, -220, -110, 0, 110, 220, 330, 440, 550, 660];
 const northSouthNames = [
-  "CORNELIA STREET", "STATE STREET", "GENESEE STREET", "ONEIDA STREET",
-  "MOHAWK STREET", "NORTH STREET", "BROAD STREET", "EAGLE STREET", "SCHUYLER STREET"
+  "MAIN STREET", "CORNELIA STREET", "STATE STREET", "GENESEE STREET", "ONEIDA STREET",
+  "DOHERTY AVENUE", "KENT STREET", "LENOX AVENUE", "PARK AVENUE", "HILTON AVENUE",
+  "MOHAWK STREET", "EAST STREET", "M.L.K. JR. AVENUE"
 ];
 const eastWestNames = [
   "COURT STREET", "COLUMBIA STREET", "LAFAYETTE STREET", "ORISKANY STREET",
-  "ALBANY STREET", "RUTGER STREET", "BLEECKER STREET", "BURRSTONE ROAD", "HOPPER STREET"
+  "ALBANY STREET", "RUTGER STREET", "BLEECKER STREET", "BURRSTONE ROAD", "HOPPER STREET",
+  "KELLOGG ROAD", "HOBART STREET", "HINDSALE STREET", "FOX STREET"
 ];
 function makeRoadTexture() {
   const canvas = document.createElement("canvas");
@@ -275,7 +277,7 @@ function addStreetSign(x, z, text, rotate = false) {
   if (rotate) label.material.rotation = Math.PI / 2;
   scene.add(label);
 }
-for (let i = 0; i < roadCoords.length; i += 2) {
+for (let i = 0; i < roadCoords.length; i++) {
   addStreetSign(roadCoords[i] + 13, 13, northSouthNames[i]);
   addStreetSign(13, roadCoords[i] + 13, eastWestNames[i], true);
 }
@@ -288,9 +290,14 @@ function addLandmark(x, z, name, width, depth, height, color) {
   sign.scale.set(Math.min(18, width * .72), 2.6, 1);
   sign.position.set(x, height + 3.2, z + depth / 2 + .2); scene.add(sign);
 }
-addLandmark(-300, -150, "UNION STATION", 34, 20, 12, 0x8a8178);
-addLandmark(300, 150, "STANLEY THEATRE", 42, 26, 16, 0x6f625e);
-addLandmark(0, 300, "ADIRONDACK BANK CENTER", 52, 34, 11, 0x56636c);
+addLandmark(-330, -110, "UNION STATION", 34, 20, 12, 0x8a8178);
+addLandmark(220, 110, "STANLEY THEATRE", 42, 26, 16, 0x6f625e);
+addLandmark(0, 330, "ADIRONDACK BANK CENTER", 52, 34, 11, 0x56636c);
+addLandmark(-110, 0, "M&T BANK BUILDING", 20, 18, 24, 0x8d7866);
+addLandmark(110, 0, "JOHN C. HIEBER BUILDING", 22, 28, 18, 0x8f5d46);
+addLandmark(-110, 110, "DOYLE HARDWARE BUILDING", 28, 38, 16, 0x7d5947);
+addLandmark(110, 110, "HURD & FITZGERALD", 20, 26, 18, 0x725347);
+addLandmark(-220, 0, "UTICA DAILY PRESS", 18, 24, 14, 0x806249);
 
 function addTree(x, z) {
   const trunk = cylinder(.28, .38, 2.7, 8, mat(0x60452c));
