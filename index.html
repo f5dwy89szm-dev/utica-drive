@@ -5,151 +5,110 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0,
-    minimum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    content="width=device-width, initial-scale=1.0,
+    maximum-scale=1.0, user-scalable=no,
+    viewport-fit=cover"
   >
 
   <title>Utica Drive</title>
 
-  <link rel="stylesheet" href="style.css">
-
-  <script type="importmap">
-  {
-    "imports": {
-      "three":
-      "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"
-    }
-  }
-  </script>
+  <link rel="stylesheet" href="./style.css?v=10">
 </head>
 
 <body>
 
 <canvas id="game"></canvas>
 
-<div id="loadingScreen">
-  <div class="loadingTitle">UTICA DRIVE</div>
-  <div id="loadingText">Loading Utica...</div>
-  <div class="loadingBar">
-    <div id="loadingProgress"></div>
-  </div>
+<div id="loading">
+  <h1>UTICA DRIVE</h1>
+  <div id="loadingText">Starting game...</div>
 </div>
+
+<div id="errorBox"></div>
 
 <div id="hud">
+  <div>UTICA, NEW YORK</div>
+  <div id="street">GENESEE STREET</div>
 
-  <div id="hudLeft">
-    <div class="hudCity">UTICA, NEW YORK</div>
-    <div id="streetName">GENESEE STREET</div>
+  <div>$ <span id="money">00000500</span></div>
 
-    <div class="money">
-      $ <span id="money">00000500</span>
-    </div>
+  <div>❤️ 100</div>
 
-    <div>
-      ❤️ <span id="health">100</span>
-    </div>
+  <div>☆☆☆☆☆</div>
 
-    <div id="wanted">
-      ☆☆☆☆☆
-    </div>
+  <div>🔫 12 / 48</div>
 
-    <div id="gameClock">
-      12:00
-    </div>
+  <br>
 
-    <div>
-      🔫 <span id="ammo">12 / 48</span>
-    </div>
+  <div>MAIN MISSION</div>
+  <div id="mission">Find your M4</div>
 
-    <div class="missionHeader">
-      MAIN MISSION
-    </div>
+  <div>
+    <span id="speed">0</span> MPH
+  </div>
+</div>
 
-    <div id="missionText">
-      Find your M4
-    </div>
+<div id="controls">
 
-    <div>
-      <span id="speed">0</span> MPH
-    </div>
-
-    <div id="zoneText">
-      DOWNTOWN
-    </div>
-
+  <div id="joystick">
+    <div id="stick"></div>
   </div>
 
-  <div id="miniMapWrap">
-    <canvas
-      id="miniMap"
-      width="180"
-      height="180">
-    </canvas>
-  </div>
+  <button id="enterBtn">
+    🚘 ENTER
+  </button>
+
+  <button id="runBtn">
+    🏃
+  </button>
+
+  <button id="attackBtn">
+    👊
+  </button>
+
+  <button id="reverseBtn">
+    REVERSE
+  </button>
+
+  <button id="gasBtn">
+    GAS
+  </button>
 
 </div>
 
-<div id="mobileControls">
+<script>
+window.addEventListener("error", function(e) {
+  const box = document.getElementById("errorBox");
 
-  <div id="leftSide">
+  box.style.display = "block";
 
-    <div id="joystick">
-      <div id="joystickKnob"></div>
-    </div>
+  box.innerHTML =
+    "GAME ERROR:<br>" +
+    e.message +
+    "<br><br>Refresh the page.";
+});
 
-    <button
-      id="sprintButton"
-      class="smallButton">
-      🏃
-    </button>
+window.addEventListener(
+  "unhandledrejection",
+  function(e) {
 
-  </div>
+    const box =
+    document.getElementById("errorBox");
 
-  <div id="rightSide">
+    box.style.display =
+    "block";
 
-    <button
-      id="actionButton"
-      class="actionButton">
-      🚘 ENTER
-    </button>
+    box.innerHTML =
+    "GAME ERROR:<br>" +
+    e.reason;
 
-    <button
-      id="attackButton"
-      class="smallButton">
-      👊
-    </button>
-
-    <button
-      id="weaponButton"
-      class="smallButton">
-      🔫
-    </button>
-
-    <div id="carControls">
-
-      <button
-        id="reverseButton"
-        class="pedal reverse">
-        REVERSE
-      </button>
-
-      <button
-        id="gasButton"
-        class="pedal gas">
-        GAS
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-<div id="message"></div>
+  }
+);
+</script>
 
 <script
   type="module"
-  src="app.js">
+  src="./app.js?v=10">
 </script>
 
 </body>
