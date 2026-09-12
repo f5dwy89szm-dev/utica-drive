@@ -8,7 +8,7 @@ const ui = {
   mission: $("mission"), progress: $("missionProgress"), speed: $("speed"),
   speedometer: $("speedometer"), hint: $("hint"), controls: $("controls"),
   joystick: $("joystick"), stick: $("stick"), lookPad: $("lookPad"), enter: $("enterBtn"),
-  run: $("runBtn"), action: $("actionBtn"), gas: $("gasBtn"), brake: $("brakeBtn")
+  run: $("runBtn"), action: $("actionBtn"), jump: $("jumpBtn"), fire: $("fireBtn"), horn: $("hornBtn"), gas: $("gasBtn"), brake: $("brakeBtn")
 };
 
 ui.loadingText.textContent = "Starting the 3D engine…";
@@ -614,7 +614,10 @@ function toggleVehicle() {
   }
 }
 ui.enter.addEventListener("pointerdown", e => { e.preventDefault(); toggleVehicle(); });
-ui.action.addEventListener("pointerdown", () => showHint("More activities are coming to Utica"));
+ui.action.addEventListener("pointerdown", () => showHint(driving ? "Action unavailable while driving" : "Action selected"));
+ui.jump.addEventListener("pointerdown", e => { e.preventDefault(); if (!driving) showHint("Jump action"); });
+ui.fire.addEventListener("pointerdown", e => { e.preventDefault(); showHint(driving ? "Vehicle action" : "Action selected"); });
+ui.horn.addEventListener("pointerdown", e => { e.preventDefault(); if (driving) showHint("Honk"); });
 
 function showHint(text, seconds = 3) {
   ui.hint.textContent = text; ui.hint.style.opacity = 1; hintTimer = seconds;
