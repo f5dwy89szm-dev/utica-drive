@@ -3,6 +3,8 @@
 [ext_resource path="res://scripts/main.gd" type="Script" id="1"]
 [ext_resource path="res://scripts/player.gd" type="Script" id="2"]
 [ext_resource path="res://scripts/asset_loader.gd" type="Script" id="3"]
+[ext_resource path="res://scripts/virtual_joystick.gd" type="Script" id="4"]
+[ext_resource path="res://scripts/camera_look.gd" type="Script" id="5"]
 
 [sub_resource type="Environment" id="Environment_main"]
 background_mode = 1
@@ -47,6 +49,7 @@ offset_top = 520.0
 offset_right = 220.0
 offset_bottom = 708.0
 mouse_filter = 1
+script = ExtResource("4")
 
 [node name="RightLook" type="Control" parent="MobileUI"]
 anchors_preset = 0
@@ -55,6 +58,7 @@ offset_top = 120.0
 offset_right = 1260.0
 offset_bottom = 560.0
 mouse_filter = 1
+script = ExtResource("5")
 
 [node name="EnterButton" type="Button" parent="MobileUI"]
 offset_left = 1090.0
