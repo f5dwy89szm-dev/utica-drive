@@ -33,3 +33,20 @@ The starter scripts in `Assets/Scripts` are deliberately dependency-light so
 they can be dropped into a new Unity 6 project and wired in the Inspector.
 Unity's WheelCollider system is used for ground vehicles, with a 1,500 kg
 vehicle baseline and tunable suspension/friction curves.
+
+## URP mobile visual setup
+
+Create a URP Mobile Renderer and assign it to the URP Pipeline Asset. Use one
+Directional Light as the sun, enable Soft Shadows on the non-battery profile,
+and bake static buildings/roads where possible. Add `MobileQualityBootstrap` to
+the bootstrap scene and `UrpSceneLighting` beside the sun. The scripts select
+30 FPS/shorter shadows for battery saver and 60 FPS/soft two-cascade shadows for
+capable phones. Keep HDR, opaque texture, depth texture, and post-processing
+off until profiling proves they are affordable.
+
+For cars, use a URP/Lit material with Metallic about 0.8, Smoothness about 0.9,
+and Clear Coat enabled at low intensity. Add `GlossyVehicleMaterial` to the
+body renderer; use separate low-metallic materials for glass, rubber, and
+unpainted trim. Prefer baked reflection probes in each streamed district over
+realtime probes.
+
