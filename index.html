@@ -8,8 +8,6 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
   />
 
-  <meta name="theme-color" content="#101820" />
-
   <title>Utica Drive</title>
 
   <link rel="stylesheet" href="style.css" />
@@ -19,76 +17,63 @@
 
   <div id="game"></div>
 
-  <!-- HUD -->
   <div id="hud">
-    <div id="location">UTICA, NEW YORK</div>
-
+    <div id="cityName">UTICA, NEW YORK</div>
     <div id="modeText">WALKING</div>
-
     <div id="speedText">0 MPH</div>
-  </div>
-
-  <!-- WALK CONTROLS -->
-  <div id="walkControls">
-
-    <div class="joystick-area">
-      <button id="walkForward" class="controlButton arrow up">▲</button>
-
-      <div class="middleRow">
-        <button id="walkLeft" class="controlButton arrow">◀</button>
-        <button id="walkRight" class="controlButton arrow">▶</button>
-      </div>
-
-      <button id="walkBack" class="controlButton arrow down">▼</button>
-    </div>
-
-    <button id="driveButton" class="actionButton">
-      DRIVE
-    </button>
-
-  </div>
-
-  <!-- CAR CONTROLS -->
-  <div id="carControls" class="hidden">
-
-    <button id="exitButton" class="actionButton exitButton">
-      EXIT
-    </button>
-
-    <div class="steering">
-      <button id="steerLeft" class="controlButton">
-        ◀
-      </button>
-
-      <button id="steerRight" class="controlButton">
-        ▶
-      </button>
-    </div>
-
-    <div class="pedals">
-
-      <button id="gasButton" class="pedal gas">
-        GAS
-      </button>
-
-      <button id="brakeButton" class="pedal brake">
-        BRAKE
-      </button>
-
-      <button id="reverseButton" class="pedal reverse">
-        REVERSE
-      </button>
-
-    </div>
-
   </div>
 
   <div id="message">
     WALK TO THE CAR
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+  <div id="controls">
 
+    <button
+      id="upBtn"
+      class="control-btn up"
+      aria-label="Forward"
+    >
+      ▲
+    </button>
+
+    <button
+      id="leftBtn"
+      class="control-btn left"
+      aria-label="Left"
+    >
+      ◀
+    </button>
+
+    <button
+      id="rightBtn"
+      class="control-btn right"
+      aria-label="Right"
+    >
+      ▶
+    </button>
+
+    <button
+      id="downBtn"
+      class="control-btn down"
+      aria-label="Reverse"
+    >
+      ▼
+    </button>
+
+  </div>
+
+  <button id="actionBtn">
+    DRIVE
+  </button>
+
+  <div id="loading">
+    LOADING UTICA...
+  </div>
+
+  <div id="errorBox"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
   <script src="app.js"></script>
 
 </body>
