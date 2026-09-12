@@ -8,72 +8,61 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
   />
 
+  <meta name="theme-color" content="#111111" />
+
   <title>Utica Drive</title>
 
   <link rel="stylesheet" href="style.css" />
+
+  <!-- THREE.JS -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 </head>
 
 <body>
 
   <div id="game"></div>
 
+  <!-- TOP HUD -->
   <div id="hud">
     <div id="cityName">UTICA, NEW YORK</div>
     <div id="modeText">WALKING</div>
     <div id="speedText">0 MPH</div>
   </div>
 
-  <div id="message">
-    WALK TO THE CAR
-  </div>
+  <!-- WALK CONTROLS -->
+  <div id="walkControls">
 
-  <div id="controls">
+    <button id="walkUp" class="controlButton">▲</button>
 
-    <button
-      id="upBtn"
-      class="control-btn up"
-      aria-label="Forward"
-    >
-      ▲
-    </button>
-
-    <button
-      id="leftBtn"
-      class="control-btn left"
-      aria-label="Left"
-    >
-      ◀
-    </button>
-
-    <button
-      id="rightBtn"
-      class="control-btn right"
-      aria-label="Right"
-    >
-      ▶
-    </button>
-
-    <button
-      id="downBtn"
-      class="control-btn down"
-      aria-label="Reverse"
-    >
-      ▼
-    </button>
+    <div class="middleRow">
+      <button id="walkLeft" class="controlButton">◀</button>
+      <button id="walkDown" class="controlButton">▼</button>
+      <button id="walkRight" class="controlButton">▶</button>
+    </div>
 
   </div>
 
-  <button id="actionBtn">
-    DRIVE
-  </button>
+  <!-- DRIVE CONTROLS -->
+  <div id="driveControls">
 
-  <div id="loading">
-    LOADING UTICA...
+    <div id="steering">
+      <button id="steerLeft" class="driveButton">◀</button>
+      <button id="steerRight" class="driveButton">▶</button>
+    </div>
+
+    <div id="pedals">
+      <button id="gasButton" class="gasButton">GAS</button>
+      <button id="brakeButton" class="brakeButton">BRAKE</button>
+      <button id="reverseButton" class="reverseButton">REVERSE</button>
+    </div>
+
   </div>
 
-  <div id="errorBox"></div>
+  <!-- ENTER / EXIT CAR -->
+  <button id="vehicleButton">ENTER CAR</button>
 
-  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+  <div id="message">WALK TO THE CAR</div>
+
   <script src="app.js"></script>
 
 </body>
