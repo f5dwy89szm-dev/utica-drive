@@ -19,7 +19,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
+renderer.toneMappingExposure = 1.38;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x8bb6d3);
@@ -29,6 +29,8 @@ const clock = new THREE.Clock();
 
 const hemi = new THREE.HemisphereLight(0xdff2ff, 0x52604a, 2.1);
 scene.add(hemi);
+const ambientFill = new THREE.AmbientLight(0x9db6cc, .72);
+scene.add(ambientFill);
 const sun = new THREE.DirectionalLight(0xfff4df, 3.1);
 sun.position.set(-130, 190, -80);
 sun.castShadow = true;
@@ -43,9 +45,9 @@ scene.add(moon);
 
 const daySky = new THREE.Color(0x8bb6d3);
 const sunsetSky = new THREE.Color(0xc96850);
-const nightSky = new THREE.Color(0x07111f);
+const nightSky = new THREE.Color(0x17283a);
 const dayFog = new THREE.Color(0x9dbacf);
-const nightFog = new THREE.Color(0x0d1723);
+const nightFog = new THREE.Color(0x1b2b3b);
 const DAY_LENGTH = 360;
 let worldHours = 19.25;
 
@@ -326,7 +328,7 @@ for (let i = 0; i < roadCoords.length; i++) {
 }
 
 ui.loadingText.textContent = "Preparing your M4…";
-function createCar(color = 0x36a7d8, functionalLights = false) {
+function createCar(color = 0x36a7d8, functionalLights = false, bodyStyle = "coupe") {
   const car = new THREE.Group();
   const paint = mat(color, .22, .72);
   const dark = mat(0x090b0d, .25, .7);
@@ -379,6 +381,10 @@ function createCar(color = 0x36a7d8, functionalLights = false) {
   car.userData.frontWheels = wheelGroups.filter(w => w.position.z > 0);
   car.userData.headlightMaterial = headlightMaterial;
   car.userData.tailMaterial = tailMaterial;
+  if (bodyStyle === "sedan") car.scale.set(1.02, .98, 1.03);
+  if (bodyStyle === "suv") car.scale.set(1.06, 1.22, 1.02);
+  if (bodyStyle === "van") car.scale.set(1.12, 1.32, .92);
+  car.userData.bodyStyle = bodyStyle;
   if (functionalLights) {
     const headBeam = new THREE.SpotLight(0xddeeff, 0, 52, .42, .72, 1.25);
     const beamTarget = new THREE.Object3D();
@@ -447,8 +453,9 @@ for (let i = 0; i < 10; i++) {
 
 // Light traffic gives the streets motion while keeping draw calls phone-friendly.
 const traffic = [];
+const trafficStyles = ["sedan", "suv", "coupe", "van", "sedan", "suv", "sedan", "van", "coupe", "sedan", "suv", "van"];
 for (let i = 0; i < 12; i++) {
-  const vehicle = createCar([0x962b32, 0xe8e8e5, 0x222831, 0x6f7478][i % 4]);
+  const vehicle = createCar([0x962b32, 0xe8e8e5, 0x222831, 0x6f7478, 0x2364a8, 0xc58b24][i % 6], false, trafficStyles[i]);
   vehicle.scale.setScalar(.72 + (i % 3) * .025);
   const road = roadCoords[(i + 2) % roadCoords.length];
   const direction = i % 2 ? 1 : -1;
@@ -635,11 +642,12 @@ function updateAtmosphere(dt) {
   scene.background.copy(atmosphereColor);
   scene.fog.color.copy(nightFog).lerp(dayFog, daylight).lerp(sunsetSky, twilight * .25);
   scene.fog.density = THREE.MathUtils.lerp(.00215, .00155, daylight);
-  hemi.intensity = .34 + daylight * 1.78;
+  hemi.intensity = .88 + daylight * 1.78;
   hemi.color.set(daylight > .45 ? 0xdff2ff : 0x7892bd);
   sun.intensity = .08 + daylight * 3.05;
   sun.position.set(Math.cos(sunAngle) * 170, Math.max(12, sunHeight * 210), Math.sin(sunAngle) * 145);
-  moon.intensity = .12 + nightAmount * .72;
+  moon.intensity = .42 + nightAmount * .92;
+  ambientFill.intensity = .68 + nightAmount * .42;
   windowMaterial.emissiveIntensity = .22 + nightAmount * 2.25;
   storefrontGlass.emissiveIntensity = .12 + nightAmount * 1.7;
   lampBulbMaterial.emissiveIntensity = .08 + nightAmount * 4.2;
